@@ -24,14 +24,16 @@
       "launchBrowser": true,
       "applicationUrl": "https://localhost:7258;http://localhost:5200",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "SQL_CONNECTION_STRING": "Server=MSI; Database=OJT_TRAIN_G5;Integrated Security=true; Encrypt=false;MultipleActiveResultSets=True"
       }
     },
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "SQL_CONNECTION_STRING": "Server=MSI; Database=OJT_TRAIN_G5;Integrated Security=true; Encrypt=false;MultipleActiveResultSets=True"
       }
     }
   }

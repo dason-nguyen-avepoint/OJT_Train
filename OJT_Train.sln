@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJT_Train.Core", "OJT_Train.Core\OJT_Train.Core.csproj", "{50923FF9-660D-48E5-8E67-E4DB1D0736B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OJT_Train.Core", "OJT_Train.Core\OJT_Train.Core.csproj", "{50923FF9-660D-48E5-8E67-E4DB1D0736B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repositories", "Repositories\Repositories.csproj", "{F8D8CD51-215F-4E05-8224-1C128E6080A6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{50923FF9-660D-48E5-8E67-E4DB1D0736B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50923FF9-660D-48E5-8E67-E4DB1D0736B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{50923FF9-660D-48E5-8E67-E4DB1D0736B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8D8CD51-215F-4E05-8224-1C128E6080A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8D8CD51-215F-4E05-8224-1C128E6080A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8D8CD51-215F-4E05-8224-1C128E6080A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8D8CD51-215F-4E05-8224-1C128E6080A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
