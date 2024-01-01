@@ -22,9 +22,11 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
             var listCategory = await _repo.GetAll();
             return Json(listCategory);
         }
-        public async Task<IActionResult> CreateCategory(CategoryDTO cate)
+        [HttpPost]
+        public IActionResult CreateCategory([FromBody] CategoryDTO model)
         {
-            return RedirectToAction("Index");
+            _repo.Add(model);
+            return Json(new { success = true, data = model });
         }
     }
 }

@@ -8,6 +8,7 @@ namespace Repositories.Const
 {
     public class StoreProcedureCategory
     {
-        public static readonly string GetCategory = "GetAll";
+        public static readonly string GetAllCategory = "GetAllCategory";
+        public static readonly string AddCategory = "AddCategory";
     }
 }

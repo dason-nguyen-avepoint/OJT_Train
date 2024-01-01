@@ -7,7 +7,7 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
     public class ManagerController : Controller
     {
         
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             return View();
         }

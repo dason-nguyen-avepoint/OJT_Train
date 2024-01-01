@@ -11,25 +11,37 @@
                         },
                         create: {
                             url: crudServiceBaseUrl + "/Category/CreateCategory",
-                            dataType: "json"
+                            dataType: "json",
+                            contentType: "application/json",
+                            type: "POST"
                         },
                         parameterMap: function (options, operation) {
+                            if (operation === "create" && options.models) {
+                                return kendo.stringify(options.models[0]);
+                            }
                             if (operation !== "read" && options.models) {
                                 return { models: kendo.stringify(options.models) };
                             }
                         }
                     },
                     batch: true,
-                    pageSize: 20,
+                    pageSize: 5,
                     schema: {
                         model: {
                             id: "categoryId",
                             fields: {
-                                categoryId: { type: "number" },
-                                categoryName: { type: "string" },
-                                createdDate: { type: "date" },
-                                modifiedDate: { type: "date" },
-                                isPublished: { type: "bool" }
+                                categoryId: { type: "number", editable: false, nullable: false },
+                                categoryName: {
+                                    type: "string", 
+                                    validation: {
+                                        required: {
+                                            message:"Please enter Category Name"
+                                        }
+                                    }
+                                },
+                                createdDate: { type: "date", editable: false },
+                                modifiedDate: { type: "date", nullable: true },
+                                isPublished: { type: "boolean" }
                             }
                         }
                     }
@@ -51,9 +63,18 @@
                     { field: "categoryName", title: "Category Name" },
                     { field: "createdDate", title: "Created Date", width: "120px", format: "{0:g}" },
                     { field: "modifiedDate", title: "Modified Date", width: "120px", format: "{0:g}" },
-                    { field: "isPublished", title:"Published", width: "120px" },
+                    { field: "isPublished", title: "Published", width: "120px" },
                     { command: ["edit", "destroy"], title: "&nbsp;", width: "250px", exportable: false }],
                 editable: "popup"
+                // save: function (e) {
+                //     // Handle the save event
+                //     if (e.model.isNew() && e.model.dirty) {
+                //         // Close the create popup when a new item is saved
+                //         this.closeCell();
+                //         // Reload the index page after a successful add
+                //         window.location.reload();
+                //     }
+                // }
             });
         });
     </script>

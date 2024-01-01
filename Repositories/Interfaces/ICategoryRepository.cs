@@ -10,5 +10,6 @@ namespace Repositories.Interfaces
     public interface ICategoryRepository
     {
         Task<IEnumerable<CategoryDTO>> GetAll();
+        void Add(CategoryDTO cate);
     }
 }

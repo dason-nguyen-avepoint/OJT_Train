@@ -10,11 +10,22 @@ namespace Repositories.Implements
 {
     public class CategoryRepository : DapperBase, ICategoryRepository
     {
+        public async void Add(CategoryDTO cate)
+        {
+            await WithConnection(async connection =>
+            {
+                var parameter = new DynamicParameters();
+                parameter.Add("categoryName", cate.CategoryName);
+                parameter.Add("isPublished", cate.IsPublished);
+                await connection.ExecuteAsync(StoreProcedureCategory.AddCategory, param: parameter, commandType: CommandType.StoredProcedure);
+            });
+        }
+
         public async Task<IEnumerable<CategoryDTO>> GetAll()
         {
             return await WithConnection(async connection =>
             {
-                var listCategory = await connection.QueryAsync<CategoryDTO>(StoreProcedureCategory.GetCategory,null, commandType: CommandType.StoredProcedure);
+                var listCategory = await connection.QueryAsync<CategoryDTO>(StoreProcedureCategory.GetAllCategory, null, commandType: CommandType.StoredProcedure);
                 return listCategory.ToList();
             });
         }
