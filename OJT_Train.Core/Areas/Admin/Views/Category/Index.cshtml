@@ -1,0 +1,60 @@
+﻿<div id="grid"></div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var crudServiceBaseUrl = "https://localhost:7258/admin",
+                dataSource = new kendo.data.DataSource({
+                    transport: {
+                        read: {
+                            url: crudServiceBaseUrl + "/Category/GetCategory",
+                            dataType: "json"
+                        },
+                        create: {
+                            url: crudServiceBaseUrl + "/Category/CreateCategory",
+                            dataType: "json"
+                        },
+                        parameterMap: function (options, operation) {
+                            if (operation !== "read" && options.models) {
+                                return { models: kendo.stringify(options.models) };
+                            }
+                        }
+                    },
+                    batch: true,
+                    pageSize: 20,
+                    schema: {
+                        model: {
+                            id: "categoryId",
+                            fields: {
+                                categoryId: { type: "number" },
+                                categoryName: { type: "string" },
+                                createdDate: { type: "date" },
+                                modifiedDate: { type: "date" },
+                                isPublished: { type: "bool" }
+                            }
+                        }
+                    }
+                });
+
+            $("#grid").kendoGrid({
+                contextMenu: true,
+                persistSelection: true,
+                dataSource: dataSource,
+                selectable: "multiple, rows",
+                sortable: true,
+                reorderable: {
+                    rows: true
+                },
+                pageable: true,
+                height: 550,
+                toolbar: ["create"],
+                columns: [
+                    { field: "categoryName", title: "Category Name" },
+                    { field: "createdDate", title: "Created Date", width: "120px", format: "{0:g}" },
+                    { field: "modifiedDate", title: "Modified Date", width: "120px", format: "{0:g}" },
+                    { field: "isPublished", title:"Published", width: "120px" },
+                    { command: ["edit", "destroy"], title: "&nbsp;", width: "250px", exportable: false }],
+                editable: "popup"
+            });
+        });
+    </script>
+}
