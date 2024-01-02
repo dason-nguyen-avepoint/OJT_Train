@@ -28,5 +28,17 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
             _repo.Add(model);
             return Json(new { success = true, data = model });
         }
+        [HttpPost]
+        public IActionResult UpdateCategory([FromBody] CategoryDTO model)
+        {
+            _repo.Update(model);
+            return Json(new { success = true, data = model });
+        }
+        [HttpPost]
+        public IActionResult DeleteCategory([FromBody] CategoryDTO model)
+        {
+            _repo.Delete(model);
+            return Json(new { success = true, data = model });
+        }
     }
 }

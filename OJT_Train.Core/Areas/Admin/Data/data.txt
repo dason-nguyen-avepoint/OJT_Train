@@ -18,6 +18,28 @@ AS
 BEGIN
 	INSERT INTO CATEGORY VALUES(@categoryName, GETDATE(), NULL, NULL, NULL, @isPublished, 'False')
 END;
+GO;
+CREATE PROCEDURE UpdateCategory @categoryId int, @categoryName NVARCHAR(50), @isPublished VARCHAR(5)
+AS
+BEGIN
+	UPDATE CATEGORY
+	SET CATEGORYNAME = @categoryName,
+		MODIFIEDDATE = GETDATE(),
+		ISPUBLISHED = @isPublished
+	WHERE CATEGORYID = @categoryId
+END;
+GO;
+
+CREATE PROCEDURE DeleteCategory
+@categoryId int
+AS
+BEGIN
+	UPDATE CATEGORY
+	SET ISPUBLISHED = 'False',
+		ISDELETED = 'True',
+		MODIFIEDDATE = GETDATE()
+	WHERE CATEGORYID = @categoryId
+END;
 
 -- IPHONE 15 PRO MAX
 INSERT INTO PRODUCT VALUES (N'Iphone 15 Pro Max', '256 GB', 33090000, '',' True', '', 'Iphone 15 Pro Max','','',2);

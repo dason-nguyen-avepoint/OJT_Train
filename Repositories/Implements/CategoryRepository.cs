@@ -21,12 +21,34 @@ namespace Repositories.Implements
             });
         }
 
+        public async void Delete(CategoryDTO cate)
+        {
+            await WithConnection(async connection =>
+            {
+                var parameter = new DynamicParameters();
+                parameter.Add("categoryId", cate.CategoryId);
+                await connection.ExecuteAsync(StoreProcedureCategory.DeleteCategory, param: parameter, commandType: CommandType.StoredProcedure);
+            });
+        }
+
         public async Task<IEnumerable<CategoryDTO>> GetAll()
         {
             return await WithConnection(async connection =>
             {
                 var listCategory = await connection.QueryAsync<CategoryDTO>(StoreProcedureCategory.GetAllCategory, null, commandType: CommandType.StoredProcedure);
                 return listCategory.ToList();
+            });
+        }
+
+        public async void Update(CategoryDTO cate)
+        {
+            await WithConnection(async connection =>
+            {
+                var parameter = new DynamicParameters();
+                parameter.Add("categoryId", cate.CategoryId);
+                parameter.Add("categoryName", cate.CategoryName);
+                parameter.Add("isPublished", cate.IsPublished);
+                await connection.ExecuteAsync(StoreProcedureCategory.UpdateCategory, param: parameter, commandType: CommandType.StoredProcedure);
             });
         }
     }

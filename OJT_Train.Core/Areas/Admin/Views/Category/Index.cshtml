@@ -15,8 +15,26 @@
                             contentType: "application/json",
                             type: "POST"
                         },
+                        update: {
+                            url: crudServiceBaseUrl + "/Category/UpdateCategory",
+                            dataType: "json",
+                            contentType: "application/json",
+                            type: "POST"
+                        },
+                        destroy: {
+                            url: crudServiceBaseUrl + "/Category/DeleteCategory",
+                            dataType: "json",
+                            contentType: "application/json",
+                            type: "POST"
+                        },
                         parameterMap: function (options, operation) {
                             if (operation === "create" && options.models) {
+                                return kendo.stringify(options.models[0]);
+                            }
+                            if (operation === "update" && options.models) {
+                                return kendo.stringify(options.models[0]);
+                            }
+                            if (operation === "destroy" && options.models) {
                                 return kendo.stringify(options.models[0]);
                             }
                             if (operation !== "read" && options.models) {
@@ -32,18 +50,31 @@
                             fields: {
                                 categoryId: { type: "number", editable: false, nullable: false },
                                 categoryName: {
-                                    type: "string", 
+                                    type: "string",
                                     validation: {
                                         required: {
-                                            message:"Please enter Category Name"
+                                            message: "Please enter Category Name"
                                         }
                                     }
                                 },
                                 createdDate: { type: "date", editable: false },
-                                modifiedDate: { type: "date", nullable: true },
-                                isPublished: { type: "boolean" }
+                                modifiedDate: { type: "date", editable: false },
+                                isPublished: { type: "boolean" },
+                                isDeleted: { type: "boolean" }
                             }
                         }
+                    },
+                    requestEnd: function (e) {
+                        if (e.type === "destroy") {
+                            // Refresh the grid
+                            $("#grid").data("kendoGrid").dataSource.read();
+                        }
+                    },
+                    remove: function (e) {
+                        // Add isDeleted property to the data item
+                        e.model.isDeleted = true;
+                        // Refresh the grid
+                        $("#grid").data("kendoGrid").dataSource.read();
                     }
                 });
 
@@ -58,23 +89,67 @@
                 },
                 pageable: true,
                 height: 550,
-                toolbar: ["create"],
+                toolbar: [
+                    { name: "customCreate", text: "Custom Create", className: "k-grid-custom-create" }
+                ],
                 columns: [
                     { field: "categoryName", title: "Category Name" },
                     { field: "createdDate", title: "Created Date", width: "120px", format: "{0:g}" },
                     { field: "modifiedDate", title: "Modified Date", width: "120px", format: "{0:g}" },
                     { field: "isPublished", title: "Published", width: "120px" },
-                    { command: ["edit", "destroy"], title: "&nbsp;", width: "250px", exportable: false }],
-                editable: "popup"
-                // save: function (e) {
-                //     // Handle the save event
-                //     if (e.model.isNew() && e.model.dirty) {
-                //         // Close the create popup when a new item is saved
-                //         this.closeCell();
-                //         // Reload the index page after a successful add
-                //         window.location.reload();
-                //     }
-                // }
+                    {
+                        command: [
+                            {
+                                name: "edit",
+                                text: { edit: "Edit", cancel: "Cancel", update: "Update" },
+                                click: function (e) {
+                                    // Custom edit command
+                                    var grid = $("#grid").data("kendoGrid");
+                                    grid.editRow($(e.currentTarget).closest("tr"));
+                                }
+                            },
+                            {
+                                name: "delete",
+                                text: "Delete",
+                                click: function (e) {
+                                    // Custom delete command
+                                    var grid = $("#grid").data("kendoGrid");
+                                    grid.removeRow($(e.currentTarget).closest("tr"));
+                                }
+                            }
+                        ], title: "&nbsp;", width: "250px", exportable: false
+                    }
+                ],
+                editable: {
+                    mode: "popup",
+                    // window: {
+                    //     title: "Edit",
+                    //     animation: false,
+                    // },
+                    // createAt: "top",
+                    // // Handle create and update success events
+                    // success: function (e) {
+                    //     $("#grid").data("kendoGrid").dataSource.read();
+                    //     $("#grid").data("kendoGrid").closeCell();
+                    // },
+                },
+                dataBound: function (e) {
+                    // Disable edit and delete buttons for deleted items
+                    e.sender.tbody.find("tr").each(function () {
+                        var dataItem = e.sender.dataItem(this);
+                        if (dataItem.isDeleted) {
+                            $(this).css("opacity", "0.5");
+                            var commandCell = $(this).find(".k-command-cell");
+                            commandCell.empty().append("<span style='color: red;'>Is Deleted</span>");
+                        }
+                    });
+                }
+            });
+
+            // Handle custom create button click
+            $(".k-grid-custom-create").click(function () {
+                var grid = $("#grid").data("kendoGrid");
+                grid.addRow();
             });
         });
     </script>

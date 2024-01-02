@@ -10,5 +10,7 @@ namespace Repositories.Const
     {
         public static readonly string GetAllCategory = "GetAllCategory";
         public static readonly string AddCategory = "AddCategory";
+        public static readonly string UpdateCategory = "UpdateCategory";
+        public static readonly string DeleteCategory = "DeleteCategory";
     }
 }
