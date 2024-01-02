@@ -25,7 +25,10 @@
                             url: crudServiceBaseUrl + "/Category/DeleteCategory",
                             dataType: "json",
                             contentType: "application/json",
-                            type: "POST"
+                            type: "POST",
+                            success: function(){
+                                toastr.success("Category deleted successfully!");
+                            }
                         },
                         parameterMap: function (options, operation) {
                             if (operation === "create" && options.models) {
@@ -65,7 +68,7 @@
                         }
                     },
                     requestEnd: function (e) {
-                        if (e.type === "destroy") {
+                        if (e.type === "destroy" || e.type === "update" || e.type === "create") {
                             // Refresh the grid
                             $("#grid").data("kendoGrid").dataSource.read();
                         }
@@ -88,20 +91,21 @@
                     rows: true
                 },
                 pageable: true,
-                height: 550,
-                toolbar: [
-                    { name: "customCreate", text: "Custom Create", className: "k-grid-custom-create" }
-                ],
+                height: 450,
+                toolbar: ["create", "search"],
+                search: {
+                    fields: ["categoryName", "isPublished"]
+                },
                 columns: [
                     { field: "categoryName", title: "Category Name" },
-                    { field: "createdDate", title: "Created Date", width: "120px", format: "{0:g}" },
-                    { field: "modifiedDate", title: "Modified Date", width: "120px", format: "{0:g}" },
-                    { field: "isPublished", title: "Published", width: "120px" },
+                    { field: "createdDate", title: "Created Date", width: "240px", format: "{0:g}" },
+                    { field: "modifiedDate", title: "Modified Date", width: "240px", format: "{0:g}" },
+                    { field: "isPublished", title: "Published", width: "240px" },
                     {
                         command: [
                             {
                                 name: "edit",
-                                text: { edit: "Edit", cancel: "Cancel", update: "Update" },
+                                text: { edit: "Edit", cancel: "Cancel", update: "Update"},
                                 click: function (e) {
                                     // Custom edit command
                                     var grid = $("#grid").data("kendoGrid");
@@ -123,15 +127,9 @@
                 editable: {
                     mode: "popup",
                     // window: {
-                    //     title: "Edit",
-                    //     animation: false,
-                    // },
-                    // createAt: "top",
-                    // // Handle create and update success events
-                    // success: function (e) {
-                    //     $("#grid").data("kendoGrid").dataSource.read();
-                    //     $("#grid").data("kendoGrid").closeCell();
-                    // },
+                    //     title:"Create Category",
+                    //     template: kendo.template($("#customCreateTemplate").html())
+                    // }
                 },
                 dataBound: function (e) {
                     // Disable edit and delete buttons for deleted items
@@ -145,12 +143,28 @@
                     });
                 }
             });
-
-            // Handle custom create button click
-            $(".k-grid-custom-create").click(function () {
-                var grid = $("#grid").data("kendoGrid");
-                grid.addRow();
-            });
         });
     </script>
+    <script id="customCreateTemplate" type="text/x-kendo-template">
+        <div>
+            <h4>Custom Create Title</h4>
+            <div>
+                <label for="categoryName">Category Name:</label>
+                <input type="text" id="categoryName" name="categoryName" class="k-input" required/>
+            </div>
+            <div>
+                <label for="isPublished">Is Published:</label>
+                <input type="checkbox" id="isPublished" name="isPublished" class="k-checkbox" />
+            </div>
+            <div class="k-edit-buttons k-state-default">
+                <a role="button" class="k-button k-button-icontext k-primary k-grid-update" href="#">
+                    <span class="k-icon k-update"></span>Custom Save
+                </a>
+                <a role="button" class="k-button k-button-icontext k-grid-cancel" href="#">
+                    <span class="k-icon k-cancel"></span>Custom Cancel
+                </a>
+            </div>
+        </div>
+    </script>
+
 }
