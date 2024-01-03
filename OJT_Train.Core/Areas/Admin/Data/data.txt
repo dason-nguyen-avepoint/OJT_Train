@@ -41,15 +41,30 @@ BEGIN
 	WHERE CATEGORYID = @categoryId
 END;
 
+SELECT * FROM PRODUCT;
+--DROP PROCEDURE GetAllProduct;
+
+CREATE PROCEDURE GetAllProduct
+AS 
+BEGIN
+	SELECT P.*, C.CATEGORYNAME FROM PRODUCT AS P JOIN CATEGORY AS C ON P.CATEGORYID = C.CATEGORYID;
+END;
+EXEC GetAllProduct;
+
 -- IPHONE 15 PRO MAX
-INSERT INTO PRODUCT VALUES (N'Iphone 15 Pro Max', '256 GB', 33090000, '',' True', '', 'Iphone 15 Pro Max','','',2);
-INSERT INTO PRODUCT VALUES (N'Iphone 15 Pro Max', '512 GB', 39690000, '', 'True', '', 'Iphone 15 Pro Max','','',2);
-INSERT INTO PRODUCT VALUES (N'Iphone 15 Pro Max', '1 TB', 46990000, '', 'True', '', 'Iphone 15 Pro Max','','',2);
+INSERT INTO PRODUCT VALUES (N'Iphone 15 Pro Max', '256 GB', 33090000, '','Detail product',GETDATE(),NULL,NULL,NULL,'True', 'False',1,'image product');
+INSERT INTO PRODUCT VALUES (N'Iphone 15 Pro Max', '512 GB', 39690000, '','Detail product',GETDATE(),NULL,NULL,NULL,'True', 'False',1,'image product');
+INSERT INTO PRODUCT VALUES (N'Iphone 15 Pro Max', '1 TB', 46990000, '','Detail product',GETDATE(),NULL,NULL,NULL,'True', 'False',1,'image product');
+
 -- IPHONE 15 PRO
-INSERT INTO PRODUCT VALUES (N'Iphone 15 Pro', '128 GB', 28990000, '', 'True', '', 'Iphone 15 Pro','','',2);
-INSERT INTO PRODUCT VALUES (N'Iphone 15 Pro', '256 GB', 31790000, '', 'True', '', 'Iphone 15 Pro','','',2);
-INSERT INTO PRODUCT VALUES (N'Iphone 15 Pro', '512 GB', 37990000, '', 'True', '', 'Iphone 15 Pro','','',2);
-INSERT INTO PRODUCT VALUES (N'Iphone 15 Pro', '1 TB', 43490000, '', 'True', '', 'Iphone 15 Pro','','',2);
+INSERT INTO PRODUCT VALUES (N'Iphone 15 Pro', '128 GB', 28990000, '','Detail product',GETDATE(),NULL,NULL,NULL,'True', 'False',1,'image product');
+INSERT INTO PRODUCT VALUES (N'Iphone 15 Pro', '256 GB', 31790000, '','Detail product',GETDATE(),NULL,NULL,NULL,'True', 'False',1,'image product');
+INSERT INTO PRODUCT VALUES (N'Iphone 15 Pro', '512 GB', 37990000, '','Detail product',GETDATE(),NULL,NULL,NULL,'True', 'False',1,'image product');
+INSERT INTO PRODUCT VALUES (N'Iphone 15 Pro', '1 TB', 43490000, '','Detail product',GETDATE(),NULL,NULL,NULL,'True', 'False',1,'image product');
+
+-- IPAD PRO
+INSERT INTO PRODUCT VALUES (N'iPad Pro M2 11" Wi-Fi', '512 GB', 30990000, '','Detail product',GETDATE(),NULL,NULL,NULL,'True', 'False',3,'image product');
+
 -- INVENTORY
 INSERT INTO INVENTORY VALUES (N'Kho Tổng');
 -- SALE PRODUCT 1

@@ -1,0 +1,149 @@
+﻿<div id="grid"></div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var crudServiceBaseUrl = "https://localhost:7258/admin",
+                dataSource = new kendo.data.DataSource({
+                    transport: {
+                        read: {
+                            url: crudServiceBaseUrl + "/Product/GetProducts",
+                            dataType: "json"
+                        },
+                        // create: {
+                        //     url: crudServiceBaseUrl + "/Category/CreateCategory",
+                        //     dataType: "json",
+                        //     contentType: "application/json",
+                        //     type: "POST"
+                        // },
+                        // update: {
+                        //     url: crudServiceBaseUrl + "/Category/UpdateCategory",
+                        //     dataType: "json",
+                        //     contentType: "application/json",
+                        //     type: "POST"
+                        // },
+                        // destroy: {
+                        //     url: crudServiceBaseUrl + "/Category/DeleteCategory",
+                        //     dataType: "json",
+                        //     contentType: "application/json",
+                        //     type: "POST",
+                        //     success: function () {
+                        //         toastr.success("Category deleted successfully!");
+                        //     }
+                        // },
+                        parameterMap: function (options, operation) {
+                            if (operation === "create" && options.models) {
+                                return kendo.stringify(options.models[0]);
+                            }
+                            if (operation === "update" && options.models) {
+                                return kendo.stringify(options.models[0]);
+                            }
+                            if (operation === "destroy" && options.models) {
+                                return kendo.stringify(options.models[0]);
+                            }
+                            if (operation !== "read" && options.models) {
+                                return { models: kendo.stringify(options.models) };
+                            }
+                        }
+                    },
+                    batch: true,
+                    pageSize: 5,
+                    schema: {
+                        model: {
+                            id: "productId",
+                            fields: {
+                                productId: { type: "number", editable: false, nullable: false },
+                                productName: {
+                                    type: "string",
+                                    validation: {
+                                        required: {
+                                            message: "Please enter Product Name"
+                                        }
+                                    }
+                                },
+                                memory: {type: "string"},
+                                priceOld: {type: "int"},
+                                priceNew: { type: "int" },
+                                imageProduct: {type:"string"},
+                                createdDate: { type: "date", editable: false },
+                                modifiedDate: { type: "date", editable: false },
+                                createdBy: {type:"string"},
+                                modifiedBy: {type:"string"},
+                                categoryId: {type:"int"},
+                                categoryName: {type:"string"},
+                                isPublished: { type: "boolean" },
+                                isDeleted: { type: "boolean" }
+                            }
+                        }
+                    },
+                });
+
+            $("#grid").kendoGrid({
+                contextMenu: true,
+                persistSelection: true,
+                dataSource: dataSource,
+                selectable: "multiple, rows",
+                sortable: true,
+                reorderable: {
+                    rows: true
+                },
+                pageable: true,
+                height: 450,
+                toolbar: ["create", "search"],
+                search: {
+                    fields: ["productName", "isPublished", "memory", "categoryName"]
+                },
+                columns: [
+                    { field: "productName", title: "Tên sản phẩm" },
+                    { field: "categoryName", title: "Loại" },
+                    { field: "memory", title: "Dung lượng" },
+                    { field: "priceOld", title: "Giá cũ" },
+                    { field: "priceNew", title: "Giá mới" },
+                    { 
+                        field: "imageProduct", title: "Ảnh sản phẩm",
+                        template: "<div class='product-photo'" +
+                            "style='background-image: url(../Images/Products/#:data.imageProduct#.png);'></div>",
+                        width: 80
+                    },
+                    { field: "createdDate", title: "Ngày tạo", format: "{0:g}" },
+                    { field: "modifiedDate", title: "Ngày sửa", format: "{0:g}" },
+                    { field: "isPublished", title: "Phát hành"},
+                    {
+                        command: [
+                            {
+                                name: "edit",
+                                text: { edit: "Edit", cancel: "Cancel", update: "Update" },
+                                click: function (e) {
+                                    // Custom edit command
+                                    var grid = $("#grid").data("kendoGrid");
+                                    grid.editRow($(e.currentTarget).closest("tr"));
+                                }
+                            },
+                            {
+                                name: "delete",
+                                text: "Delete",
+                                click: function (e) {
+                                    // Custom delete command
+                                    var grid = $("#grid").data("kendoGrid");
+                                    grid.removeRow($(e.currentTarget).closest("tr"));
+                                }
+                            }
+                        ], title: "&nbsp;", width: "250px", exportable: false
+                    }
+                ],
+                editable: {
+                    mode: "popup",
+                },
+                // dataBound: function (e) {
+                //     e.sender.tbody.find("tr").each(function () {
+                //         var dataItem = e.sender.dataItem(this);
+                //         if (dataItem.isDeleted) {
+                //             $(this).css("opacity", "0.5");
+                //             var commandCell = $(this).find(".k-command-cell");
+                //             commandCell.empty().append("<span style='color: red;'>Is Deleted</span>");
+                //         }
+                //     });
+                // }
+            });
+        });
+    </script>
+}

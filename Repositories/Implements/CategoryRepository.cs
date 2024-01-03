@@ -1,6 +1,4 @@
 ﻿using Dapper;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using Repositories.Const;
 using Repositories.DataAccess;
 using Repositories.Dto;
