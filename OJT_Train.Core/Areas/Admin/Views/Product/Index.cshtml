@@ -21,15 +21,12 @@
                         //     contentType: "application/json",
                         //     type: "POST"
                         // },
-                        // destroy: {
-                        //     url: crudServiceBaseUrl + "/Category/DeleteCategory",
-                        //     dataType: "json",
-                        //     contentType: "application/json",
-                        //     type: "POST",
-                        //     success: function () {
-                        //         toastr.success("Category deleted successfully!");
-                        //     }
-                        // },
+                        destroy: {
+                            url: crudServiceBaseUrl + "/Product/DeleteProduct",
+                            dataType: "json",
+                            contentType: "application/json",
+                            type: "POST"
+                        },
                         parameterMap: function (options, operation) {
                             if (operation === "create" && options.models) {
                                 return kendo.stringify(options.models[0]);
@@ -46,7 +43,7 @@
                         }
                     },
                     batch: true,
-                    pageSize: 5,
+                    pageSize: 10,
                     schema: {
                         model: {
                             id: "productId",
@@ -87,7 +84,7 @@
                     rows: true
                 },
                 pageable: true,
-                height: 450,
+                height: 650,
                 toolbar: ["create", "search"],
                 search: {
                     fields: ["productName", "isPublished", "memory", "categoryName"]
@@ -96,17 +93,26 @@
                     { field: "productName", title: "Tên sản phẩm" },
                     { field: "categoryName", title: "Loại" },
                     { field: "memory", title: "Dung lượng" },
-                    { field: "priceOld", title: "Giá cũ" },
-                    { field: "priceNew", title: "Giá mới" },
-                    { 
+                    { field: "priceOld", title: "Giá cũ", template: "#= currencyOld(data)#" },
+                    { field: "priceNew", title: "Giá mới", template: "#= currencyNew(data)#" },
+                    {
                         field: "imageProduct", title: "Ảnh sản phẩm",
-                        template: "<div class='product-photo'" +
-                            "style='background-image: url(../Images/Products/#:data.imageProduct#.png);'></div>",
-                        width: 80
+                        template: "<div class='product-photo'><img src='/Images/Products/#: data.imageProduct#.png' style='max-width: 100%; max-height: 100%;'/></div>",
                     },
                     { field: "createdDate", title: "Ngày tạo", format: "{0:g}" },
                     { field: "modifiedDate", title: "Ngày sửa", format: "{0:g}" },
-                    { field: "isPublished", title: "Phát hành"},
+                    {
+                        "field": "isPublished",
+                        "title": "Phát hành",
+                        "template": function (dataItem) {
+                            if (dataItem.isPublished) {
+                                return kendo.ui.icon({ icon: 'check-outline' });
+                            } else {
+                                return kendo.ui.icon({ icon: 'x-circle' });
+                            }
+                        },
+                        width: 120
+                    },
                     {
                         command: [
                             {
@@ -133,17 +139,23 @@
                 editable: {
                     mode: "popup",
                 },
-                // dataBound: function (e) {
-                //     e.sender.tbody.find("tr").each(function () {
-                //         var dataItem = e.sender.dataItem(this);
-                //         if (dataItem.isDeleted) {
-                //             $(this).css("opacity", "0.5");
-                //             var commandCell = $(this).find(".k-command-cell");
-                //             commandCell.empty().append("<span style='color: red;'>Is Deleted</span>");
-                //         }
-                //     });
-                // }
+                dataBound: function (e) {
+                    e.sender.tbody.find("tr").each(function () {
+                        var dataItem = e.sender.dataItem(this);
+                        if (dataItem.isDeleted) {
+                            $(this).css("opacity", "0.5");
+                            var commandCell = $(this).find(".k-command-cell");
+                            commandCell.empty().append("<span style='color: red;'>Is Deleted</span>");
+                        }
+                    });
+                }
             });
         });
+        function currencyOld(data) {
+            return kendo.toString(data.priceOld, "###,## VND")
+        }
+        function currencyNew(data) {
+            return kendo.toString(data.priceNew, "###,## VND")
+        }
     </script>
 }

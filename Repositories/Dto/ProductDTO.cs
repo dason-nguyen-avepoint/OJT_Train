@@ -17,7 +17,7 @@ namespace Repositories.Dto
         public string ProductDetail { get; set; }
         public string ImageProduct { get; set; }
         public DateTime CreatedDate { get; set; }
-        public DateTime ModifiedDate { get; set; }
+        public DateTime? ModifiedDate { get; set; }
         public string CreatedBy { get; set; }
         public string ModifiedBy { get; set; }
         public int CategoryId { get; set; }

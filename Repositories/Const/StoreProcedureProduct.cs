@@ -9,5 +9,6 @@ namespace Repositories.Const
     public class StoreProcedureProduct
     {
         public static readonly string GetAllProduct = "GetAllProduct";
+        public static readonly string DeleteProduct = "DeleteProduct";
     }
 }

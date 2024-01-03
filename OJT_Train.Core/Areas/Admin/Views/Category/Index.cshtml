@@ -100,7 +100,18 @@
                     { field: "categoryName", title: "Category Name" },
                     { field: "createdDate", title: "Created Date", width: "240px", format: "{0:g}" },
                     { field: "modifiedDate", title: "Modified Date", width: "240px", format: "{0:g}" },
-                    { field: "isPublished", title: "Published", width: "240px" },
+                    { 
+                        field: "isPublished", 
+                        title: "Published",
+                        template: function (dataItem) {
+                            if (dataItem.isPublished) {
+                                return kendo.ui.icon({ icon: 'check-outline'});
+                            } else {
+                                return kendo.ui.icon({ icon: 'x-circle'});
+                            }
+                        },
+                        width: 120
+                    },
                     {
                         command: [
                             {

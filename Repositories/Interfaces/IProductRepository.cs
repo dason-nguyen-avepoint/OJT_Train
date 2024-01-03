@@ -10,5 +10,6 @@ namespace Repositories.Interfaces
     public interface IProductRepository
     {
         Task<IEnumerable<ProductDTO>> GetAll();
+        void Delete(ProductDTO product);
     }
 }
