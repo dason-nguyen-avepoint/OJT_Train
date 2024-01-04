@@ -9,12 +9,12 @@
                             url: crudServiceBaseUrl + "/Product/GetProducts",
                             dataType: "json"
                         },
-                        // create: {
-                        //     url: crudServiceBaseUrl + "/Category/CreateCategory",
-                        //     dataType: "json",
-                        //     contentType: "application/json",
-                        //     type: "POST"
-                        // },
+                        create: {
+                            url: crudServiceBaseUrl + "/Product/CreateProduct",
+                            dataType: "json",
+                            contentType: "application/json",
+                            type: "POST"
+                        },
                         // update: {
                         //     url: crudServiceBaseUrl + "/Category/UpdateCategory",
                         //     dataType: "json",
@@ -43,7 +43,7 @@
                         }
                     },
                     batch: true,
-                    pageSize: 10,
+                    pageSize: 5,
                     schema: {
                         model: {
                             id: "productId",
@@ -57,23 +57,34 @@
                                         }
                                     }
                                 },
-                                memory: {type: "string"},
-                                priceOld: {type: "int"},
+                                memory: { type: "string" },
+                                priceOld: { type: "int" },
                                 priceNew: { type: "int" },
-                                imageProduct: {type:"string"},
+                                imageProduct: { type: "string" },
                                 createdDate: { type: "date", editable: false },
                                 modifiedDate: { type: "date", editable: false },
-                                createdBy: {type:"string"},
-                                modifiedBy: {type:"string"},
-                                categoryId: {type:"int"},
-                                categoryName: {type:"string"},
+                                createdBy: { type: "string" },
+                                modifiedBy: { type: "string" },
+                                categoryId: { type: "int" },
+                                categoryName: { type: "string" },
                                 isPublished: { type: "boolean" },
                                 isDeleted: { type: "boolean" }
                             }
                         }
                     },
+                    requestEnd: function (e) {
+                        if (e.type === "destroy" || e.type === "update" || e.type === "create") {
+                            // Refresh the grid
+                            $("#grid").data("kendoGrid").dataSource.read();
+                        }
+                    },
+                    remove: function (e) {
+                        // Add isDeleted property to the data item
+                        e.model.isDeleted = true;
+                        // Refresh the grid
+                        $("#grid").data("kendoGrid").dataSource.read();
+                    }
                 });
-
             $("#grid").kendoGrid({
                 contextMenu: true,
                 persistSelection: true,
@@ -84,7 +95,7 @@
                     rows: true
                 },
                 pageable: true,
-                height: 650,
+                height: 500,
                 toolbar: ["create", "search"],
                 search: {
                     fields: ["productName", "isPublished", "memory", "categoryName"]
@@ -138,6 +149,27 @@
                 ],
                 editable: {
                     mode: "popup",
+                    window: {
+                        title: "Edit Product",
+                        width: 800,
+                        height: 600,
+                    },
+                    template: kendo.template($("#popup-editor-template").html()),
+                    create: function (e) {
+                        $("#categoryId").kendoDropDownList({
+                            dataSource: {
+                                transport: {
+                                    read: {
+                                        url: "https://localhost:7258/admin/Category/GetCategories",
+                                        dataType: "json"
+                                    }
+                                }
+                            },
+                            dataTextField: "categoryName",
+                            dataValueField: "categoryId",
+                            optionLabel: "Select a category"
+                        });
+                    }
                 },
                 dataBound: function (e) {
                     e.sender.tbody.find("tr").each(function () {
@@ -150,12 +182,59 @@
                     });
                 }
             });
+
         });
         function currencyOld(data) {
             return kendo.toString(data.priceOld, "###,## VND")
         }
         function currencyNew(data) {
             return kendo.toString(data.priceNew, "###,## VND")
+        }
+    </script>
+    <script type="text/x-kendo-template" id="popup-editor-template">
+        <div class="k-edit-label">
+            <label for="productName">Product Name:</label>
+        </div>
+        <div data-container-for="productName" class="k-edit-field">
+            <input type="text" class="k-input k-textbox" data-bind="value:productName" name="productName" required/>
+        </div>
+
+        <div class="k-edit-label">
+            <label for="priceOld">Price:</label>
+        </div>
+        <div data-container-for="priceOld" class="k-edit-field">
+            <input type="number" class="k-input k-textbox" data-bind="value:priceOld" name="priceOld" required/>
+        </div>
+
+         <div class="k-edit-label">
+            <label for="productDetail">Product Detail:</label>
+        </div>
+        <div data-container-for="productDetail" class="k-edit-field">
+            <input type="text" class="k-input k-textbox" data-bind="value:productDetail" name="productDetail" required/>
+        </div>
+
+        <!-- Add similar sections for other fields -->
+
+        <div class="k-edit-label">
+            <label for="imageProduct">Product Image:</label>
+        </div>
+        <div data-container-for="imageProduct" class="k-edit-field">
+            <input type="file" class="k-input k-textbox" data-bind="value:imageProduct" name="imageProduct" accept="image/*" />
+        </div>
+        @* DROP DOWN CATEGORY *@
+        <div class="k-edit-label">
+            <label for="categoryId">Category:</label>
+        </div>
+        <div data-container-for="categoryId" class="k-edit-field">
+            <input id="categoryId" name="categoryId" data-bind="value:categoryId" required />
+        </div>
+    </script>
+
+    <script>
+        // Function to close the popup editor
+        function closePopup() {
+            var grid = $("#grid").data("kendoGrid");
+            grid.cancelChanges();
         }
     </script>
 }
