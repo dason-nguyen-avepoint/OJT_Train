@@ -1,0 +1,110 @@
+﻿
+<div id="validation-success"></div>
+<h3>Create Product</h3>
+<form id="exampleform"></form>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var validationSuccess = $("#validation-success");
+
+            // var categoriesData = [
+            //     { categoryId: 1, categoryName: "Category 1" },
+            //     { categoryId: 2, categoryName: "Category 2" },
+            // ];
+            var categoriesData = @ViewBag.CategoriesData;
+
+            $("#exampleform").kendoForm({
+                orientation: "horizontal",
+                formData: {
+                    productName: "",
+                    memory: "",
+                    productDetail: "",
+                    priceOld: 0,
+                    isPublished: false,
+                    categoryName: "",
+                },
+                items: [
+                    {
+                        field: "productName",
+                        label: "Product Name:",
+                        validation: { required: true },
+                        editor: "TextBox"
+                    },
+                    {
+                        field: "memory",
+                        label: "Memory:",
+                        validation: { required: true },
+                        editor: "TextBox"
+                    },
+                    {
+                        field: "productDetail",
+                        label: "Details:",
+                        editor: "TextArea"
+                    },
+                    {
+                        field: "priceOld",
+                        label: "Price:",
+                        validation: { required: true },
+                        editor: "NumericTextBox"
+                    },
+                    {
+                        field: "isPublished",
+                        label: "Published",
+                        editor: "Switch"
+                    },
+                    {
+                        field: "categoryName",
+                        label: "Category:",
+                        validation: { required: true },
+                        editor: function(container, options) {
+                            $("<input name='" + options.field + "' required/>").appendTo(container)
+                                .kendoDropDownList({
+                                    dataTextField: "categoryName",
+                                    dataValueField: "categoryId",
+                                    dataSource: categoriesData
+                                });
+                        }
+                    }
+                ],
+                validateField: function (e) {
+                    validationSuccess.html("");
+                },
+                submit: function (e) {
+                    e.preventDefault();
+
+                    var formData = new FormData();
+
+                    formData.append("productName", $("#exampleform").find("[name='productName']").val());
+                    formData.append("memory", $("#exampleform").find("[name='memory']").val());
+                    formData.append("productDetail", $("#exampleform").find("[name='productDetail']").val());
+                    formData.append("priceOld", $("#exampleform").find("[name='priceOld']").val());
+                    formData.append("isPublished", $("#exampleform").find("[name='isPublished']").is(":checked"));
+
+                    $.ajax({
+                        url: "/admin/product/CreateProduct",
+                        type: "POST",
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            validationSuccess.html("<div class='k-messagebox k-messagebox-success'>Form data is valid!</div>");
+                        },
+                        error: function (error) {
+                            console.error("Error uploading image:", error);
+                        }
+                    });
+                },
+                clear: function (ev) {
+                    validationSuccess.html("");
+                }
+            });
+        });
+    </script>
+    <style>
+        .k-list-horizontal {
+            margin-top: 5px;
+        }
+    </style>
+}
+

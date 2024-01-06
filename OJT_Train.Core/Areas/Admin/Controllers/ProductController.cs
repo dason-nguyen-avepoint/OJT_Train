@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Repositories.Dto;
 using Repositories.Interfaces;
 
@@ -9,11 +8,11 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
     public class ProductController : Controller
     {
         private readonly IProductRepository _repo;
-        private readonly IWebHostEnvironment _webHostEnvironment;
-        public ProductController(IProductRepository repo, IWebHostEnvironment webHostEnvironment)
+        private readonly ICategoryRepository _cate;
+        public ProductController(IProductRepository repo, ICategoryRepository cate)
         {
             _repo = repo;
-            _webHostEnvironment = webHostEnvironment;
+            _cate = cate;
         }
         public IActionResult Index()
         {
@@ -24,26 +23,16 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
             var products = await _repo.GetAll();
             return Json(products);
         }
-        [HttpPost]
-        public IActionResult CreateProduct([FromBody] ProductDTO productDTO)
+        public async Task<IActionResult> Create() 
         {
-            string uniqueFileName = UploadedFile(productDTO);
+            var categories = await _cate.GetAll();
+            ViewBag.ListCate = categories;
+            return View();
         }
-        private string UploadedFile(ProductDTO model)
+        [HttpPost]
+        public IActionResult CreateProduct(ProductDTO product)
         {
-            string uniqueFileName = null;
-
-            if (model.ImageProduct != null)
-            {
-                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images");
-                uniqueFileName = Guid.NewGuid().ToString() + "_" + model.ProfileImage.FileName;
-                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    model.ProfileImage.CopyTo(fileStream);
-                }
-            }
-            return uniqueFileName;
+            return Ok(product);
         }
 
         [HttpPost]
