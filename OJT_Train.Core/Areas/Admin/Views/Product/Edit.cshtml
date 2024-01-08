@@ -1,26 +1,41 @@
-﻿<div id="validation-success"></div>
-<h3>Create Product</h3>
+﻿@model ProductDTO
+
+<div id="validation-success"></div>
+<h3>Update Product</h3>
 <div class="d-flex">
-    <div class="form-container" style="width:90%">
+    <div class="form-container" style="width:65%">
         <form id="exampleform" enctype="multipart/form-data">
         </form>
     </div>
 </div>
+
 
 @section Scripts {
     <script>
         $(document).ready(function () {
             var validationSuccess = $("#validation-success");
             var categoriesData = @Html.Raw(Json.Serialize(ViewBag.ListCate));
+            var modelData = @Html.Raw(Json.Serialize(Model));
+            
+            const parser = new DOMParser()
+            const html = parser.parseFromString(modelData.productDetail, 'text/html');
+
             $("#exampleform").kendoForm({
                 orientation: "horizontal",
                 formData: {
-                    productName: "",
-                    memory: "",
-                    productDetail: "",
-                    priceOld: 0,
-                    isPublished: false,
-                    categoryName: "",
+                    productId: modelData.productId,
+                    productName: modelData.productName,
+                    memory: modelData.memory,
+                    productDetail: html.body.firstChild.data,
+                    priceOld: modelData.priceOld,
+                    isPublished: modelData.isPublished,
+                    categoryName: modelData.categoryId,
+                    imageProduct: modelData.imageProduct,
+                },
+                dataBound: function (e) {
+                    // Set initial values
+                    $("#exampleform").find("[name='imageProduct']").val(modelData.imageProduct);
+                    $("#exampleform").find("[name='categoryName']").data("kendoDropDownList").value(modelData.categoryId);
                 },
                 buttonsTemplate: "<div style='width:200px; display:flex; justify-content:space-evenly'><button type='submit' class='btn btn-primary'>Submit</button><button type='button' class='btn btn-danger' onclick='cancelForm()'>Cancel</button></div>",
                 items: [
@@ -40,7 +55,7 @@
                         field: "productDetail",
                         label: "Details:",
                         editor: function (container, options) {
-                            $("<textarea name='" + options.field + "' required></textarea>").appendTo(container)
+                            $("<textarea id = 'productDetail' name='" + options.field + "' required></textarea>").appendTo(container)
                                 .kendoEditor({
                                     tools: [
                                         "bold",
@@ -86,6 +101,7 @@
                                         "redo"
                                     ]
                                 });
+                            
                         }
                     },
                     {
@@ -98,7 +114,11 @@
                         field: "imageProduct",
                         label: "Product Image:",
                         editor: function (container, options) {
-                            $("<input type='file' name='" + options.field + "' accept='image/*' required/>").appendTo(container);
+                            // Display the existing image
+                            $("<img src='" + modelData.imageProduct + "' style='max-width: 200px; max-height: 200px;'/>").appendTo(container);
+
+                            // Add the file input for updating the image
+                            $("<input type='file' name='" + options.field + "' accept='image/*'/>").appendTo(container);
                         }
                     },
                     {
@@ -110,7 +130,7 @@
                         field: "categoryName",
                         label: "Category:",
                         validation: { required: true },
-                        editor: function(container, options) {
+                        editor: function (container, options) {
                             $("<input name='" + options.field + "' required/>").appendTo(container)
                                 .kendoDropDownList({
                                     dataTextField: "categoryName",
@@ -128,19 +148,24 @@
                 },
                 submit: function (e) {
                     e.preventDefault();
-
                     var formData = new FormData();
+                    var imageProductInput = $("#exampleform").find("[name='imageProduct']");
 
+                    formData.append("productId", modelData.productId);
                     formData.append("productName", $("#exampleform").find("[name='productName']").val());
                     formData.append("memory", $("#exampleform").find("[name='memory']").val());
                     formData.append("productDetail", $("#exampleform").find("[name='productDetail']").val());
                     formData.append("priceOld", $("#exampleform").find("[name='priceOld']").val());
                     formData.append("isPublished", $("#exampleform").find("[name='isPublished']").is(":checked"));
                     formData.append("categoryId", $("#exampleform").find("[name='categoryName']").data("kendoDropDownList").value());
-                    formData.append("imageProductFile", $("#exampleform").find("[name='imageProduct']")[0].files[0]);
+                    formData.append("imageProduct", modelData.imageProduct);
+                    // Check if a new image is selected
+                    if (imageProductInput[0].files.length > 0) {
+                        formData.append("imageProductFile", imageProductInput[0].files[0]);
+                    }
                     console.log(formData);
                     $.ajax({
-                        url: "/admin/product/CreateProduct",
+                        url: "/admin/product/UpdateProduct",
                         type: "POST",
                         data: formData,
                         contentType: false,

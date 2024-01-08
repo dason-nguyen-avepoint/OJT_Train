@@ -38,6 +38,15 @@ namespace Repositories.Implements
             });
         }
 
+        public async Task<IEnumerable<Categories>> GetPublishedCate()
+        {
+            return await WithConnection(async connection =>
+            {
+                var categories = await connection.QueryAsync<Categories>(StoreProcedureCategory.GetPublishedCategories, null, commandType: CommandType.StoredProcedure);
+                return categories.ToList();
+            });
+        }
+
         public async void Update(CategoryDTO cate)
         {
             await WithConnection(async connection =>

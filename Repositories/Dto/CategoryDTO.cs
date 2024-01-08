@@ -17,4 +17,9 @@ namespace Repositories.Dto
         public bool IsPublished { get; set; }
         public bool IsDeleted { get; set; }
     }
+    public class Categories
+    {
+        public int CategoryId { get; set; }
+        public string CategoryName { get; set; }
+    }
 }

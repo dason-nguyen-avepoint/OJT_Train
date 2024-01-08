@@ -44,12 +44,31 @@ END;
 SELECT * FROM PRODUCT;
 --DROP PROCEDURE GetAllProduct;
 GO;
+--GET ALL PRODUCT
 CREATE PROCEDURE GetAllProduct
 AS 
 BEGIN
 	SELECT P.*, C.CATEGORYNAME FROM PRODUCT AS P JOIN CATEGORY AS C ON P.CATEGORYID = C.CATEGORYID;
 END;
 GO;
+--GET PRODUCT BY ID
+CREATE PROCEDURE GetProductById @productId INT
+AS 
+BEGIN
+	SELECT P.*, C.CATEGORYNAME FROM PRODUCT AS P JOIN CATEGORY AS C ON P.CATEGORYID = C.CATEGORYID WHERE P.PRODUCTID = @productId;
+END
+GO;
+
+--ADD NEW PRODUCT
+CREATE PROCEDURE AddProduct 
+@productName NVARCHAR(100), @memory VARCHAR(50), @priceOld INT, @productDetail NVARCHAR(MAX),
+@categoryId INT, @isPublished VARCHAR(5), @imageProduct VARCHAR(1000)
+AS 
+BEGIN
+	INSERT INTO PRODUCT VALUES(@productName, @memory, @priceOld,'',@productDetail, GETDATE(),NULL,NULL,NULL,@isPublished,'False',@categoryId,@imageProduct);
+END;
+GO;
+--DELETE PRODUCT
 CREATE PROCEDURE DeleteProduct @productId int
 AS 
 BEGIN
@@ -58,6 +77,35 @@ BEGIN
 		ISDELETED = 'True'
 	WHERE PRODUCTID = @productId
 END;
+GO;
+--UPDATE PRODUCT
+CREATE PROCEDURE UpdateProduct 
+@productId INT, @productName NVARCHAR(100), @memory VARCHAR(50), @priceOld INT, 
+@productDetail NVARCHAR(MAX), @categoryId INT, @isPublished VARCHAR(5), @imageProduct VARCHAR(1000)
+AS
+BEGIN
+	UPDATE PRODUCT
+	SET PRODUCTNAME = @productName,
+		MEMORY = @memory,
+		PRICEOLD = @priceOld,
+		PRODUCTDETAIL = @productDetail,
+		MODIFIEDDATE = GETDATE(),
+		IMAGEPRODUCT = @imageProduct,
+		ISPUBLISHED = @isPublished,
+		CATEGORYID = @categoryId
+	WHERE PRODUCTID = @productId;
+END;
+GO;
+-- SELECT CATEGORIES AVAILABLE
+CREATE PROCEDURE GetPublishedCategories 
+AS 
+BEGIN
+	SELECT C.CATEGORYID, C.CATEGORYNAME FROM CATEGORY AS C WHERE C. ISPUBLISHED = 'True';
+END;
+
+EXEC GetAllProduct;
+
+
 
 -- IPHONE 15 PRO MAX
 INSERT INTO PRODUCT VALUES (N'Iphone 15 Pro Max', '256 GB', 33090000, '','Detail product',GETDATE(),NULL,NULL,NULL,'True', 'False',1,'test');

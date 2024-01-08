@@ -1,4 +1,4 @@
-﻿<a class="btn btn-outline-success" asp-area="Admin" asp-controller="Product" asp-action="Create">Create</a>
+﻿<a class="btn btn-outline-success" asp-area="Admin" asp-controller="Product" asp-action="Create" style='width:100px;margin-left:10px;margin-bottom:10px'>Create</a>
 <div id="grid"></div>
 @section Scripts {
     <script>
@@ -10,22 +10,7 @@
                             url: crudServiceBaseUrl + "/Product/GetProducts",
                             dataType: "json"
                         },
-                        destroy: {
-                            url: crudServiceBaseUrl + "/Product/DeleteProduct",
-                            dataType: "json",
-                            contentType: "application/json",
-                            type: "POST"
-                        },
                         parameterMap: function (options, operation) {
-                            if (operation === "create" && options.models) {
-                                return kendo.stringify(options.models[0]);
-                            }
-                            if (operation === "update" && options.models) {
-                                return kendo.stringify(options.models[0]);
-                            }
-                            if (operation === "destroy" && options.models) {
-                                return kendo.stringify(options.models[0]);
-                            }
                             if (operation !== "read" && options.models) {
                                 return { models: kendo.stringify(options.models) };
                             }
@@ -50,6 +35,7 @@
                                 priceOld: { type: "int" },
                                 priceNew: { type: "int" },
                                 imageProduct: { type: "string" },
+                                productDetail: {type:"string"},
                                 createdDate: { type: "date", editable: false },
                                 modifiedDate: { type: "date", editable: false },
                                 createdBy: { type: "string" },
@@ -84,7 +70,7 @@
                     rows: true
                 },
                 pageable: true,
-                height: 500,
+                height: 700,
                 toolbar: ["search"],
                 search: {
                     fields: ["productName", "isPublished", "memory", "categoryName"]
@@ -96,8 +82,11 @@
                     { field: "priceOld", title: "Giá cũ", template: "#= currencyOld(data)#" },
                     { field: "priceNew", title: "Giá mới", template: "#= currencyNew(data)#" },
                     {
-                        field: "imageProduct", title: "Ảnh sản phẩm",
-                        template: "<div class='product-photo'><img src='/Images/Products/#: data.imageProduct#.png' style='max-width: 100%; max-height: 100%;'/></div>",
+                        field: "imageProduct",
+                        title: "Ảnh sản phẩm",
+                        template: function (data) {
+                            return "<div class='product-photo'><img src='" + data.imageProduct + "' style='max-width: 100%; max-height: 100%;'/></div>";
+                        }
                     },
                     { field: "createdDate", title: "Ngày tạo", format: "{0:g}" },
                     { field: "modifiedDate", title: "Ngày sửa", format: "{0:g}" },
@@ -118,27 +107,57 @@
                             {
                                 name: "edit",
                                 text: { edit: "Edit", cancel: "Cancel", update: "Update" },
+                                template: "<a class='btn btn-outline-primary k-grid-edit' href='\\#' style='width:100px'>Edit</a>",
                                 click: function (e) {
-                                    // Custom edit command
+                                    e.preventDefault();
                                     var grid = $("#grid").data("kendoGrid");
-                                    grid.editRow($(e.currentTarget).closest("tr"));
+                                    var dataItem = grid.dataItem($(e.target).closest("tr"));
+                                    var editUrl = crudServiceBaseUrl + "/Product/Edit/" + dataItem.productId;
+                                    window.location.href = editUrl;
                                 }
                             },
                             {
                                 name: "delete",
-                                text: "Delete",
+                                template: "<a class='btn btn-outline-danger k-grid-delete' href='\\#' style='width:100px;margin-left:10px'>Delete</a>",
                                 click: function (e) {
-                                    // Custom delete command
+                                    e.preventDefault();
                                     var grid = $("#grid").data("kendoGrid");
-                                    grid.removeRow($(e.currentTarget).closest("tr"));
+                                    var dataItem = grid.dataItem($(e.target).closest("tr"));
+                                    var confirmed = confirm("Are you sure you want to delete this item?");
+
+                                    if (confirmed) {
+                                        console.log("Delete button clicked");
+                                        console.log("Data Item:", dataItem);
+                                        $.ajax({
+                                            url: crudServiceBaseUrl + "/Product/DeleteProduct",
+                                            type: "POST",
+                                            contentType: "application/json",
+                                            data: JSON.stringify(dataItem),
+                                            success: function (response) {
+                                                console.log("Delete successful", response);
+                                                $("#grid").data("kendoGrid").dataSource.read();
+                                            },
+                                            error: function (error) {
+                                                console.error("Delete failed", error);
+                                            }
+                                        });
+                                    }
                                 }
-                            }
+                            },
+                            // {
+                            //     name: "image",
+                            //     template: "<a class='btn btn-outline-secondary k-grid-image' href='\\#' style='width:150px;margin-top:10px;margin-left:40px'>Add Image</a>",
+                            //     click: function (e) {
+                            //         e.preventDefault();
+                            //         var grid = $("#grid").data("kendoGrid");
+                            //         var dataItem = grid.dataItem($(e.target).closest("tr"));
+                            //         var editUrl = crudServiceBaseUrl + "/Product/ImageProduct/" + dataItem.productId;
+                            //         window.location.href = editUrl;
+                            //     }
+                            // }
                         ], title: "&nbsp;", width: "250px", exportable: false
                     }
                 ],
-                editable: {
-                    mode: "popup",
-                },
                 dataBound: function (e) {
                     e.sender.tbody.find("tr").each(function () {
                         var dataItem = e.sender.dataItem(this);
@@ -152,6 +171,25 @@
             });
 
         });
+        function convertDataItemToJson(dataItem) {
+            return {
+                productId: dataItem.productId,
+                productName: dataItem.productName,
+                memory: dataItem.memory,
+                priceOld: dataItem.priceOld,
+                priceNew: dataItem.priceNew,
+                productDetail: dataItem.productDetail,
+                createdDate: dataItem.createdDate,
+                modifiedDate: dataItem.modifiedDate,
+                createdBy: dataItem.createdBy,
+                modifiedBy: dataItem.modifiedBy,
+                isPublished: dataItem.isPublished,
+                isDeleted: dataItem.isDeleted,
+                categoryId: dataItem.categoryId,
+                categoryName: dataItem.categoryName,
+                imageProduct: dataItem.imageProduct
+            };
+        }
         function currencyOld(data) {
             return kendo.toString(data.priceOld, "###,## VND")
         }

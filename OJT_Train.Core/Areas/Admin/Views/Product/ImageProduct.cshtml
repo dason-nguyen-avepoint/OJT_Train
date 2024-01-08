@@ -1,0 +1,22 @@
+﻿@model ProductDTO
+
+<div id="example">
+    <div>
+        <div class="demo-section">
+            <input name="files" id="files" type="file" />
+        </div>
+    </div>
+
+
+</div>
+<script>
+    $(document).ready(function () {
+        $("#files").kendoUpload({
+            async: {
+                saveUrl: "save",
+                removeUrl: "remove",
+                autoUpload: true
+            }
+        });
+    });
+</script>
