@@ -1,0 +1,97 @@
+﻿<div id="validation-success"></div>
+<h3>Create Sale</h3>
+<div class="d-flex">
+    <div class="form-container" style="width:90%">
+        <form id="exampleform" enctype="multipart/form-data">
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var validationSuccess = $("#validation-success");
+            var productsData = @Html.Raw(Json.Serialize(ViewBag.ListProducts));
+            $("#exampleform").kendoForm({
+                orientation: "horizontal",
+                formData: {
+                    productId:"",
+                    productName: "",
+                    quantity: "",
+                    unitPrice: ""
+                },
+                buttonsTemplate: "<div style='width:200px; display:flex; justify-content:space-evenly'><button type='submit' class='btn btn-primary'>Submit</button><button type='button' class='btn btn-danger' onclick='cancelForm()'>Cancel</button></div>",
+                items: [
+                    {
+                        field: "productName",
+                        label: "Tên sản phẩm:",
+                        validation: { required: true },
+                        editor: function (container, options) {
+                            $("<input name='" + options.field + "' required/>").appendTo(container)
+                                .kendoDropDownList({
+                                    dataTextField: "productName",
+                                    dataValueField: "productId",
+                                    dataSource: productsData
+                                });
+                        }
+                    },
+                    {
+                        field: "quantity",
+                        label: "Số lượng:",
+                        validation: { required: true },
+                        editor: "TextBox"
+                    },
+                    {
+                        field: "unitPrice",
+                        label: "Đơn giá:",
+                        validation: { required: true },
+                        editor: "NumericTextBox"
+                    },
+                    
+                ],
+                toolbar: [
+                    { name: "clear", text: "Cancel", iconClass: "k-icon k-i-cancel" }
+                ],
+                validateField: function (e) {
+                    validationSuccess.html("");
+                },
+                submit: function (e) {
+                    e.preventDefault();
+                    var formData = new FormData();
+
+                    formData.append("productId", $("#exampleform").find("[name='productName']").data("kendoDropDownList").value());
+                    formData.append("unitPrice", $("#exampleform").find("[name='unitPrice']").val());
+                    formData.append("quantity", $("#exampleform").find("[name='quantity']").val());
+                    console.log(formData);
+
+                    $.ajax({
+                        url: "/admin/sale/CreateSale",
+                        type: "POST",
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            console.log(response);
+                            window.location.href = response.redirectUrl;
+                        },
+                        error: function (error) {
+                            console.error("Error uploading image:", error);
+                        }
+                    });
+                },
+                clear: function (ev) {
+                    validationSuccess.html("");
+                }
+            });
+        });
+        function cancelForm() {
+            window.location.href = "/admin/sale/index";
+        }
+    </script>
+    <style>
+        .k-list-horizontal {
+            margin-top: 5px;
+        }
+    </style>
+}
+

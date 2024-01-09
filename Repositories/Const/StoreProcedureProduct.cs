@@ -13,5 +13,6 @@ namespace Repositories.Const
         public static readonly string AddProduct = "AddProduct";
         public static readonly string UpdateProduct = "UpdateProduct";
         public static readonly string GetProductById = "GetProductById";
+        public static readonly string GetValidProducts = "GetValidProducts";
     }
 }

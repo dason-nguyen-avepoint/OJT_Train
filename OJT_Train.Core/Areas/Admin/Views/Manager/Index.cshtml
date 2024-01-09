@@ -1,14 +1,50 @@
-﻿<input id="ddl" />
+﻿<style>
+    canvas {
+        display: block;
+        margin: 20px auto;
+        border: 2px solid #000;
+        border-radius: 50%;
+    }
+</style>
+
+<canvas id="doanhThuCanvas" width="200" height="200"></canvas>
+<canvas id="chiPhiCanvas" width="200" height="200"></canvas>
+<canvas id="loiNhuanCanvas" width="200" height="200"></canvas>
+
 @section Scripts{
     <script>
-        $("#ddl").kendoDropDownList({
-            dataTextField: "text",
-            dataValueField: "value",
-            dataSource: [
-                { text: "Item1", value: "1" },
-                { text: "Item2", value: "2" }
-            ]
-        });
+        function drawCircle(canvasId, value) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = 80; // Độ rộng của vành
+
+            // Vẽ hình tròn lớn (nền màu trắng)
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+
+            // Vẽ vành
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 5;
+            ctx.stroke();
+
+            // Hiển thị giá trị ở giữa
+            ctx.font = '20px Arial';
+            ctx.fillStyle = '#000';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(value, centerX, centerY);
+        }
+
+        // Thay giá trị bên trong hàm drawCircle để hiển thị giá trị tương ứng
+        drawCircle('doanhThuCanvas', '$1000');
+        drawCircle('chiPhiCanvas', '$800');
+        drawCircle('loiNhuanCanvas', '$200');
     </script>
 }
    

@@ -55,6 +55,15 @@ namespace Repositories.Implements
             });
         }
 
+        public async Task<IEnumerable<ValidProductDTO>> GetValidProduct()
+        {
+            return await WithConnection(async connection =>
+            {
+                var products = await connection.QueryAsync<ValidProductDTO>(StoreProcedureProduct.GetValidProducts, null, commandType: CommandType.StoredProcedure);
+                return products.ToList();
+            });
+        }
+
         public async void Update(ProductDTO product)
         {
             await WithConnection(async connection =>

@@ -18,4 +18,9 @@
         public bool IsDeleted { get; set; }
         public string ? CategoryName { get; set; }
     }
+    public class ValidProductDTO
+    {
+        public int ProductId { get; set; }
+        public string? ProductName { get; set; }
+    }
 }
