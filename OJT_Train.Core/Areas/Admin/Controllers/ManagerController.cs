@@ -6,10 +6,16 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
     [Area("Admin")]
     public class ManagerController : Controller
     {
-        
-        public IActionResult Index()
+        private readonly IInventoryRepository _repo;
+        public ManagerController(IInventoryRepository repo)
         {
-            return View();
+            _repo = repo;
+        }
+        
+        public async Task<IActionResult> Index()
+        {
+            var inventories = await _repo.GetInfor();
+            return View(inventories);
         }
     }
 }

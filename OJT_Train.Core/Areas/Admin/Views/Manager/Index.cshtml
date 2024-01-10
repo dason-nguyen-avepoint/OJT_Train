@@ -1,50 +1,79 @@
-﻿<style>
-    canvas {
-        display: block;
-        margin: 20px auto;
-        border: 2px solid #000;
-        border-radius: 50%;
-    }
-</style>
+﻿@model IEnumerable<InventoryDTO>
+<div class="d-flex">
+    <div id="pieChart"></div>
+    <div id="pieChart2"></div>
+    <div id="pieChart3"></div>
+</div>
 
-<canvas id="doanhThuCanvas" width="200" height="200"></canvas>
-<canvas id="chiPhiCanvas" width="200" height="200"></canvas>
-<canvas id="loiNhuanCanvas" width="200" height="200"></canvas>
 
 @section Scripts{
     <script>
-        function drawCircle(canvasId, value) {
-            const canvas = document.getElementById(canvasId);
-            const ctx = canvas.getContext('2d');
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-            const radius = 80; // Độ rộng của vành
+        $(document).ready(function () {
+            var modelData = @Html.Raw(Json.Serialize(Model));
+            console.log(modelData);
+            // var jsonData = [
+            //     { category: "Category 1", value: 30 },
+            //     { category: "Category 2", value: 45 },
+            //     { category: "Category 3", value: 25 }
+            // ];
 
-            // Vẽ hình tròn lớn (nền màu trắng)
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-            ctx.fillStyle = '#fff';
-            ctx.fill();
-
-            // Vẽ vành
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-            ctx.strokeStyle = '#000';
-            ctx.lineWidth = 5;
-            ctx.stroke();
-
-            // Hiển thị giá trị ở giữa
-            ctx.font = '20px Arial';
-            ctx.fillStyle = '#000';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(value, centerX, centerY);
-        }
-
-        // Thay giá trị bên trong hàm drawCircle để hiển thị giá trị tương ứng
-        drawCircle('doanhThuCanvas', '$1000');
-        drawCircle('chiPhiCanvas', '$800');
-        drawCircle('loiNhuanCanvas', '$200');
+            // Cấu hình biểu đồ
+            $("#pieChart").kendoChart({
+                title: {
+                    text: "Total Product"
+                },
+                legend: {
+                    position: "bottom"
+                },
+                series: [{
+                    type: "pie",
+                    data: modelData,
+                    field: "totalImport",
+                    categoryField: "productName"
+                }],
+                tooltip: {
+                    visible: true,
+                    template: "#= value #"
+                }
+            });
+            $("#pieChart2").kendoChart({
+                title: {
+                    text: "Delivered Product"
+                },
+                legend: {
+                    position: "bottom"
+                },
+                series: [{
+                    type: "pie",
+                    data: modelData,
+                    field: "delivered",
+                    categoryField: "productName"
+                }],
+                tooltip: {
+                    visible: true,
+                    format: "{0}%"
+                }
+            });
+            $("#pieChart3").kendoChart({
+                title: {
+                    text: "Remaining Product"
+                },
+                legend: {
+                    position: "bottom"
+                },
+                series: [{
+                    type: "pie",
+                    data: modelData,
+                    field: "remaining",
+                    categoryField: "productName"
+                }],
+                tooltip: {
+                    visible: true,
+                    format: "{0}%"
+                }
+            });
+        });
     </script>
+
 }
    

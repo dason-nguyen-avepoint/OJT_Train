@@ -8,6 +8,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ISaleRepository, SaleRepository>();
+builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
