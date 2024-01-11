@@ -7,14 +7,17 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
     public class ManagerController : Controller
     {
         private readonly IInventoryRepository _repo;
-        public ManagerController(IInventoryRepository repo)
+        private readonly IThongKeRepository _thongke;
+        public ManagerController(IInventoryRepository repo, IThongKeRepository thongke)
         {
             _repo = repo;
+            _thongke = thongke;
         }
         
         public async Task<IActionResult> Index()
         {
             var inventories = await _repo.GetInfor();
+            ViewBag.ThongKe = await _thongke.GetInfo();
             return View(inventories);
         }
     }

@@ -1,0 +1,143 @@
+﻿<h3>List Of Order</h3>
+<div id="grid"></div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var crudServiceBaseUrl = "https://localhost:7258/admin",
+                dataSource = new kendo.data.DataSource({
+                    transport: {
+                        read: {
+                            url: crudServiceBaseUrl + "/Order/GetOrders",
+                            dataType: "json"
+                        },
+                        parameterMap: function (options, operation) {
+                            if (operation !== "read" && options.models) {
+                                return { models: kendo.stringify(options.models) };
+                            }
+                        }
+                    },
+                    batch: true,
+                    pageSize: 10,
+                    schema: {
+                        model: {
+                            id: "orderId",
+                            fields: {
+                                userId: { type: "number", editable: false, nullable: false },
+                                orderPrice: { type: "number" },
+                                createdDate: { type: "date", editable: false },
+                                modifiedDate: { type: "date", editable: false },
+                                createdBy: { type: "string" },
+                                modifiedBy: { type: "string" },
+                                address: { type: "string" },
+                                paymentDate: {type:"date"},
+                                orderStatus: { type: "string" },
+                                isDeleted: { type: "boolean" }
+                            }
+                        }
+                    },
+                    requestEnd: function (e) {
+                        if (e.type === "destroy") {
+                            $("#grid").data("kendoGrid").dataSource.read();
+                        }
+                    },
+                    remove: function (e) {
+                        e.model.isDeleted = true;
+                        $("#grid").data("kendoGrid").dataSource.read();
+                    }
+                });
+            $("#grid").kendoGrid({
+                contextMenu: true,
+                persistSelection: true,
+                dataSource: dataSource,
+                selectable: "multiple, rows",
+                sortable: true,
+                reorderable: {
+                    rows: true
+                },
+                pageable: true,
+                height: 600,
+                toolbar: ["search"],
+                search: {
+                    fields: ["createdBy","modifiedBy"]
+                },
+                columns: [
+                    { field: "orderId", title: "Mã đơn hàng", width:"110px" },
+                    { field: "orderPrice", title: "Tổng giá trị đơn hàng", template: "#= currencyFormat(data)#" },
+                    { field: "createdDate", title: "Ngày tạo", format: "{0:g}" },
+                    { field: "modifiedDate", title: "Ngày sửa", format: "{0:g}" },
+                    { field: "createdBy", title: "Người tạo đơn"},
+                    { field: "modifiedBy", title: "Người sửa đơn"},
+                    { field: "address", title: "Địa chỉ nhận" },
+                    { field: "paymentDate", title: "Ngày thanh toán" },
+                    { field: "orderStatus", title: "Trạng thái đơn hàng" },
+                    {
+                        command: [
+                            {
+                                name: "edit",
+                                text: { edit: "Edit", cancel: "Cancel", update: "Update" },
+                                template: "<a class='btn btn-outline-primary k-grid-edit' href='\\#' style='width:100px'>Chi tiết</a>",
+                                click: function (e) {
+                                    e.preventDefault();
+                                    var grid = $("#grid").data("kendoGrid");
+                                    var dataItem = grid.dataItem($(e.target).closest("tr"));
+                                    console.log(dataItem);
+                                    var editUrl = crudServiceBaseUrl + "/Order/OrderDetails/" + dataItem.orderId;
+                                    window.location.href = editUrl;
+                                }
+                            },
+                            {
+                                name: "delete",
+                                template: "<a class='btn btn-outline-danger k-grid-delete' href='\\#' style='width:100px;margin-left:10px'>Delete</a>",
+                                click: function (e) {
+                                    e.preventDefault();
+                                    var grid = $("#grid").data("kendoGrid");
+                                    var dataItem = grid.dataItem($(e.target).closest("tr"));
+                                    var confirmed = confirm("Are you sure you want to delete this item?");
+
+                                    if (confirmed) {
+                                        console.log("Delete button clicked");
+                                        console.log("Data Item:", dataItem);
+                                        $.ajax({
+                                            url: crudServiceBaseUrl + "/Order/DeleteOrder" + dataItem.orderId,
+                                            type: "PUT",
+                                            contentType: "application/json",
+                                            data: JSON.stringify(dataItem),
+                                            success: function (response) {
+                                                console.log("Delete successful", response);
+                                                $("#grid").data("kendoGrid").dataSource.read();
+                                            },
+                                            error: function (error) {
+                                                console.error("Delete failed", error);
+                                            }
+                                        });
+                                    }
+                                }
+                            },
+                        ], title: "&nbsp;", width: "250px", exportable: false
+                    }
+                ],
+                dataBound: function (e) {
+                    e.sender.tbody.find("tr").each(function () {
+                        var dataItem = e.sender.dataItem(this);
+                        if (dataItem.isDeleted) {
+                            $(this).css("opacity", "0.5");
+                            var commandCell = $(this).find(".k-command-cell");
+                            commandCell.empty().append("<span style='color: red;'>Is Deleted</span>");
+                        }
+                    });
+                }
+            });
+        });
+        function currencyFormat(data) {
+            return kendo.toString(data.orderPrice, "###,## VND");
+        }
+    </script>
+    <script>
+        // Function to close the popup editor
+        function closePopup() {
+            var grid = $("#grid").data("kendoGrid");
+            grid.cancelChanges();
+        }
+    </script>
+}
+
