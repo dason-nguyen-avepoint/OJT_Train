@@ -17,13 +17,13 @@ namespace Repositories.Implements
             });
         }
 
-        public async Task<OrderDTO> GetById(int id)
+        public async Task<OrderById> GetById(int id)
         {
             return await WithConnection(async connection =>
             {
                 var parameter = new DynamicParameters();
                 parameter.Add("orderId", id, DbType.Int32);
-                var order = await connection.QueryFirstOrDefaultAsync<OrderDTO>("GetOrderById", param: parameter, commandType: CommandType.StoredProcedure);
+                var order = await connection.QueryFirstOrDefaultAsync<OrderById>("GetOrderById", param: parameter, commandType: CommandType.StoredProcedure);
                 return order;
             });
         }
@@ -36,6 +36,16 @@ namespace Repositories.Implements
                 parameter.Add("orderId", id, DbType.Int32);
                 var orderDetails = await connection.QueryAsync<OrderDetail>("GetOrderDetail", param: parameter, commandType: CommandType.StoredProcedure);
                 return orderDetails.ToList();
+            });
+        }
+
+        public async void ShippingOrder(int id)
+        {
+            await WithConnection(async connection =>
+            {
+                var parameter = new DynamicParameters();
+                parameter.Add("orderId", id, DbType.Int32);
+                await connection.ExecuteAsync("ShippingOrder", param: parameter, commandType: CommandType.StoredProcedure);
             });
         }
     }

@@ -195,9 +195,11 @@ GO;
 CREATE PROCEDURE GetOrderById @orderId INT
 AS
 BEGIN
-	SELECT * FROM [ORDER]
+	SELECT O.*, A.ADDRESS AS UserAddress, A.Phone FROM [ORDER] AS O 
+	JOIN ACCOUNT AS A ON O.USERID = A.USERID
 	WHERE ORDERID = @orderId
 END;
 GO;
 EXEC GetOrderInfo;
 EXEC GetOrderDetail @orderId = 1;
+EXEC GetOrderById @orderId = 1;

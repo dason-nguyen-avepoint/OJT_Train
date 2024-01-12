@@ -10,7 +10,8 @@ namespace Repositories.Interfaces
     public interface IOrderRepository
     {
         Task<IEnumerable<OrderDTO>> GetAll();
-        Task<OrderDTO> GetById(int id);
+        Task<OrderById> GetById(int id);
+        void ShippingOrder(int id);
         Task<IEnumerable<OrderDetail>> GetOrderDetail(int id);
     }
 }

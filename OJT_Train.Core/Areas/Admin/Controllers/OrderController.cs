@@ -26,5 +26,10 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
             ViewBag.Order = await _repo.GetById(Id);
             return View(orderDetails);
         }
+        public async Task<IActionResult> ShippingOrder(int Id)
+        {
+            await _repo.ShippingOrder(Id);
+            return RedirectToAction("Index");
+        }
     }
 }
