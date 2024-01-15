@@ -2,5 +2,9 @@
 {
     public class Test
     {
+        public void anns()
+        {
+            Console.WriteLine("AnNS");
+        }
     }
 }
