@@ -5,6 +5,7 @@ using NuGet.Protocol;
 using OJT_Train.Core.Areas.User.Models;
 using Repositories.Dto;
 using Repositories.Interfaces;
+using System.Web;
 using X.PagedList;
 namespace OJT_Train.Core.Areas.User.Controllers
 {
@@ -99,7 +100,7 @@ namespace OJT_Train.Core.Areas.User.Controllers
             returnProduct.Memory = productdetail.Memory;
             returnProduct.PriceOld = productdetail.PriceOld;
             returnProduct.PriceNew = productdetail.PriceNew;
-            returnProduct.ProductDetail = productdetail.ProductDetail;
+            returnProduct.ProductDetail = HttpUtility.HtmlDecode(productdetail.ProductDetail);
             returnProduct.ImageProduct = productdetail.ImageProduct;
             var listComment = await _commentRepository.GetAllComment(id);
             List<Comment> comments = new List<Comment>();

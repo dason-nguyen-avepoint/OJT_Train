@@ -19,6 +19,7 @@
                     memory: "",
                     productDetail: "",
                     priceOld: 0,
+                    priceNew:0,
                     isPublished: false,
                     categoryName: "",
                 },
@@ -90,7 +91,13 @@
                     },
                     {
                         field: "priceOld",
-                        label: "Price:",
+                        label: "Price Old:",
+                        validation: { required: true },
+                        editor: "NumericTextBox"
+                    },
+                    {
+                        field: "priceNew",
+                        label: "Price New:",
                         validation: { required: true },
                         editor: "NumericTextBox"
                     },
@@ -135,6 +142,7 @@
                     formData.append("memory", $("#exampleform").find("[name='memory']").val());
                     formData.append("productDetail", $("#exampleform").find("[name='productDetail']").val());
                     formData.append("priceOld", $("#exampleform").find("[name='priceOld']").val());
+                    formData.append("priceNew", $("#exampleform").find("[name='priceNew']").val());
                     formData.append("isPublished", $("#exampleform").find("[name='isPublished']").is(":checked"));
                     formData.append("categoryId", $("#exampleform").find("[name='categoryName']").data("kendoDropDownList").value());
                     formData.append("imageProductFile", $("#exampleform").find("[name='imageProduct']")[0].files[0]);

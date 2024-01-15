@@ -28,6 +28,7 @@
                     memory: modelData.memory,
                     productDetail: html.body.firstChild.data,
                     priceOld: modelData.priceOld,
+                    priceNew: modelData.priceNew,
                     isPublished: modelData.isPublished,
                     categoryName: modelData.categoryId,
                     imageProduct: modelData.imageProduct,
@@ -101,12 +102,21 @@
                                         "redo"
                                     ]
                                 });
-                            
+                            container.find(".k-editor").css({
+                                "width": "800px",   // Điều chỉnh chiều rộng
+                                "height": "600px"   // Điều chỉnh chiều cao
+                            });
                         }
                     },
                     {
                         field: "priceOld",
-                        label: "Price:",
+                        label: "Price Old:",
+                        validation: { required: true },
+                        editor: "NumericTextBox"
+                    },
+                    {
+                        field: "priceNew",
+                        label: "Price New:",
                         validation: { required: true },
                         editor: "NumericTextBox"
                     },
@@ -156,6 +166,7 @@
                     formData.append("memory", $("#exampleform").find("[name='memory']").val());
                     formData.append("productDetail", $("#exampleform").find("[name='productDetail']").val());
                     formData.append("priceOld", $("#exampleform").find("[name='priceOld']").val());
+                    formData.append("priceNew", $("#exampleform").find("[name='priceNew']").val());
                     formData.append("isPublished", $("#exampleform").find("[name='isPublished']").is(":checked"));
                     formData.append("categoryId", $("#exampleform").find("[name='categoryName']").data("kendoDropDownList").value());
                     formData.append("imageProduct", modelData.imageProduct);
