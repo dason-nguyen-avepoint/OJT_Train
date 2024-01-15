@@ -14,12 +14,39 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" />
+    <None Include="Areas\User\Views\Comment\_CommentPartial.cshtml" />
+    <None Include="Areas\User\Views\Home\ForgetPassword.cshtml" />
+    <None Include="Areas\User\Views\Home\Index.cshtml" />
+    <None Include="Areas\User\Views\Home\Login.cshtml" />
+    <None Include="Areas\User\Views\Home\Register.cshtml" />
+    <None Include="Areas\User\Views\Product\ViewProductByCategory.cshtml" />
+    <None Include="Areas\User\Views\Product\ViewProductDetail.cshtml" />
+    <None Include="Areas\User\Views\Product\ViewStore.cshtml" />
+    <None Include="Areas\User\Views\Shared\_Footer.cshtml" />
+    <None Include="Areas\User\Views\Shared\_Header.cshtml" />
+    <None Include="Areas\User\Views\Shared\_Layout.cshtml" />
+    <None Include="Areas\User\Views\Shared\_ValidationScriptsPartial.cshtml" />
+    <None Include="Areas\User\Views\User\ProfileUser.cshtml" />
+    <None Include="Areas\User\Views\_ViewImports.cshtml" />
+    <None Include="Areas\User\Views\_ViewStart.cshtml" />
+    <None Include="wwwroot\userStyle\css\cdn-cgi\scripts\5c5dd728\cloudflare-static\email-decode.min.js" />
+    <None Include="wwwroot\userStyle\fonts\fontawesome-webfont.svg" />
+    <None Include="wwwroot\userStyle\fonts\fontawesome-webfont.woff2" />
+    <None Include="wwwroot\userStyle\fonts\slick.svg" />
+    <None Include="wwwroot\userStyle\js\bootstrap.min.js" />
+    <None Include="wwwroot\userStyle\js\jquery.min.js" />
+    <None Include="wwwroot\userStyle\js\jquery.zoom.min.js" />
+    <None Include="wwwroot\userStyle\js\main.js" />
+    <None Include="wwwroot\userStyle\js\nouislider.min.js" />
+    <None Include="wwwroot\userStyle\js\slick.min.js" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\User\Data\" />
+    <PackageReference Include="Mapster" Version="7.4.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" />
+    <PackageReference Include="X.PagedList" Version="8.4.7" />
+    <PackageReference Include="X.PagedList.Mvc.Core" Version="8.4.7" />
   </ItemGroup>
 
   <ItemGroup>

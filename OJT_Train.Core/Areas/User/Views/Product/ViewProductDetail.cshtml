@@ -1,0 +1,113 @@
+﻿@using OJT_Train.Core.Areas.User.Models
+@model Product
+@{
+    var userid = Context.Session.GetInt32("UserID");
+    var listcoment = ViewBag.CommentList as List<Comment>;
+}
+
+<div class="section">
+    <div class="container">
+        <div class="row">     
+            <div class="col-md-5 col-md-push-2">
+                <div id="product-main-img" class="slick-initialized slick-slider">
+                    <div class="slick-list draggable">
+                        <div class="slick-track" style="opacity: 1; width: 1832px;">
+                           
+                                     <div class="product-preview" data-slick-index="0" aria-hidden="false" tabindex="0" style="width: 458px; position: relative; left: 0px; top: 0px; z-index: 999; opacity: 1; overflow: hidden;">
+                                <img src=@Model.ImageProduct alt="">
+                                <img role="presentation" src=@Model.ImageProduct class="zoomImg" style="position: absolute; top: -99.8341px; left: -137.814px; opacity: 0; width: 600px; height: 600px; border: none; max-width: none; max-height: none;">
+                                    </div>                                     
+                        </div>
+                    </div>
+                </div>
+            </div>       
+            <div class="col-md-2  col-md-pull-5">
+            </div>
+            <div class="col-md-5">
+                <div class="product-details">
+                    <h2 class="product-name">@Model.ProductName</h2>
+                    <div>
+                        <h3 class="product-price">$@Model.PriceOld <del class="product-old-price">$@Model.PriceNew</del></h3>
+                        <span class="product-available">In Stock</span>
+                    </div>
+                    <p>@Model.ProductDetail</p>
+                    <div class="add-to-cart">
+                        <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+		<div class="col-md-12">
+			<div id="product-tab">
+				<!-- product tab nav -->
+				<ul class="tab-nav">
+					<li class="active"><a data-toggle="tab" href="#tab1">Description</a></li>
+					<li><a data-toggle="tab" href="#tab2">Details</a></li>
+					<li><a data-toggle="tab" href="#tab3">Reviews</a></li>
+				</ul>
+				<!-- /product tab nav -->
+				<!-- product tab content -->
+				<div class="tab-content">
+					<!-- tab1  -->
+					<div id="tab1" class="tab-pane fade in active">
+						<div class="row">
+							<div class="col-md-12">
+								@Model.ProductDetail
+							</div>
+						</div>
+					</div>
+					<!-- /tab1  -->
+					<!-- tab2  -->
+					<div id="tab2" class="tab-pane fade in">
+						<div class="row">
+							<div class="col-md-12">
+								@Model.ProductDetail
+							</div>
+						</div>
+					</div>
+					<!-- /tab2  -->
+					<!-- tab3  -->
+					<div id="tab3" class="tab-pane fade in">
+						<div class="row">
+							<!-- Reviews -->
+							<div class="col-md-12">
+								<div id="reviews">
+									@foreach (var item in listcoment)
+									{
+										<ul class="reviews">
+											<li>
+												<div class="review-heading">
+													<h5 class="name">@item.UserName</h5>
+													<p class="date">@item.CreatedDate</p>
+												</div>
+												<div class="review-body">
+													<p>@item.CommentContent</p>
+												</div>
+											</li>
+										</ul>
+									}
+									
+								</div>
+							</div>
+							<div class="col-md-12">
+								@if (userid != null)
+								{
+									<div id="review-form">
+										<form class="review-form" method="post" asp-action="AddComment" asp-controller="Comment">
+											<input value=@userid name="@userid" hidden />
+											<input asp-for=@Model.ProductId name="productId" hidden />
+											<input class="input w-100" type="text" placeholder="Input your comment" name="inputComment" required>
+											<button class="primary-btn" ASP>Submit</button>
+										</form>
+									</div>
+								}
+								
+							</div>						
+						</div>
+					</div>	
+				</div>				
+			</div>
+		</div>
+    </div>
+</div>

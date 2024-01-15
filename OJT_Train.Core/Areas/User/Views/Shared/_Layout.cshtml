@@ -1,49 +1,66 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - OJT_Train.Core</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/OJT_Train.Core.styles.css" asp-append-version="true" />
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"] - Mock OJT</title>
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
+	<link type="text/css" rel="stylesheet" href="~/userStyle/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/kendo/default-main.css" />
+	<!-- Slick -->
+	<link type="text/css" rel="stylesheet" href="~/userStyle/css/slick.css" />
+	<link type="text/css" rel="stylesheet" href="~/userStyle/css/slick-theme.css" />
+	<!-- nouislider -->
+	<link type="text/css" rel="stylesheet" href="~/userStyle/css/nouislider.min.css" />
+	<!-- font awesome icon -->
+	<link rel="stylesheet" href="~/userStyle/css/font-awesome.min.css">
+	<!-- custom stlylesheet -->
+	<link type="text/css" rel="stylesheet" href="~/userStyle/css/style.css" />
+	<script src="~/kendo/jquery-3.7.0.min.js"></script>
+	<script src="~/kendo/jszip.min.js"></script>
+	<script src="~/kendo/kendo.all.min.js"></script>
+	<script src="~/js/kendo-ui-license.js"></script>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">OJT_Train.Core</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="User" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="User" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+	<header>
+		<partial name="_Header" />
+	</header>
+	<nav id="navigation">
+		<!-- container -->
+		<div class="container">
+			<!-- responsive-nav -->
+			<div id="responsive-nav">
+				<!-- NAV -->
+				<ul class="main-nav nav navbar-nav">
+					<li class="active"><a href="#">Home</a></li>
+					<li><a asp-action="ViewStore" asp-controller="Product">Store</a></li>
+					<li><a href="#">Laptops</a></li>
+					<li><a href="#">Smartphones</a></li>
+					<li><a href="#">Cameras</a></li>
+					<li><a href="#">Accessories</a></li>
+				</ul>
+				<!-- /NAV -->
+			</div>
+			<!-- /responsive-nav -->
+		</div>
+		<!-- /container -->
+	</nav>
+	<div class="container">
+		<main role="main" class="pb-3">
+			@RenderBody()
+		</main>
+	</div>
+	<footer id="footer">
+		<partial name="_Footer" />
+	</footer>
+	<script src="~/userStyle/js/jquery.min.js"></script>
+	<script src="~/userStyle/js/bootstrap.min.js"></script>
+	<script src="~/userStyle/js/slick.min.js"></script>
+	<script src="~/userStyle/js/nouislider.min.js"></script>
+	<script src="~/userStyle/js/jquery.zoom.min.js"></script>
+	<script src="~/userStyle/js/main.js"></script>
+	
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - OJT_Train.Core - <a asp-area="User" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+	@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

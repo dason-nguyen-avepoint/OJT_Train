@@ -1,0 +1,7 @@
+﻿@using OJT_Train.Core.Areas.User.Models
+@model IEnumerable<Comment>
+
+@foreach(var item in Model)
+{
+    <h1>@item.CommentContent</h1>
+}

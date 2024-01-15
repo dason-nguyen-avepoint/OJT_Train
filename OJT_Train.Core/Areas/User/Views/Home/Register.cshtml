@@ -1,0 +1,76 @@
+﻿@model OJT_Train.Core.Areas.User.Models.Account
+<section class="ftco-section">
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-md-7 col-lg-10">
+				<div class="login-wrap p-4 p-md-5">
+					<div class="d-flex">
+						<div class="w-100">
+							<h3 class="mb-4">Sign Up</h3>
+						</div>
+					</div>
+					<span class="text-danger">@ViewBag.Message</span>
+					<form action="#" class="login-form" method="post">
+						<div class="form-group">
+							<label asp-for="FullName"></label>
+							<input asp-for="FullName" type="text" class="form-control rounded-left" placeholder="Full Name">
+							<span asp-validation-for="FullName" class="text-danger"></span>
+						</div>
+						<div class="form-group">
+							<label asp-for="UserName"></label>
+							<input asp-for="UserName" type="text" class="form-control rounded-left" placeholder="User Name">
+							<span asp-validation-for="UserName" class="text-danger"></span>
+						</div>
+						<div class="form-group">
+							<label asp-for="Password"></label>
+							<input asp-for="Password" type="password" class="form-control rounded-left" placeholder="Your Password">
+							<span asp-validation-for="Password" class="text-danger"></span>
+						</div>
+						<div class="form-group">
+							<label>Confirm Password</label>
+							<input asp-for="ComfirmPassword" type="password" class="form-control rounded-left" placeholder="Comfirm Password">
+							<span asp-validation-for="Password" class="text-danger"></span>
+						</div>
+						<div class="form-group">
+							<label asp-for="Email"></label>
+							<input asp-for="Email" type="email" class="form-control rounded-left" placeholder="Your Email">
+							<span asp-validation-for="Email" class="text-danger"></span>
+						</div>
+						<div class="form-group">
+							<label asp-for="Address"></label>
+							<input asp-for="Address" type="text" class="form-control rounded-left" placeholder="Your Address">
+							<span asp-validation-for="Address" class="text-danger"></span>
+						</div>
+						<div class="form-group">
+							<label asp-for="Phone"></label>
+							<input asp-for="Phone" type="text" class="form-control rounded-left" placeholder="Your Phone">
+							<span asp-validation-for="Phone" class="text-danger"></span>
+						</div>
+						<div class="form-group">
+							<label asp-for="DateOfBirth"></label>
+							<input asp-for="DateOfBirth" type="datetime-local" class="form-control rounded-left" placeholder="Your Date of Birth">
+							<span asp-validation-for="DateOfBirth" class="text-danger"></span>
+						</div>
+						<div class="form-group d-flex align-items-center">
+							<div class="w-100 d-flex justify-content-end">
+								<button type="submit" class="btn btn-primary rounded submit">Register</button>
+							</div>
+						</div>
+						<div class="form-group mt-4">
+							<div class="w-100 text-center">
+								<p class="mb-1"><a a asp-controller="Home" asp-action="Login">Back to Login</a></p>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</section>
+@section Scripts {
+	@{
+		<partial name="_ValidationScriptsPartial" />
+	}
+
+}

@@ -58,5 +58,13 @@ namespace Repositories.Implements
                 await connection.ExecuteAsync(StoreProcedureCategory.UpdateCategory, param: parameter, commandType: CommandType.StoredProcedure);
             });
         }
+        public async Task<IEnumerable<CategoryProductDTO>> GetAllCategory()
+        {
+            return await WithConnection(async connection =>
+            {
+                var listCategory = await connection.QueryAsync<CategoryProductDTO>(StoreProcedureCategoryProduct.UspAllCategory, null, commandType: CommandType.StoredProcedure);
+                return listCategory.ToList();
+            });
+        }
     }
 }

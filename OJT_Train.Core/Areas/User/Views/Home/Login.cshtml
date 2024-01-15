@@ -1,0 +1,108 @@
+﻿
+<div id="example">
+    <div class="demo-section">
+        <div id="validation-success"></div>
+        <form id="loginform"></form>
+        <div class="form-group mt-4">
+            <div class="w-100 text-center">
+                <p class="mb-1">Don't have an account? <a asp-controller="Home" asp-action="Register" asp-area="User">Sign Up</a></p>
+                <p><a asp-controller="Home" asp-action="ForgetPassword">Forgot Password</a></p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    #example .demo-section {
+        margin: auto;
+        max-width: 600px;
+        width: 600px;
+    }
+</style>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var validationSuccess = $("#validation-success");
+
+            $("#loginform").kendoForm({
+                layout: "grid",
+                grid: {
+                    cols: 1,
+                    gutter: 10
+                },
+                items: [
+                    {
+                        field: "userName",
+                        label: "User Name:",
+                        validation: { required: true },
+                        editor: "TextBox",
+                    },
+                    {
+                        field: "password",
+                        label: "Password:",
+                        validation: { required: true },
+                        // editor: "TextBox",
+                        editor: function (container, options) {
+                            // Create a password input field
+                            $("<input type='password' id='password' title='Password' class='k-input k-textbox' name='" + options.field + "' required  />")
+                                .appendTo(container);
+                        }
+                    },
+                    // {
+                    //     field: "password",
+                    //     label: "Password:",
+                    //     validation: { required: true },
+                    //     editor: "TextBox",
+                    //     type: "password",
+                    //     // editor: function (container, options) {
+                    //     //     $('<input type="password" id="password" name="' + options.field + '" title="Password" required="required" autocomplete="off" aria-labelledby="Password-form-label" data-bind="value: password" aria-describedby="Password-form-hint"/>')
+                    //     //         .appendTo(container)
+                    //     // }
+                    // },
+                ],
+                //       buttonsTemplate:'<div class="k-form-buttons">'+
+                // '<button class="k-button k-primary k-form-submit" type="submit">Submit</button>'+
+                // '<button class="k-button k-form-clear">Clear</button>'+
+                // '<button id="btn" onclick="custom()" class="k-button">Custom Reset button</button>'+
+                // '</div>',
+                submit: function (e) {
+                    e.preventDefault();
+                    // var formData = $("#loginform").serialize();
+                    var userName = $("#loginform").find("#userName").val();
+                    var password = $("#loginform").find("#password").val();
+                    var login = {
+                        "userName": userName,
+                        "password": password
+                    };
+                    $.ajax({
+                        url: "@Url.Action("Login", "Home")",
+                        type: "POST",
+                        data: JSON.stringify(login),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            if (response.status) {                            
+                                window.location.href = "@Url.Action("Login", "Home")";
+                                alert("Login sucessfully");
+                            } else {
+                                validationSuccess.html("<div class='k-messagebox k-messagebox-error'>" + response.message + "</div>");
+                            }
+                        },
+                        error: function (error) {
+                            validationSuccess.html("<div class='k-messagebox k-messagebox-error'>An error occurred while processing your request.</div>");
+                        }
+                    });
+
+                },
+            });
+        });
+    </script>
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+    <script src="~/kendo/jquery-3.7.0.min.js"></script>
+    <script src="~/kendo/jszip.min.js"></script>
+    <script src="~/kendo/kendo.all.min.js"></script>
+    <script src="~/js/kendo-ui-license.js"></script>
+}

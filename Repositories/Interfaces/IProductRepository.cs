@@ -15,6 +15,11 @@ namespace Repositories.Interfaces
         void Add(ProductDTO product);
         void Update(ProductDTO product);
         void Delete(ProductDTO product);
+        Task<IEnumerable<ProductInUserViewDTO>> GetAllProduct();
+        Task<IEnumerable<ProductInUserViewDTO>> GetProductByCategory(int? id);
+        Task<ProductInUserViewDTO?> GetProductByID(int? id);
+        Task<IEnumerable<ProductDetailImgDto>> GetProductByIDIMG(int? id);
+
 
     }
 }

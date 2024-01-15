@@ -14,5 +14,6 @@ namespace Repositories.Interfaces
         void Add(CategoryDTO cate);
         void Update(CategoryDTO cate);
         void Delete(CategoryDTO cate);
+        Task<IEnumerable<CategoryProductDTO>> GetAllCategory();
     }
 }

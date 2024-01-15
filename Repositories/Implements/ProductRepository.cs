@@ -80,5 +80,44 @@ namespace Repositories.Implements
                 await connection.QueryAsync<ProductDTO>(StoreProcedureProduct.UpdateProduct, param: parameter, commandType: CommandType.StoredProcedure);
             });
         }
+        public async Task<IEnumerable<ProductInUserViewDTO>> GetAllProduct()
+        {
+            return await WithConnection(async connection =>
+            {
+                var listProduct = await connection.QueryAsync<ProductInUserViewDTO>(StoreProcedureCategoryProduct.UspAllProduct, null, commandType: CommandType.StoredProcedure);
+                return listProduct.ToList();
+            });
+        }
+
+        public async Task<IEnumerable<ProductInUserViewDTO>> GetProductByCategory(int? id)
+        {
+            return await WithConnection(async connection =>
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("CategoryId", id, DbType.Int32);
+                var listproduct = await connection.QueryAsync<ProductInUserViewDTO>(StoreProcedureCategoryProduct.UspGetListProductByCategory, param: parameters, commandType: CommandType.StoredProcedure);
+                return listproduct.ToList();
+            });
+        }
+        public async Task<ProductInUserViewDTO?> GetProductByID(int? id)
+        {
+            return await WithConnection(async connection =>
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("ProductId", id, DbType.Int32);
+                var product = await connection.QuerySingleOrDefaultAsync<ProductInUserViewDTO>(StoreProcedureCategoryProduct.UspGetProductDetails, param: parameters, commandType: CommandType.StoredProcedure);
+                return product;
+            });
+        }
+        public async Task<IEnumerable<ProductDetailImgDto>> GetProductByIDIMG(int? id)
+        {
+            return await WithConnection(async connection =>
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("ProductId", id, DbType.Int32);
+                var product = await connection.QueryAsync<ProductDetailImgDto>(StoreProcedureCategoryProduct.UspgetProductDetailImg, param: parameters, commandType: CommandType.StoredProcedure);
+                return product.ToList();
+            });
+        }
     }
 }
