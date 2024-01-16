@@ -22,6 +22,16 @@ namespace Repositories.Implements
             });
         }
 
+        public async void AddSaleExcel(string jsonData)
+        {
+            await WithConnection(async connection =>
+            {
+                var parameter = new DynamicParameters();
+                parameter.Add("jsonData", jsonData);
+                await connection.ExecuteAsync("AddSaleExcel", param: parameter, commandType: CommandType.StoredProcedure);
+            });
+        }
+
         public async void Delete(SaleDTO sale)
         {
             await WithConnection(async connection =>

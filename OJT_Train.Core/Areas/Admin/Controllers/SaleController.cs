@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Repositories.Dto;
 using Repositories.Interfaces;
 
@@ -76,6 +77,13 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
                 return Json(new { redirectUrl = Url.Action("Index", "Sale", new { area = "Admin" }) });
             }
             return BadRequest(ModelState);
+        }
+        [HttpPost]
+        public IActionResult LoadExcel([FromBody] List<SaleExcel> jsonData)
+        {
+            string jsonString = JsonConvert.SerializeObject(jsonData);
+            _repo.AddSaleExcel(jsonString);
+            return Json(new { success = true, message = "Data processed successfully" });
         }
     }
 }

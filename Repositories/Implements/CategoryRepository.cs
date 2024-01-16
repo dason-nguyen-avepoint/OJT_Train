@@ -66,5 +66,15 @@ namespace Repositories.Implements
                 return listCategory.ToList();
             });
         }
+
+        public async void AddCateExcel(string jsonString)
+        {
+            await WithConnection(async connection =>
+            {
+                var parameter = new DynamicParameters();
+                parameter.Add("CategoryData", jsonString);
+                await connection.ExecuteAsync("InsertCategories", param: parameter, commandType: CommandType.StoredProcedure);
+            });
+        }
     }
 }

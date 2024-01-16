@@ -21,6 +21,7 @@ builder.Services.AddScoped<IThongKeRepository, ThongKeRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddControllers().AddNewtonsoftJson();
 
 var app = builder.Build();
 

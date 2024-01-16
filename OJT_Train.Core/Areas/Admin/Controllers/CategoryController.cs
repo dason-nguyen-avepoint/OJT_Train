@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Repositories.Dto;
 using Repositories.Interfaces;
 
@@ -39,6 +40,13 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
         {
             _repo.Delete(model);
             return Json(new { success = true, data = model });
+        }
+        [HttpPost]
+        public IActionResult LoadExcel([FromBody] List<CategoryExcel> jsonData)
+        {
+            string jsonString = JsonConvert.SerializeObject(jsonData);
+            _repo.AddCateExcel(jsonString);
+            return Json(new { success = true, message = "Data processed successfully" });
         }
     }
 }

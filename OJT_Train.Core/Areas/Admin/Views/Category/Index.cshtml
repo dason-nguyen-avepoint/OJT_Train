@@ -1,5 +1,53 @@
-﻿<div id="grid"></div>
+﻿<input type="file" id="excelFileInput"/>
+<button class="btn btn-primary" onclick="uploadExcel()">Upload Excel</button>
+<div id="grid"></div>
 @section Scripts {
+
+    <script>
+        function uploadExcel() {
+            var fileInput = document.getElementById("excelFileInput");
+            var file = fileInput.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var data = new Uint8Array(e.target.result);
+                    var workbook = XLSX.read(data, { type: 'array' });
+                    var jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
+                    var jsonString = convertArrayToKeyValue(jsonData);
+                    console.log(jsonString);
+                    sendToServer(jsonString);
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        }
+        function convertArrayToKeyValue(jsonArray) {
+            var result = [];
+            var keys = jsonArray[0];
+            for (var i = 1; i < jsonArray.length; i++) {
+                var obj = {};
+                for (var j = 0; j < keys.length; j++) {
+                    obj[keys[j]] = jsonArray[i][j];
+                }
+                result.push(obj);
+            }
+            return result;
+        }
+        function sendToServer(jsonString) {
+            $.ajax({
+                type: 'POST',
+                url: "https://localhost:7258/admin/Category/LoadExcel",
+                contentType: 'application/json',
+                data: JSON.stringify(jsonString),
+                //data: jsonString,
+                success: function () {
+                    location.reload();
+                },
+                error: function (error) {
+                    console.error('Error sending data to server:', error);
+                }
+            });
+        }
+    </script>
     <script>
         $(document).ready(function () {
             var crudServiceBaseUrl = "https://localhost:7258/admin",
@@ -156,5 +204,4 @@
             });
         });
     </script>
-
 }

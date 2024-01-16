@@ -520,42 +520,24 @@ BEGIN
 
 END;
 GO
--- BUY PRODUCT
-CREATE TRIGGER buy_product ON SALE
-AFTER INSERT
-AS
-BEGIN
-	DECLARE @QUANTITY INT
-	DECLARE @PRODUCTID INT
-	DECLARE @INVENTORYID INT
-	SET @QUANTITY = (SELECT inserted.QUANTITY FROM inserted);
-	SET @PRODUCTID = (SELECT inserted.PRODUCTID FROM inserted);
-	SET @INVENTORYID = 1;
-	
-	IF NOT EXISTS (
-		SELECT * FROM INVENTORYDETAIL 
-		WHERE INVENTORYID = @INVENTORYID 
-		AND PRODUCTID = @PRODUCTID
-	)
-	BEGIN
-		INSERT INTO INVENTORYDETAIL(IMPORTEDDATE, TOTALIMPORT, DELIVERED, REMAINING, PRODUCTID, INVENTORYID) 
-		VALUES(GETDATE(), @QUANTITY, 0, @QUANTITY, @PRODUCTID, @INVENTORYID)
-	END
-	ELSE
-	BEGIN
-		UPDATE INVENTORYDETAIL
-		SET TOTALIMPORT = TOTALIMPORT + @QUANTITY,
-			REMAINING = TOTALIMPORT + @QUANTITY - DELIVERED
-		WHERE INVENTORYID = @INVENTORYID
-		AND PRODUCTID = @PRODUCTID
-	END
-END;
-GO
 ------ CREATE SALE
 CREATE PROCEDURE AddSale @quantity int, @unitPrice int, @productId int
 AS
 BEGIN
 	INSERT INTO SALE VALUES(@productId, @quantity, @unitPrice, GETDATE(), NULL, NULL, NULL, 'False');
+	IF EXISTS (SELECT 1 FROM INVENTORYDETAIL WHERE PRODUCTID = @productId)
+	BEGIN
+		UPDATE INVENTORYDETAIL
+		SET TOTALIMPORT = TOTALIMPORT + @quantity,
+		REMAINING = REMAINING + @quantity
+		WHERE INVENTORYID = 1
+		AND PRODUCTID = @productId;
+	END
+	ELSE
+	BEGIN
+		INSERT INTO INVENTORYDETAIL (IMPORTEDDATE, PRODUCTID, TOTALIMPORT, DELIVERED, REMAINING, INVENTORYID)
+        VALUES (GETDATE(), @productId, @quantity, '0', @quantity, '1');
+	END
 END;
 GO
 ------ UPDATE SALE
@@ -606,3 +588,69 @@ BEGIN
 	WHERE S.SALEID =  @saleId;
 END;
 GO
+-- INSERT MULTI CATE WITH EXCEL
+CREATE PROCEDURE InsertCategories
+    @CategoryData NVARCHAR(MAX)
+AS
+BEGIN
+    CREATE TABLE #TempCategoryTable
+    (
+        CategoryName NVARCHAR(255),
+        IsPublished BIT
+    );
+    INSERT INTO #TempCategoryTable (CategoryName, IsPublished)
+    SELECT CategoryName, IsPublished
+    FROM OPENJSON(@CategoryData)
+    WITH (
+        CategoryName NVARCHAR(255),
+        IsPublished BIT
+    );
+    INSERT INTO CATEGORY(CATEGORYNAME, ISPUBLISHED)
+    SELECT t.CategoryName, t.IsPublished
+    FROM #TempCategoryTable t
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM CATEGORY c
+        WHERE c.CATEGORYNAME = t.CategoryName
+    );
+    DROP TABLE #TempCategoryTable;
+END;
+GO
+-- CREATE MULTI SALE
+CREATE PROCEDURE AddSaleExcel 
+@jsonData NVARCHAR(MAX)
+AS
+BEGIN
+	CREATE TABLE #TempSaleTable
+    (
+        ProductId INT,
+        Quantity INT,
+		UnitPrice BIGINT
+    );
+	-- Insert data from JSON array into the temporary table
+    INSERT INTO #TempSaleTable (ProductId, Quantity, UnitPrice)
+    SELECT ProductId, Quantity, UnitPrice
+    FROM OPENJSON(@jsonData)
+    WITH (
+        ProductId INT,
+        Quantity INT,
+		UnitPrice BIGINT
+    );
+	 -- Insert data
+    INSERT INTO SALE(PRODUCTID, QUANTITY, UNITPRICE, CREATEDDATE)
+    SELECT ProductId, Quantity, UnitPrice, GETDATE() AS CREATEDDATE
+    FROM #TempSaleTable;
+
+	MERGE INTO INVENTORYDETAIL AS Target
+    USING #TempSaleTable AS Source
+    ON Target.PRODUCTID = Source.ProductId
+    WHEN MATCHED THEN
+        UPDATE SET 
+            Target.TOTALIMPORT = Target.TOTALIMPORT + Source.Quantity,
+			Target.REMAINING = Target.REMAINING + Source.Quantity
+    WHEN NOT MATCHED BY TARGET THEN
+        INSERT (IMPORTEDDATE, PRODUCTID, TOTALIMPORT, DELIVERED, REMAINING, INVENTORYID)
+        VALUES (GETDATE(), Source.ProductId, Source.Quantity, '0', Source.Quantity, '1');
+    -- Drop the temporary table
+    DROP TABLE #TempSaleTable;
+END;
