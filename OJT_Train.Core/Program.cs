@@ -48,5 +48,7 @@ app.MapAreaControllerRoute(
     areaName: "Admin",
     name: "Admin",
     pattern: "{area=Admin}/{controller=Manager}/{action=Index}/{id?}");
-
+app.MapControllerRoute(
+    name: "error",
+    pattern: "{controller=Error}/{action=Unauthorized}");
 app.Run();
