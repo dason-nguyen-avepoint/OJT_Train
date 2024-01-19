@@ -25,11 +25,11 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var accessResult = await CheckAdminAccess();
-        if (accessResult != null)
-        {
-            return accessResult;
-        }
+            //var accessResult = await CheckAdminAccess();
+            //if (accessResult != null)
+            //{
+            //    return accessResult;
+            //}
             var inventories = await _repo.GetInfor();
             ViewBag.ThongKe = await _thongke.GetInfo();
             return View(inventories);

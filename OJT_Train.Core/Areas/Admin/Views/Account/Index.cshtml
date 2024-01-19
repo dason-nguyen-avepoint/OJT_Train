@@ -1,0 +1,162 @@
+﻿@model IEnumerable<AccountManageDTO>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">User Name</th>
+            <th scope="col">Full Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <th scope="row">@item.UserId</th>
+                <td>@item.UserName</td>
+                <td>@item.FullName</td>
+                <td>@item.Email</td>
+                <td>
+                    @if (item.IsDeleted)
+                    {
+                        <a class="btn btn-danger">Đã xoá</a>
+                    }
+                    else if (item.IsBlocked)
+                    {
+                        <a class="btn btn-warning">Đang tạm khoá</a>
+                    }
+                    else if (item.IsActived)
+                    {
+                        <a class="btn btn-success">Đã kích hoạt</a>
+                    }
+                    else if (!item.IsActived)
+                    {
+                        <a class="btn btn-warning">Chưa kích hoạt</a>
+                    }
+                </td>
+                <td>
+                    @if (!item.IsDeleted)
+                    {
+                        <a class="btn btn-primary"
+                           data-toggle="modal"
+                           data-target="#editModal"
+                           onclick="openEditModal(
+                                @item.UserId, '@item.UserName', '@item.FullName', '@item.Email', '@item.Phone','@item.Address'
+                        )">
+                            Edit
+                        </a>
+                        <a class="btn btn-danger" onclick="deleteAccount(@item.UserId)">Delete</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+    @* POP UP EDITOR *@
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="editUserName">Tên đăng nhập:</label>
+                            <input type="text" class="form-control" id="editUserName">
+                        </div>
+                        <div class="form-group">
+                            <label for="editFullName">Tên đầy đủ:</label>
+                            <input type="text" class="form-control" id="editFullName">
+                        </div>
+                        <div class="form-group">
+                            <label for="editEmail">Địa chỉ Email:</label>
+                            <input type="email" class="form-control" id="editEmail">
+                        </div>
+                        <div class="form-group">
+                            <label for="editPhone">Số điện thoại:</label>
+                            <input type="text" class="form-control" id="editPhone">
+                        </div>
+                        <div class="form-group">
+                            <label for="editAddress">Địa chỉ:</label>
+                            <input type="text" class="form-control" id="editAddress">
+                        </div>
+                        <input type="hidden" id="editUserId">
+
+                        <button type="submit" class="btn btn-primary" onclick="saveChanges()">Lưu</button>
+                        <button type="button" class="btn btn-danger" onclick="closeChanges()">Thoát</button>
+                        <button type="button" class="btn btn-warning" onclick="blockAccount()">Khoá tài khoản</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</table>
+@section Scripts {
+    <script>
+        function openEditModal(userId, userName, fullName, email, phone, address) {
+            $("#editUserId").val(userId);
+            $("#editUserName").val(userName);
+            $("#editFullName").val(fullName);
+            $("#editEmail").val(email);
+            $("#editPhone").val(phone);
+            $("#editAddress").val(address);
+            $("#editModal").modal("show");
+        }
+        function deleteAccount(userId) {
+            $.ajax({
+                type: 'PUT',
+                url: "https://localhost:7258/admin/account/deleteaccount/",
+                contentType: 'application/json',
+                data: JSON.stringify(userId),
+                success: function () {
+                    location.reload();
+                },
+                error: function (error) {
+                    console.error('Error sending data to server:', error);
+                }
+            })
+        }
+
+        function saveChanges() {
+            // Collect data from form fields
+            var editUserId = $("#editUserId").val();
+            var editUserName = $("#editUserName").val();
+            var editFullName = $("#editFullName").val();
+            var editEmail = $("#editEmail").val();
+            var editPhone = $("#editPhone").val();
+            var editAddress = $("#editAddress").val();
+            // Create an object with the data
+            var userData = {
+                userId: editUserId,
+                userName: editUserName,
+                fullName: editFullName,
+                email: editEmail,
+                phone: editPhone,
+                address: editAddress
+            };
+            $.ajax({
+                type: 'PUT',
+                url: "https://localhost:7258/admin/account/editaccount",
+                contentType: 'application/json',
+                data: JSON.stringify(userData),
+                success: function () {
+                    $("#editModal").modal("hide");
+                    location.reload();
+                },
+                error: function (error) {
+                    console.error('Error sending data to server:', error);
+                }
+            });
+        }
+        function closeChanges() {
+            $("#editModal").modal("hide");
+        }
+    </script>
+
+}
