@@ -654,3 +654,33 @@ BEGIN
     -- Drop the temporary table
     DROP TABLE #TempSaleTable;
 END;
+GO
+-- GET ALL ACCOUNT
+CREATE PROCEDURE GetAccountInfo
+AS
+BEGIN
+	SELECT ACCOUNT.*, [ROLE].ROLENAME FROM ACCOUNT JOIN [ROLE]
+	ON ACCOUNT.ROLEID = [ROLE].ROLEID
+END;
+GO
+-- UPDATE ACCOUNT
+CREATE  PROCEDURE UpdateAccount
+@userId INT, @userName VARCHAR(50), @email VARCHAR(100), @fullName NVARCHAR(200), @phone VARCHAR(12), @address NVARCHAR(200), @timeStamp DATETIME,
+@dateOfBirth DATETIME, @isBlocked VARCHAR(5), @isActived VARCHAR(5), @roleId INT
+AS
+BEGIN
+	UPDATE ACCOUNT
+	SET USERNAME = @userName, EMAIL = @email, FULLNAME = @fullName, PHONE = @phone, [ADDRESS] = @address, [TIMESTAMP] = @timeStamp,
+		DATEOFBIRTH = @dateOfBirth, ISBLOCKED = @isBlocked, ISACTIVED = @isActived, ROLEID = @roleId, MODIFIEDDATE = GETDATE()
+	WHERE USERID = @userId
+END;
+GO
+-- DELETE ACCOUNT
+CREATE PROCEDURE DeleteAccount @userId INT
+AS
+BEGIN
+	UPDATE ACCOUNT
+	SET ISDELETED = 'True'
+	WHERE USERID = @userId
+END;
+GO

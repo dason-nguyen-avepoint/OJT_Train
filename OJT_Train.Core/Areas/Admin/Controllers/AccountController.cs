@@ -41,20 +41,24 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
         [HttpPut]
         public IActionResult DeleteAccount([FromBody] int userId) 
         {
-            if(userId == 0 || userId == null)
+            _repo.Delete(userId);
+            return Json(new { success = true });
+        }
+        [HttpPut]
+        public async Task<IActionResult> BlockAccount([FromBody] BlockAccount blockAccount)
+        {
+            var account = await _repo.GetById(blockAccount.UserId);
+            if (blockAccount.IsBlocked)
             {
-                return NotFound();
-            }
-            if(_repo.GetById(userId) == null) 
-            {
-                return NotFound();
+                account.TimeStamp = DateTime.Now.AddMinutes(blockAccount.TimeBlock);
             }
             else
             {
-                _repo.Delete(userId);
-                return Json(new { success = true });
+                account.TimeStamp = null;
             }
-            
+            account.IsBlocked = blockAccount.IsBlocked;
+            _repo.Update(account);
+            return Json(new { success = true });
         }
     }
 }

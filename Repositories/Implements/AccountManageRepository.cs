@@ -33,7 +33,7 @@ namespace Repositories.Implements
             {
                 var parameter = new DynamicParameters();
                 parameter.Add("userId", id, DbType.Int32);
-                var account = await connection.QueryFirstOrDefaultAsync<AccountManageDTO>("GetAccountInfo", param: parameter, commandType: CommandType.StoredProcedure);
+                var account = await connection.QueryFirstOrDefaultAsync<AccountManageDTO>("GetAccountById", param: parameter, commandType: CommandType.StoredProcedure);
                 return account;
             });
         }
@@ -49,6 +49,11 @@ namespace Repositories.Implements
                 parameter.Add("email", account.Email);
                 parameter.Add("phone", account.Phone);
                 parameter.Add("address", account.Address);
+                parameter.Add("timeStamp", account.TimeStamp);
+                parameter.Add("dateOfBirth", account.DateOfBirth);
+                parameter.Add("isActived", account.IsActived);
+                parameter.Add("isBlocked", account.IsBlocked);
+                parameter.Add("roleId", account.RoleId, DbType.Int32);
                 await connection.ExecuteAsync("UpdateAccount", param: parameter, commandType: CommandType.StoredProcedure);
             });
         }
