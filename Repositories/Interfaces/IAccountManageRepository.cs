@@ -13,5 +13,6 @@ namespace Repositories.Interfaces
         Task<AccountManageDTO> GetById(int id);
         void Update(AccountManageDTO account);
         void Delete(int id);
+        Task<IEnumerable<RoleDTO>> GetRole();
     }
 }

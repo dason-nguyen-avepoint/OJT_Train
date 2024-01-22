@@ -38,6 +38,15 @@ namespace Repositories.Implements
             });
         }
 
+        public async Task<IEnumerable<RoleDTO>> GetRole()
+        {
+            return await WithConnection(async connection =>
+            {
+                var roles = await connection.QueryAsync<RoleDTO>("GetRole", null, commandType: CommandType.StoredProcedure);
+                return roles.ToList();
+            });
+        }
+
         public async void Update(AccountManageDTO account)
         {
             await WithConnection(async connection =>

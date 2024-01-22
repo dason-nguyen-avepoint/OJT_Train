@@ -111,6 +111,16 @@
                             <label for="editAddress">Địa chỉ:</label>
                             <input type="text" class="form-control" id="editAddress" disabled>
                         </div>
+                        <div class="form-group">
+                            <label for="editRoleId">Vai trò:</label>
+                            <select id="chooseRole">
+                                <option value="" disabled selected id="defaultRole">Chọn vai trò</option>
+                                @foreach (var item in ViewBag.GetRoles)
+                                {
+                                    <option value="@item.RoleId" data-role="@item.RoleName">@item.RoleName</option>
+                                }
+                            </select>
+                        </div>
                         <input type="hidden" id="editUserId">
                         <input type="hidden" id="editDOB">
                         <input type="hidden" id="editTimeStamp">
@@ -209,6 +219,8 @@
             $("#editTimeStamp").val(timeStamp);
             $("#editRoleId").val(roleId);
             $("#editRoleName").val(roleName);
+            $("#chooseRole").val(roleId);
+            $("#defaultRole").data("role", roleName);
             $("#editModal").modal("show");
         }
         function openBlockedAccount(blockedUserId) {
@@ -264,8 +276,7 @@
             var editBlocked = $("#editIsBlocked").val();
             var editActived = $("#editIsActived").val();
             var editTimeStamp = $("#editTimeStamp").val();
-            var editRoleId = $("#editRoleId").val();
-            var editRoleName = $("#editRoleName").val();
+            var editRoleId =  $("#chooseRole").val();
             // Create an object with the data
             var userData = {
                 userId: editUserId,
@@ -279,7 +290,7 @@
                 isActived : editActived,
                 timeStamp : editTimeStamp,
                 roleId : editRoleId,
-                roleName : editRoleName
+                //roleName : editRoleName
             };
             $.ajax({
                 type: 'PUT',

@@ -29,6 +29,7 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
             //{
             //    return accessResult;
             //}
+            ViewBag.GetRoles = await _repo.GetRole();
             var accounts = await _repo.GetAll();
             return View(accounts);
         }
