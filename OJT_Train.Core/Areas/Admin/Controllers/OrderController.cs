@@ -31,5 +31,11 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
             _repo.ShippingOrder(Id);
             return RedirectToAction("Index");
         }
+        [HttpPut]
+        public IActionResult DeleteOrder([FromBody] int Id)
+        {
+            _repo.DeleteOrder(Id);
+            return Json(new { success = true });
+        }
     }
 }

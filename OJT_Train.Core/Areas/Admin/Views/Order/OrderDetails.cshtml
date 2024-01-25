@@ -98,13 +98,37 @@
     </div>
 
     <div class="col d-flex flex-row-reverse" style="margin-right:20px;margin-bottom:10px">
-        <a class="btn btn-secondary" asp-area="Admin" asp-controller="Order" asp-action="Index">Thoát</a>
-        @if (ViewBag.Order.OrderStatus != "Đang giao hàng")
+        
+        @if (ViewBag.Order.OrderStatus == "Đã đặt hàng")
         {
-            <a class="btn btn-danger" style="margin-right:10px">Huỷ đơn hàng</a>
+            <a class="btn btn-danger" style="margin-right:10px" onclick="deleteOrder(@ViewBag.Order.OrderId)">Huỷ đơn hàng</a>
             <a class="btn btn-success" style="margin-right:10px" asp-area="Admin" asp-controller="Order" asp-action="ShippingOrder" asp-route-id="@ViewBag.Order.OrderId">Xác nhận giao hàng</a>
+            <a class="btn btn-secondary" asp-area="Admin" asp-controller="Order" asp-action="Index">Thoát</a>
+        }
+        else
+        {
+            <a class="btn btn-secondary" asp-area="Admin" asp-controller="Order" asp-action="Index">Thoát</a>
         }
     </div>
-            
-        }
 </div>
+@section Scripts{
+    <script>
+        function deleteOrder(orderId) {
+            var confirmDelete = confirm("Bạn có chắc chắn muốn xoá đơn hàng này không?");
+            if (confirmDelete) {
+                $.ajax({
+                    type: 'PUT',
+                    url: "https://localhost:7258/admin/order/DeleteOrder/",
+                    contentType: 'application/json',
+                    data: JSON.stringify(orderId),
+                    success: function () {
+                        window.location.href = "https://localhost:7258/admin/order/index";
+                    },
+                    error: function (error) {
+                        console.error('Error sending data to server:', error);
+                    }
+                });
+            }
+        }
+    </script>
+}

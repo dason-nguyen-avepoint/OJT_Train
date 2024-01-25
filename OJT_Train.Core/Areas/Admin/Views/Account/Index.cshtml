@@ -9,8 +9,8 @@
         <tr>
             <th class="col-1">#</th>
             <th class="col-2">Tên tài khoản</th>
-            <th class="col-3">Địa chỉ Email</th>
-            <th class="col-1">Vai trò</th>
+            <th class="col-2">Địa chỉ Email</th>
+            <th class="col-2">Vai trò</th>
             <th class="col-2">Trạng thái</th>
             <th class="col-3"></th>
         </tr>
@@ -33,19 +33,19 @@
                 <td>
                     @if (item.IsDeleted)
                     {
-                        <a class="btn btn-danger" style="width:140px">Đã xoá</a>
+                        <span class="text-danger mt-2">Đã xoá</span>
                     }
                     else if (item.IsBlocked)
                     {
-                        <a class="btn btn-warning" style="width:140px">Đang tạm khoá</a>
+                        <span class="text-warning">Đang tạm khoá</span>
                     }
                     else if (item.IsActived)
                     {
-                        <a class="btn btn-success" style="width:140px">Đã kích hoạt</a>
+                        <span class="text-success">Đã kích hoạt</span>
                     }
                     else
                     {
-                        <a class="btn btn-warning" style="width:140px">Chưa kích hoạt</a>
+                        <span class="text-warning">Chưa kích hoạt</span>
                     }
                 </td>
                 <td>

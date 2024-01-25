@@ -58,7 +58,7 @@
                 height: 600,
                 toolbar: ["search"],
                 search: {
-                    fields: ["createdBy","modifiedBy"]
+                    fields: ["createdBy", "modifiedBy", "address", "orderStatus"]
                 },
                 columns: [
                     { field: "orderId", title: "Mã đơn hàng", width:"110px" },
@@ -95,13 +95,12 @@
                                     var confirmed = confirm("Are you sure you want to delete this item?");
 
                                     if (confirmed) {
-                                        console.log("Delete button clicked");
                                         console.log("Data Item:", dataItem);
                                         $.ajax({
-                                            url: crudServiceBaseUrl + "/Order/DeleteOrder" + dataItem.orderId,
+                                            url: crudServiceBaseUrl + "/Order/DeleteOrder/" + dataItem.orderId,
                                             type: "PUT",
                                             contentType: "application/json",
-                                            data: JSON.stringify(dataItem),
+                                            data: JSON.stringify(dataItem.orderId),
                                             success: function (response) {
                                                 console.log("Delete successful", response);
                                                 $("#grid").data("kendoGrid").dataSource.read();
@@ -123,6 +122,11 @@
                             $(this).css("opacity", "0.5");
                             var commandCell = $(this).find(".k-command-cell");
                             commandCell.empty().append("<span style='color: red;'>Is Deleted</span>");
+                        }
+                        if (dataItem.orderStatus === "Đã thanh toán") {
+                            $(this).css("opacity", "0.5");
+                            var commandCell = $(this).find(".k-command-cell");
+                            commandCell.empty().append("<span style='color: green;'>Completed</span>");
                         }
                     });
                 }

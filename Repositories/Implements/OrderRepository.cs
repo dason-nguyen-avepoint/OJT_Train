@@ -8,6 +8,16 @@ namespace Repositories.Implements
 {
     public class OrderRepository : DapperBase, IOrderRepository
     {
+        public async void DeleteOrder(int id)
+        {
+            await WithConnection(async connection =>
+            {
+                var parameter = new DynamicParameters();
+                parameter.Add("orderId", id, DbType.Int32);
+                await connection.ExecuteAsync("DeleteOrderByAdmin", param: parameter, commandType: CommandType.StoredProcedure);
+            });
+        }
+
         public async Task<IEnumerable<OrderDTO>> GetAll()
         {
             return await WithConnection(async connection =>

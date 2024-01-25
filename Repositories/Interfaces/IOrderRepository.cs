@@ -13,5 +13,6 @@ namespace Repositories.Interfaces
         Task<OrderById> GetById(int id);
         void ShippingOrder(int id);
         Task<IEnumerable<OrderDetail>> GetOrderDetail(int id);
+        void DeleteOrder(int id);
     }
 }
