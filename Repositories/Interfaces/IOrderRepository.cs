@@ -9,10 +9,11 @@ namespace Repositories.Interfaces
 {
     public interface IOrderRepository
     {
-        Task<IEnumerable<OrderDTO>> GetAll();
+        Task<IEnumerable<OrderDTO>> GetAll(int pageNumber, int pageSize);
         Task<OrderById> GetById(int id);
         void ShippingOrder(int id);
         Task<IEnumerable<OrderDetail>> GetOrderDetail(int id);
         void DeleteOrder(int id);
+        Task<int> TotalOrder();
     }
 }

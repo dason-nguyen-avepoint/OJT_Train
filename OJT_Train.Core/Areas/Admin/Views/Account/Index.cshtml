@@ -4,7 +4,8 @@
         text-align: center;
     }
 </style>
-<table class="table table-bordered">
+<h2 class="text-center font-weight-bold my-3">Quản lý thông tin tài khoản</h2>
+<table class="table table-bordered mx-2">
     <thead>
         <tr>
             <th class="col-1">#</th>
@@ -168,6 +169,32 @@
         </div>
     </div>
 </table>
+
+<nav aria-label="Page navigation example" class="mx-2">
+    <ul class="pagination">
+        @if (ViewBag.CurrentPage == 1)
+        {
+            <li class="page-item disabled"><a class="page-link">Previous</a></li>
+        }
+        else
+        {
+            <li class="page-item"><a class="page-link" asp-area="Admin" asp-controller="Account" asp-action="Index" asp-route-pageNumber="@(ViewBag.CurrentPage - 1)">Previous</a></li>
+        }
+        @for (int i = 1; i <= ViewBag.TotalAccounts; i++)
+        {
+            <li class="page-item"><a class="page-link" asp-area="Admin" asp-controller="Account" asp-action="Index" asp-route-pageNumber="@i">@i</a></li>
+        }
+        @if (ViewBag.CurrentPage == ViewBag.TotalAccounts)
+        {
+            <li class="page-item disabled"><a class="page-link">Next</a></li>
+        }
+        else
+        {
+            <li class="page-item"><a class="page-link" asp-area="Admin" asp-controller="Account" asp-action="Index" asp-route-pageNumber="@(ViewBag.CurrentPage + 1)">Next</a></li>
+        }
+    </ul>
+</nav>
+
 @section Scripts {
     <script>
         var selectedTime = $("#timeSelect").prop("value");

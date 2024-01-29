@@ -18,11 +18,14 @@ namespace Repositories.Implements
             });
         }
 
-        public async Task<IEnumerable<OrderDTO>> GetAll()
+        public async Task<IEnumerable<OrderDTO>> GetAll(int pageNumber, int pageSize)
         {
             return await WithConnection(async connection =>
             {
-                var orders = await connection.QueryAsync<OrderDTO>("GetOrderInfo", null, commandType: CommandType.StoredProcedure);
+                var parameter = new DynamicParameters();
+                parameter.Add("pageNumber", pageNumber, DbType.Int32);
+                parameter.Add("pageSize", pageSize, DbType.Int32);
+                var orders = await connection.QueryAsync<OrderDTO>("GetOrderInfo", param: parameter, commandType: CommandType.StoredProcedure);
                 return orders.ToList();
             });
         }
@@ -56,6 +59,15 @@ namespace Repositories.Implements
                 var parameter = new DynamicParameters();
                 parameter.Add("orderId", id, DbType.Int32);
                 await connection.ExecuteAsync("ShippingOrder", param: parameter, commandType: CommandType.StoredProcedure);
+            });
+        }
+
+        public async Task<int> TotalOrder()
+        {
+            return await WithConnection(async connection =>
+            {
+                int orders = (int) await connection.ExecuteScalarAsync("TotalOrder", null, commandType: CommandType.StoredProcedure);
+                return orders;
             });
         }
     }

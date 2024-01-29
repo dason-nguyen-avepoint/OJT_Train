@@ -18,11 +18,14 @@ namespace Repositories.Implements
             });
         }
 
-        public async Task<IEnumerable<AccountManageDTO>> GetAll()
+        public async Task<IEnumerable<AccountManageDTO>> GetAll(int pageNumber, int pageSize)
         {
             return await WithConnection(async connection =>
-            {
-                var accounts = await connection.QueryAsync<AccountManageDTO>("GetAccountInfo", null, commandType: CommandType.StoredProcedure);
+            { 
+                var parameter = new DynamicParameters();
+                parameter.Add("pageNumber", pageNumber, DbType.Int32);
+                parameter.Add("pageSize", pageSize, DbType.Int32);
+                var accounts = await connection.QueryAsync<AccountManageDTO>("GetAccountInfo", param:parameter, commandType: CommandType.StoredProcedure);
                 return accounts.ToList();
             });
         }
@@ -44,6 +47,15 @@ namespace Repositories.Implements
             {
                 var roles = await connection.QueryAsync<RoleDTO>("GetRole", null, commandType: CommandType.StoredProcedure);
                 return roles.ToList();
+            });
+        }
+
+        public async Task<int> TotalAccount()
+        {
+            return await WithConnection(async connection =>
+            {
+                int totalAccont = (int) await connection.ExecuteScalarAsync("TotalAccount", null, commandType: CommandType.StoredProcedure);
+                return totalAccont;
             });
         }
 

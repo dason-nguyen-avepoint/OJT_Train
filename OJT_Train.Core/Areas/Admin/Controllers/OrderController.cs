@@ -11,25 +11,27 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
         {
             _repo = repo;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index(int pageNumber = 1)
         {
-            return View();
+            int pageSize = 3;
+            ViewBag.CurrentPage = pageNumber;
+            ViewBag.TotalOrders = (int)Math.Ceiling((await _repo.TotalOrder()) / (double)pageSize);
+            var order = await _repo.GetAll(pageNumber, pageSize);
+            return View(order);
         }
-        public async Task<IActionResult> GetOrders()
+        [HttpPut]
+        public async Task<IActionResult> OrderDetails([FromBody] int orderId)
         {
-            var order = await _repo.GetAll();
-            return Json(order);
+            var orderDetail = await _repo.GetOrderDetail(orderId);
+            ViewBag.Order = await _repo.GetById(orderId);
+            var response = new {success = true, order = ViewBag.Order, orderDetail = orderDetail};
+            return Json(response);
         }
-        public async Task<IActionResult> OrderDetails(int Id)
-        {
-            var orderDetails = await _repo.GetOrderDetail(Id);
-            ViewBag.Order = await _repo.GetById(Id);
-            return View(orderDetails);
-        }
-        public IActionResult ShippingOrder(int Id)
+        [HttpPut]
+        public IActionResult ShippingOrder([FromBody] int Id)
         {
             _repo.ShippingOrder(Id);
-            return RedirectToAction("Index");
+            return Json(new { success = true });
         }
         [HttpPut]
         public IActionResult DeleteOrder([FromBody] int Id)

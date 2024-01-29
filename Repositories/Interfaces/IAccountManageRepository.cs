@@ -9,10 +9,11 @@ namespace Repositories.Interfaces
 {
     public interface IAccountManageRepository
     {
-        Task<IEnumerable<AccountManageDTO>> GetAll();
+        Task<IEnumerable<AccountManageDTO>> GetAll(int pageNumber, int pageSize);
         Task<AccountManageDTO> GetById(int id);
         void Update(AccountManageDTO account);
         void Delete(int id);
         Task<IEnumerable<RoleDTO>> GetRole();
+        Task<int> TotalAccount();
     }
 }

@@ -13,24 +13,27 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
         {
             _repo = repo;
         }
-        private async Task<IActionResult> CheckAdminAccess()
-        {
-            if (HttpContext.Session.GetString("RoleName") != "Admin")
-            {
-                return RedirectToAction("Unauthorized", "Error");
-            }
+        //private async Task<IActionResult> CheckAdminAccess()
+        //{
+        //    if (HttpContext.Session.GetString("RoleName") != "Admin")
+        //    {
+        //        return RedirectToAction("Unauthorized", "Error");
+        //    }
 
-            return null;
-        }
-        public async Task<IActionResult> Index()
+        //    return null;
+        //}
+        public async Task<IActionResult> Index(int pageNumber = 1)
         {
             //var accessResult = await CheckAdminAccess();
             //if (accessResult != null)
             //{
             //    return accessResult;
             //}
+            int pageSize = 3;
+            ViewBag.CurrentPage = pageNumber;
+            ViewBag.TotalAccounts = (int) Math.Ceiling((await _repo.TotalAccount()) / (double)pageSize);
             ViewBag.GetRoles = await _repo.GetRole();
-            var accounts = await _repo.GetAll();
+            var accounts = await _repo.GetAll(pageNumber, pageSize);
             return View(accounts);
         }
         [HttpPut]
