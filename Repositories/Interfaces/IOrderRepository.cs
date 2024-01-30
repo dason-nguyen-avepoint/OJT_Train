@@ -13,6 +13,9 @@ namespace Repositories.Interfaces
         Task<OrderById> GetById(int id);
         void ShippingOrder(int id);
         Task<IEnumerable<OrderDetail>> GetOrderDetail(int id);
+        //Task<int> UspOrder(int orderPrice, int userID, string createBy, string address);
+        void AddOrderandOrderDetail(decimal OrderPrice, string CreatedBy, string Address, int UserID, List<OrderU> model);
+	}
         void DeleteOrder(int id);
         Task<int> TotalOrder();
     }

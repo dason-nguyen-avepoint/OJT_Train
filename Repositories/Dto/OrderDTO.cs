@@ -1,6 +1,6 @@
 ﻿namespace Repositories.Dto
 {
-    public  class OrderDTO
+    public class OrderDTO
     {
         public int OrderId { get; set; }
         public long OrderPrice { get; set; }
@@ -19,7 +19,7 @@
         public int OrderDetailId { get; set; }
         public long ProductId { get; set; }
         public string? ProductName { get; set; }
-        public string? ImageProduct {  get; set; }
+        public string? ImageProduct { get; set; }
         public int Quantity { get; set; }
         public long Price { get; set; }
         public int OrderId { get; set; }
@@ -40,5 +40,12 @@
         public string? UserAddress { get; set; }
         public string? Phone { get; set; }
     }
+    public class OrderU
+    {
+		public int ProductID { get; set; }
+		public Nullable<long> Price { get; set; }
+		public Nullable<int> Quantity { get; set; }
 
+		public int UserID { get; set; }
+	}
 }

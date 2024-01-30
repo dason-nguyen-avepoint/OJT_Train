@@ -9,7 +9,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.IdleTimeout = TimeSpan.FromMinutes(50);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
@@ -21,7 +21,6 @@ builder.Services.AddScoped<IThongKeRepository, ThongKeRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
-builder.Services.AddScoped<IAccountManageRepository, AccountManageRepository>();
 builder.Services.AddControllers().AddNewtonsoftJson();
 
 var app = builder.Build();

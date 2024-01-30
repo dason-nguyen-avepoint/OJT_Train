@@ -67,4 +67,9 @@ namespace OJT_Train.Core.Areas.User.Models
 		public int UserExists { get; set; }
 		public string? Password { get; set; }
 	}
+
+	public class UserInfoPayment
+	{
+
+	}
 }
