@@ -388,6 +388,47 @@ begin
 end;
 GO
 
+--create orderandorderdetail
+ALTER PROCEDURE UspAddOrderAndOrderDetail
+    @OrderPrice decimal,
+    @CreatedBy NVARCHAR(50),
+    @Address NVARCHAR(200),
+    @UserID INT,
+    @Jinput NVARCHAR(MAX)
+AS
+BEGIN
+    DECLARE @OrderID INT;
+    INSERT INTO [ORDER] (OrderPrice, CreatedDate, CreatedBy, [Address], UserID, OrderStatus, IsDeleted)
+    VALUES (@OrderPrice, GETDATE(), @CreatedBy, @Address, @UserID, N'Đã đặt hàng', 0);
+
+    SET @OrderID = SCOPE_IDENTITY();
+
+    INSERT INTO ORDERDETAIL (ProductID, Quantity, Price, OrderID)
+    SELECT 
+        ProductID,
+        Quantity,
+        Price,
+        @OrderID
+    FROM OPENJSON(@Jinput)
+    WITH (
+        PRODUCTID INT '$.PRODUCTID',
+		QUANTITY INT '$.QUANTITY',
+		PRICE bigint '$.PRICE'
+    );
+END;
+GO
+
+--create proc UspGetPromotionu
+create proc UspGetPromotionu
+@Promotioncode varchar(100)
+as
+begin
+select pro.PROMOTIONCODE,pro.PROMOTIONVALUE
+from PROMOTION pro
+where pro.PROMOTIONCODE=@Promotioncode and pro.ISDELETED='false'
+end;
+GO
+
 ---admin
 
 
