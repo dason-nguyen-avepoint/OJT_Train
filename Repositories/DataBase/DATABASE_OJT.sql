@@ -415,6 +415,18 @@ BEGIN
 		QUANTITY INT '$.QUANTITY',
 		PRICE bigint '$.PRICE'
     );
+	 UPDATE S
+    SET S.QUANTITY = S.QUANTITY - OD.QUANTITY
+    FROM SALE S
+    INNER JOIN (
+        SELECT ProductID, SUM(Quantity) AS QUANTITY
+        FROM OPENJSON(@Jinput)
+        WITH (
+            PRODUCTID INT '$.PRODUCTID',
+            QUANTITY INT '$.QUANTITY'
+        )
+        GROUP BY ProductID
+    ) OD ON S.PRODUCTID = OD.PRODUCTID;
 END;
 GO
 

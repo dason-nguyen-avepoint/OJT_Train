@@ -14,8 +14,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="wwwroot\userStyle\img\electro-master\electro-master\.vscode\settings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="Areas\User\Views\Home\ForgetPassword.cshtml" />
-    <None Include="Areas\User\Views\Home\Index.cshtml" />
     <None Include="Areas\User\Views\Home\Login.cshtml" />
     <None Include="Areas\User\Views\Home\Register.cshtml" />
     <None Include="Areas\User\Views\Product\ViewProductByCategory.cshtml" />
@@ -31,6 +34,17 @@
     <None Include="wwwroot\userStyle\fonts\fontawesome-webfont.svg" />
     <None Include="wwwroot\userStyle\fonts\fontawesome-webfont.woff2" />
     <None Include="wwwroot\userStyle\fonts\slick.svg" />
+    <None Include="wwwroot\userStyle\img\electro-master\electro-master\.gitattributes" />
+    <None Include="wwwroot\userStyle\img\electro-master\electro-master\fonts\fontawesome-webfont.svg" />
+    <None Include="wwwroot\userStyle\img\electro-master\electro-master\fonts\fontawesome-webfont.woff2" />
+    <None Include="wwwroot\userStyle\img\electro-master\electro-master\fonts\slick.svg" />
+    <None Include="wwwroot\userStyle\img\electro-master\electro-master\js\bootstrap.min.js" />
+    <None Include="wwwroot\userStyle\img\electro-master\electro-master\js\jquery.min.js" />
+    <None Include="wwwroot\userStyle\img\electro-master\electro-master\js\jquery.zoom.min.js" />
+    <None Include="wwwroot\userStyle\img\electro-master\electro-master\js\main.js" />
+    <None Include="wwwroot\userStyle\img\electro-master\electro-master\js\nouislider.min.js" />
+    <None Include="wwwroot\userStyle\img\electro-master\electro-master\js\slick.min.js" />
+    <None Include="wwwroot\userStyle\img\electro-master\electro-master\README.md" />
     <None Include="wwwroot\userStyle\js\bootstrap.min.js" />
     <None Include="wwwroot\userStyle\js\jquery.min.js" />
     <None Include="wwwroot\userStyle\js\jquery.zoom.min.js" />
