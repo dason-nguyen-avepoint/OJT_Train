@@ -86,7 +86,8 @@ namespace OJT_Train.Core.Areas.User.Controllers
 
 		public async Task<ActionResult> AddToCart(int productID)
 		{
-			try
+             Console.WriteLine(productID);
+            try
 			{
 				int userId = Convert.ToInt32(HttpContext.Session.GetInt32("UserID"));
 				var productdetail = await _productRepository.GetProductByID(productID);
