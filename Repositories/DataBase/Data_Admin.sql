@@ -39,3 +39,41 @@ INSERT INTO [ORDERDETAIL] VALUES (1,1,24590000,4);
 INSERT INTO [ORDER] VALUES (24590000,GETDATE(),NULL,'User1@gmail.com',NULL,N'01 Nguyễn Hữu Thọ',NULL,N'Đã đặt hàng','False',2);
 INSERT INTO [ORDERDETAIL] VALUES (1,1,24590000,5);
 GO
+---
+
+
+CREATE PROCEDURE GetUserInfo @PageNumber INT, @PageSize INT, @searchBy NVARCHAR(100)
+AS
+BEGIN
+	DECLARE @Offset INT;
+	SET @Offset = (@PageNumber - 1) * @PageSize;
+	IF @searchBy IS NULL
+		BEGIN
+			SELECT A.*,B.ROLENAME FROM ACCOUNT AS A 
+			JOIN [ROLE] AS B 
+			ON A.ROLEID = B.ROLEID WHERE B.ROLENAME = 'User'
+			ORDER BY A.USERID
+			OFFSET @Offset ROWS
+			FETCH NEXT @PageSize ROWS ONLY;
+		END
+	ELSE
+		BEGIN
+			SET @searchBy = '%' + @searchBy + '%';
+			SELECT A.*,B.ROLENAME FROM ACCOUNT AS A 
+			JOIN [ROLE] AS B 
+			ON A.ROLEID = B.ROLEID 
+			WHERE B.ROLENAME = 'User'
+			AND (A.FULLNAME LIKE @searchBy
+			   OR A.EMAIL LIKE @searchBy
+			   OR A.PHONE LIKE @searchBy
+			   OR A.[ADDRESS] LIKE @searchBy)
+			ORDER BY A.USERID
+			OFFSET @Offset ROWS
+			FETCH NEXT @PageSize ROWS ONLY;
+		END
+	
+END;
+GO
+
+EXEC GetUserInfo @PageNumber =1, @PageSize =3, @searchBy = 'User1@gmail.com';
+

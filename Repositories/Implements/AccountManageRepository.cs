@@ -50,12 +50,28 @@ namespace Repositories.Implements
             });
         }
 
-        public async Task<int> TotalAccount()
+        public async Task<IEnumerable<AccountManageDTO>> InfoUsers(int pageNumber, int pageSize, string searchBy)
         {
             return await WithConnection(async connection =>
             {
-                int totalAccont = (int) await connection.ExecuteScalarAsync("TotalAccount", null, commandType: CommandType.StoredProcedure);
-                return totalAccont;
+                var parameter = new DynamicParameters();
+                parameter.Add("pageNumber", pageNumber, DbType.Int32);
+                parameter.Add("pageSize", pageSize, DbType.Int32);
+                parameter.Add("searchBy", searchBy);
+                var users = await connection.QueryAsync<AccountManageDTO>("GetUserInfo", param: parameter, commandType: CommandType.StoredProcedure);
+                return users.ToList();
+            });
+        }
+
+        public async Task<int> TotalAccount(string? role, string? searchBy)
+        {
+            return await WithConnection(async connection =>
+            {
+                var parameter = new DynamicParameters();
+                parameter.Add("role", role);
+                parameter.Add("searchBy", searchBy);
+                int totalAccount = (int)await connection.ExecuteScalarAsync("TotalAccount", param: parameter, commandType: CommandType.StoredProcedure);
+                return totalAccount;
             });
         }
 

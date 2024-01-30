@@ -37,18 +37,17 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-app.UseRouting();
+//app.UseRouting();
 
 app.UseSession();
 app.UseAuthorization();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{area=User}/{controller=Home}/{action=Index}/{id?}");
 app.MapAreaControllerRoute(
     areaName: "Admin",
     name: "Admin",
     pattern: "{area=Admin}/{controller=Manager}/{action=Index}/{id?}");
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{area=User}/{controller=Home}/{action=Index}/{id?}");
 app.MapControllerRoute(
     name: "error",
     pattern: "{controller=Error}/{action=Unauthorized}");

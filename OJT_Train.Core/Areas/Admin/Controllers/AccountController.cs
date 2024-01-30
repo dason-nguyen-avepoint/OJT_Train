@@ -31,10 +31,10 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
             //}
             int pageSize = 3;
             ViewBag.CurrentPage = pageNumber;
-            ViewBag.TotalAccounts = (int) Math.Ceiling((await _repo.TotalAccount()) / (double)pageSize);
+            ViewBag.TotalAccounts = (int) Math.Ceiling((await _repo.TotalAccount(null,null)) / (double)pageSize);
             ViewBag.GetRoles = await _repo.GetRole();
-            var accounts = await _repo.GetAll(pageNumber, pageSize);
-            return View(accounts);
+            //var accounts = await _repo.GetAll(pageNumber, pageSize);
+            return View(new List<AccountManageDTO>());
         }
         [HttpPut]
         public IActionResult EditAccount([FromBody] AccountManageDTO account)

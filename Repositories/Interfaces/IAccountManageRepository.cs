@@ -14,6 +14,7 @@ namespace Repositories.Interfaces
         void Update(AccountManageDTO account);
         void Delete(int id);
         Task<IEnumerable<RoleDTO>> GetRole();
-        Task<int> TotalAccount();
+        Task<int> TotalAccount(string? role, string? searchBy);
+        Task<IEnumerable<AccountManageDTO>> InfoUsers(int pageNumber, int pageSize, string searchBy);
     }
 }
