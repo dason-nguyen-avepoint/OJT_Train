@@ -21,6 +21,7 @@ builder.Services.AddScoped<IThongKeRepository, ThongKeRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<IAccountManageRepository, AccountManageRepository>();
 builder.Services.AddControllers().AddNewtonsoftJson();
 
 var app = builder.Build();
@@ -48,5 +49,7 @@ app.MapAreaControllerRoute(
     areaName: "Admin",
     name: "Admin",
     pattern: "{area=Admin}/{controller=Manager}/{action=Index}/{id?}");
-
+app.MapControllerRoute(
+    name: "error",
+    pattern: "{controller=Error}/{action=Unauthorized}");
 app.Run();

@@ -1,0 +1,346 @@
+﻿@model IEnumerable<AccountManageDTO>
+<style>
+    th, tr {
+        text-align: center;
+    }
+</style>
+<h2 class="text-center font-weight-bold my-3">Quản lý thông tin tài khoản</h2>
+<table class="table table-bordered mx-2">
+    <thead>
+        <tr>
+            <th class="col-1">#</th>
+            <th class="col-2">Tên tài khoản</th>
+            <th class="col-2">Địa chỉ Email</th>
+            <th class="col-2">Vai trò</th>
+            <th class="col-2">Trạng thái</th>
+            <th class="col-3"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <th scope="row">@item.UserId</th>
+                <td>@item.UserName</td>
+                <td>@item.Email</td>
+                @if (item.RoleName == "Admin")
+                {
+                    <td>Quản trị viên</td>
+                }
+                else
+                {
+                    <td>Người dùng</td>
+                }
+                <td>
+                    @if (item.IsDeleted)
+                    {
+                        <span class="text-danger mt-2">Đã xoá</span>
+                    }
+                    else if (item.IsBlocked)
+                    {
+                        <span class="text-warning">Đang tạm khoá</span>
+                    }
+                    else if (item.IsActived)
+                    {
+                        <span class="text-success">Đã kích hoạt</span>
+                    }
+                    else
+                    {
+                        <span class="text-warning">Chưa kích hoạt</span>
+                    }
+                </td>
+                <td>
+                    @if (!item.IsDeleted)
+                    {
+                        <div class="d-flex justify-content-center align-items-center">
+                            <button class="btn btn-primary" style="width:140px; margin-right:10px"
+                               data-toggle="modal"
+                               data-target="#editModal"
+                               onclick="openEditModal(
+                                @item.UserId, '@item.UserName', '@item.FullName', '@item.Email', '@item.Phone','@item.DateOfBirth',
+                                '@item.Address','@item.IsBlocked','@item.IsActived','@item.TimeStamp', '@item.RoleId', '@item.RoleName'
+                        )">
+                                Sửa
+                            </button>
+                            <button class="btn btn-danger" style="width:140px;margin-right:10px" onclick="deleteAccount(@item.UserId)">Xoá</button>
+                            @if (item.IsBlocked)
+                            {
+                                <button class="btn btn-success" style="width:140px" data-toggle="modal" data-target="#blockModal" onclick="openBlockedAccount(@item.UserId)">Mở khoá</button>
+                            }
+                            else
+                            {
+                            <button class="btn btn-warning" style="width:140px" data-toggle="modal" data-target="#blockModal" onclick="openBlockModal(@item.UserId)">
+                                Khoá tài khoản
+                            </button>
+                            }
+                        </div>
+                        
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+    @* POP UP EDITOR *@
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Cập nhật tài khoản</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="editUserName">Tên đăng nhập:</label>
+                            <input type="text" class="form-control" id="editUserName" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="editFullName">Tên đầy đủ:</label>
+                            <input type="text" class="form-control" id="editFullName" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="editEmail">Địa chỉ Email:</label>
+                            <input type="email" class="form-control" id="editEmail" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="editPhone">Số điện thoại:</label>
+                            <input type="text" class="form-control" id="editPhone" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="editAddress">Địa chỉ:</label>
+                            <input type="text" class="form-control" id="editAddress" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="editRoleId">Vai trò:</label>
+                            <select id="chooseRole">
+                                <option value="" disabled selected id="defaultRole">Chọn vai trò</option>
+                                @foreach (var item in ViewBag.GetRoles)
+                                {
+                                    <option value="@item.RoleId" data-role="@item.RoleName">@item.RoleName</option>
+                                }
+                            </select>
+                        </div>
+                        <input type="hidden" id="editUserId">
+                        <input type="hidden" id="editDOB">
+                        <input type="hidden" id="editTimeStamp">
+                        <input type="hidden" id="editIsActived">
+                        <input type="hidden" id="editIsBlocked">
+                        <input type="hidden" id="editRoleId">
+                        <input type="hidden" id="editRoleName">
+
+                        <button type="submit" class="btn btn-primary" style="width:140px" onclick="saveChanges()">Lưu</button>
+                        <button type="button" class="btn btn-danger" style="width:140px" onclick="closeChanges()">Thoát</button>
+                        
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    @* POP UP BLOCK ACCOUNT *@
+    <div class="modal fade" id="blockModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Khoá tài khoản</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <span>Bạn muốn khoá tài khoản trong bao lâu?</span>
+                            <select class="form-select" aria-label="Default select example" style="text-align:center" id="timeSelect">
+                                    <option selected disabled value="0">-- Time Option --</option>
+                                    <option value="3">3 phút</option>
+                                    <option value="5">5 phút</option>
+                                    <option value="10">10 phút</option>
+                            </select>
+                            <span id="validTime" style="color:red; display:none">Vui lòng chọn 1 tuỳ chọn thời gian.</span>
+                        </div>
+                        <input type="hidden" id="editUserId">
+                        <button type="submit" class="btn btn-primary" style="width:140px" onclick="blockAccount(event)">Thực hiện</button>
+                        <button type="button" class="btn btn-danger" style="width:140px" onclick="closeBlock()">Thoát</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</table>
+
+<nav aria-label="Page navigation example" class="mx-2">
+    <ul class="pagination">
+        @if (ViewBag.CurrentPage == 1)
+        {
+            <li class="page-item disabled"><a class="page-link">Previous</a></li>
+        }
+        else
+        {
+            <li class="page-item"><a class="page-link" asp-area="Admin" asp-controller="Account" asp-action="Index" asp-route-pageNumber="@(ViewBag.CurrentPage - 1)">Previous</a></li>
+        }
+        @for (int i = 1; i <= ViewBag.TotalAccounts; i++)
+        {
+            <li class="page-item"><a class="page-link" asp-area="Admin" asp-controller="Account" asp-action="Index" asp-route-pageNumber="@i">@i</a></li>
+        }
+        @if (ViewBag.CurrentPage == ViewBag.TotalAccounts)
+        {
+            <li class="page-item disabled"><a class="page-link">Next</a></li>
+        }
+        else
+        {
+            <li class="page-item"><a class="page-link" asp-area="Admin" asp-controller="Account" asp-action="Index" asp-route-pageNumber="@(ViewBag.CurrentPage + 1)">Next</a></li>
+        }
+    </ul>
+</nav>
+
+@section Scripts {
+    <script>
+        var selectedTime = $("#timeSelect").prop("value");
+
+        function openBlockModal(userId) {
+            $("#editUserId").val(userId);
+            $("#blockModal").modal("show");
+        }
+        function blockAccount(e) {
+            e.preventDefault();
+            var blockUserId = $("#editUserId").val();
+            var timeBlock = $("#timeSelect").prop("value");
+            if (timeBlock === "0") {
+                $('#validTime').show();
+            } else 
+            {
+                $('#validTime').hide();
+                var object = {
+                    userId : blockUserId,
+                    timeBlock : timeBlock,
+                    isBlocked : "True"
+                }
+                $.ajax({
+                    type: 'PUT',
+                    url: "https://localhost:7258/admin/account/blockaccount",
+                    contentType: 'application/json',
+                    data: JSON.stringify(object),
+                    success: function () {
+                        $("#blockModal").modal("hide");
+                        location.reload();
+                    },
+                    error: function (error) {
+                        console.error('Error sending data to server:', error);
+                    }
+                });
+            }
+        }
+        
+        function openEditModal(userId, userName, fullName, email, phone, dateOfBirth, address, isBlocked, isActived, timeStamp, roleId, roleName) {
+            $("#editUserId").val(userId);
+            $("#editUserName").val(userName);
+            $("#editFullName").val(fullName);
+            $("#editEmail").val(email);
+            $("#editPhone").val(phone);
+            $("#editDOB").val(dateOfBirth);
+            $("#editAddress").val(address);
+            $("#editIsBlocked").val(isBlocked);
+            $("#editIsActived").val(isActived);
+            $("#editTimeStamp").val(timeStamp);
+            $("#editRoleId").val(roleId);
+            $("#editRoleName").val(roleName);
+            $("#chooseRole").val(roleId);
+            $("#defaultRole").data("role", roleName);
+            $("#editModal").modal("show");
+        }
+        function openBlockedAccount(blockedUserId) {
+            console.log(blockedUserId);
+            var object = {
+                userId: blockedUserId,
+                timeBlock: 0,
+                isBlocked: "False"
+            }
+            var confirmOpen = confirm("Bạn muốn mở khoá cho tài khoản này?");
+            if (confirmOpen) {
+                $.ajax({
+                    type: 'PUT',
+                    url: "https://localhost:7258/admin/account/blockaccount",
+                    contentType: 'application/json',
+                    data: JSON.stringify(object),
+                    success: function () {
+                        location.reload();
+                    },
+                    error: function (error) {
+                        console.error('Error sending data to server:', error);
+                    }
+                });
+            }
+        }
+        function deleteAccount(userId) {
+            var confirmDelete = confirm("Bạn có chắc chắn muốn xoá tài khoản này?");
+            if (confirmDelete) {
+                $.ajax({
+                    type: 'PUT',
+                    url: "https://localhost:7258/admin/account/deleteaccount/",
+                    contentType: 'application/json',
+                    data: JSON.stringify(userId),
+                    success: function () {
+                        location.reload();
+                    },
+                    error: function (error) {
+                        console.error('Error sending data to server:', error);
+                    }
+                });
+            }
+        }
+
+        function saveChanges() {
+            // Collect data from form fields
+            var editUserId = $("#editUserId").val();
+            var editUserName = $("#editUserName").val();
+            var editFullName = $("#editFullName").val();
+            var editEmail = $("#editEmail").val();
+            var editPhone = $("#editPhone").val();
+            var editAddress = $("#editAddress").val();
+            var editDOB = $("#editDOB").val();
+            var editBlocked = $("#editIsBlocked").val();
+            var editActived = $("#editIsActived").val();
+            var editTimeStamp = $("#editTimeStamp").val();
+            var editRoleId =  $("#chooseRole").val();
+            // Create an object with the data
+            var userData = {
+                userId: editUserId,
+                userName: editUserName,
+                fullName: editFullName,
+                email: editEmail,
+                phone: editPhone,
+                address: editAddress,
+                dateOfBirth: editDOB,
+                isBlocked : editBlocked,
+                isActived : editActived,
+                timeStamp : editTimeStamp,
+                roleId : editRoleId,
+                //roleName : editRoleName
+            };
+            $.ajax({
+                type: 'PUT',
+                url: "https://localhost:7258/admin/account/editaccount",
+                contentType: 'application/json',
+                data: JSON.stringify(userData),
+                success: function () {
+                    $("#editModal").modal("hide");
+                    location.reload();
+                },
+                error: function (error) {
+                    console.error('Error sending data to server:', error);
+                }
+            });
+        }
+        function closeBlock() {
+            $("#timeSelect").val(selectedTime);
+            $('#validTime').hide();
+            $("#blockModal").modal("hide");
+        }
+        function closeChanges() {
+            $("#editModal").modal("hide");
+        }
+    </script>
+
+}

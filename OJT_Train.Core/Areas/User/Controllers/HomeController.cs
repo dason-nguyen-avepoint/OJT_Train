@@ -32,7 +32,8 @@ namespace OJT_Train.Core.Areas.User.Controllers
 			}
 			else
 			{
-				return RedirectToAction("Index", "Home");
+                //HttpContext.SetRoles(new[] { HttpContext.Session.GetString("RoleName") });
+                return RedirectToAction("Index", "Home");
 			}
 		}
 
@@ -52,7 +53,10 @@ namespace OJT_Train.Core.Areas.User.Controllers
 			else
 			{
 				HttpContext.Session.SetInt32("UserID", account.UserID);
-				return Ok(new { status = true, message = "Login successful" });
+                // SET ROLE NAME
+                HttpContext.Session.SetString("RoleName", "Admin");
+                
+                return Ok(new { status = true, message = "Login successful" });
 			}
 		}
 		[HttpGet]
