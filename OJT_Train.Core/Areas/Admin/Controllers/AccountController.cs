@@ -33,8 +33,9 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
             ViewBag.CurrentPage = pageNumber;
             ViewBag.TotalAccounts = (int) Math.Ceiling((await _repo.TotalAccount(null,null)) / (double)pageSize);
             ViewBag.GetRoles = await _repo.GetRole();
-            //var accounts = await _repo.GetAll(pageNumber, pageSize);
-            return View(new List<AccountManageDTO>());
+            var accounts = await _repo.GetAll(pageNumber, pageSize);
+            return View(accounts);
+            //return View(new List<AccountManageDTO>());
         }
         [HttpPut]
         public IActionResult EditAccount([FromBody] AccountManageDTO account)

@@ -18,7 +18,6 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
             var users = await _repo.InfoUsers(pageNumber, pageSize, searchBy);
             ViewBag.CurrentPage = pageNumber;
             ViewBag.TotalUsers = (int)Math.Ceiling((await _repo.TotalAccount("User",searchBy)) / (double)pageSize);
-
             return View(users);
         }
     }

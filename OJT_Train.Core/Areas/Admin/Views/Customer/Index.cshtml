@@ -34,7 +34,7 @@
 </div>
 
 
-@* <nav aria-label="Page navigation example" class="mx-2 ml-4">
+<nav aria-label="Page navigation example" class="mx-2 ml-4">
     <ul class="pagination">
         @if (ViewBag.CurrentPage == 1)
         {
@@ -57,22 +57,16 @@
             <li class="page-item"><a class="page-link" asp-area="Admin" asp-controller="Customer" asp-action="Index" asp-route-pageNumber="@(ViewBag.CurrentPage + 1)">Next</a></li>
         }
     </ul>
-</nav> *@
+</nav>
 @section Scripts {
     <script>
-        console.log('asdlo')
         function submitForm() {
             var searchBy = document.getElementById("searchInput").value;
-            console.log('functiom chay')
             $.ajax({
                 url: "https://localhost:7258/admin/Customer/Index/",
                 contentType: 'application/json',
                 data: { searchBy: searchBy }
-                success: function (response) {
-
-                }
             })
-            
         }
     </script>
 }
