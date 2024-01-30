@@ -62,10 +62,34 @@
     <script>
         function submitForm() {
             var searchBy = document.getElementById("searchInput").value;
+            // if (searchBy === null) {
+                
+            // }
             $.ajax({
                 url: "https://localhost:7258/admin/Customer/Index/",
                 contentType: 'application/json',
-                data: { searchBy: searchBy }
+                data: { searchBy: searchBy },
+                success: function (response) {
+                    console.log(response);
+                    var tableBody = $("tbody");
+                    tableBody.empty();
+                    $.each(response.users, function (index, user) {
+                        var row = "<tr class='text-center'>" +
+                            "<td>" + user.fullName + "</td>" +
+                            "<td>" + user.email + "</td>" +
+                            "<td>" + user.phone + "</td>" +
+                            "<td>" + user.address + "</td>" +
+                            "<td><button class='btn btn-outline-info' onclick='UserDetail(" + user.userId + ")'>Chi tiết</button></td>" +
+                            "</tr>";
+                        tableBody.append(row);
+                    });
+                    var pagination = $(".pagination");
+                    pagination.empty();
+                    for (var i = 1; i <= response.totalPages; i++) {
+                        var pageLink = "<li class='page-item'><a class='page-link' href='/admin/Customer/Index?pageNumber=" + i + "'>" + i + "</a></li>";
+                        pagination.append(pageLink);
+                    }
+                }
             })
         }
     </script>

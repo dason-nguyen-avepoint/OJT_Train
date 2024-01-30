@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Repositories.Dto;
 using Repositories.Interfaces;
 
 namespace OJT_Train.Core.Areas.Admin.Controllers
@@ -18,7 +19,16 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
             var users = await _repo.InfoUsers(pageNumber, pageSize, searchBy);
             ViewBag.CurrentPage = pageNumber;
             ViewBag.TotalUsers = (int)Math.Ceiling((await _repo.TotalAccount("User",searchBy)) / (double)pageSize);
-            return View(users);
+            if(searchBy == null)
+            {
+                return View(users);   
+            }
+            else
+            {
+                var response = new { success = true, users = users, totalPages = ViewBag.TotalUsers, searchBy = searchBy, currentPage = ViewBag.CurrentPage };
+                return Json(response);
+            }
+            
         }
     }
 }
