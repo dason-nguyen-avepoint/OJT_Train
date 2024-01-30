@@ -1,9 +1,9 @@
 ﻿@using OJT_Train.Core.Areas.User.Models
 @model X.PagedList.IPagedList<Product>;
-@* @model IEnumerable<Product>; *@
 @using X.PagedList.Mvc.Core;
 @{
     var listCategory = ViewBag.listCate as List<Category>;
+    var userid = Context.Session.GetInt32("UserID");
 }
 <div class="section">
     <div class="container">
@@ -44,7 +44,14 @@
                                    
                                 </div>
                                 <div class="add-to-cart">
-                                    <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+                                    @if (userid == null)
+                                    {
+                                        <a class="add-to-cart-btn login" asp-action="Login" asp-controller="Home"><i class="fa fa-shopping-cart"></i> add to cart</a>
+                                    }
+                                    else
+                                    {
+                                        <button class="add-to-cart-btn addToCart" data-product-id="@product.ProductId"><i class="fa fa-shopping-cart"></i> add to cart</button>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -59,3 +66,23 @@
     </div>
 </div>
 <br />
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".addToCart").click(function (e) {
+            e.preventDefault();
+            var productId = $(this).data("product-id");
+            $.ajax({
+                url: '/User/Cart/AddToCart',
+                type: "POST",
+                data: {
+                    productID: productId,
+                },
+                success: function (result) {
+                },
+                error: function (result) {
+                    alert('error');
+                }
+            });
+        });
+    });
+</script>

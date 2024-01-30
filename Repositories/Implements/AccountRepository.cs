@@ -71,6 +71,41 @@ namespace Repositories.Implements
                 return result;
 			});	
 		}
+		public async void UpdateProfile(AccountDTO model)
+		{
+			await WithConnection(async connection =>
+			{
+				DynamicParameters parameters = new DynamicParameters();
+				parameters.Add("UserId", model.UserID);
+				parameters.Add("Fullname", model.FullName);
+				parameters.Add("Phone", model.Phone);
+				parameters.Add("Address", model.Address);
+				parameters.Add("DateOfBirth", model.DateOfBirth);
+				parameters.Add("Password", model.Password);
+				await connection.ExecuteAsync(StoreProcedureAccount.UspUpdateInformation, param: parameters, commandType: CommandType.StoredProcedure);
+			});
+		}
+		public async Task ActivedAccount(int? id)
+		{
+			await WithConnection(async connection =>
+			{
+				DynamicParameters parameters = new DynamicParameters();
+				parameters.Add("UserId", id);
+				await connection.ExecuteAsync(StoreProcedureAccount.UspUpdateActiveAccount, param: parameters, commandType: CommandType.StoredProcedure);
+			});
+		}
+
+		public async Task<int> Uspgetuseridbyemail(AccountDTO model)
+		{
+			return await WithConnection(async connection =>
+			{
+				DynamicParameters parameters = new DynamicParameters();
+				parameters.Add("Email", model.Email);
+				int check = await connection.ExecuteScalarAsync<int>(StoreProcedureAccount.Uspgetuseridbyemail, param: parameters, commandType: CommandType.StoredProcedure);
+				return check;
+			});
+		}
+
 
 	}
 }

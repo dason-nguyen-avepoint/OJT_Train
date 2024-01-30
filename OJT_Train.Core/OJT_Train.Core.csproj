@@ -14,7 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Areas\User\Views\Comment\_CommentPartial.cshtml" />
     <None Include="Areas\User\Views\Home\ForgetPassword.cshtml" />
     <None Include="Areas\User\Views\Home\Index.cshtml" />
     <None Include="Areas\User\Views\Home\Login.cshtml" />
@@ -26,7 +25,6 @@
     <None Include="Areas\User\Views\Shared\_Header.cshtml" />
     <None Include="Areas\User\Views\Shared\_Layout.cshtml" />
     <None Include="Areas\User\Views\Shared\_ValidationScriptsPartial.cshtml" />
-    <None Include="Areas\User\Views\User\ProfileUser.cshtml" />
     <None Include="Areas\User\Views\_ViewImports.cshtml" />
     <None Include="Areas\User\Views\_ViewStart.cshtml" />
     <None Include="wwwroot\userStyle\css\cdn-cgi\scripts\5c5dd728\cloudflare-static\email-decode.min.js" />
@@ -53,6 +51,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Repositories\Repositories.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\User\Views\Comment\" />
   </ItemGroup>
 
 </Project>

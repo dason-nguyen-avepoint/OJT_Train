@@ -2,31 +2,22 @@
 @model X.PagedList.IPagedList<Product>;
 @using X.PagedList.Mvc.Core;
 @{
+    var searchinput = ViewBag.search as string; 
     var userid = Context.Session.GetInt32("UserID");
-    var listCategory = ViewBag.listCate as List<Category>;
 }
+<div class="row pt-4 pb-4">
+    <form asp-action="GetProductByCategory" method="get">
+        <label>Nhập tên sản phẩm bạn cần tìm:</label>
+        <input type="text" name="name" />
+        <button class="btn btn-group border-1 btn-outline-primary">tìm</button>
+    </form>
+</div>
 <div class="section">
     <div class="container">
         <div class="row">
-            <div id="aside" class="col-md-3">
-                <div class="aside">
-                    <h3 class="aside-title">Categories</h3>
-                    <div class="checkbox-filter">
-                        @foreach (var category in listCategory)
-                        {
-                            <div class="input-checkbox">
-                                <label for="category-1">
-                                    <span></span>
-                                    <a asp-controller="Product" asp-action="ViewProductByCategory" asp-route-id="@category.CategoryId">@category.CategoryName</a>
-                                </label>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-            <div id="store" class="col-md-9">
+            <div id="store" class="col-md-12">
                 <div class="row productContainer">
-                    @foreach(var product in Model)
+                    @foreach (var product in Model)
                     {
                         <div class="col-md-4 col-xs-6">
                             <div class="product">
@@ -34,19 +25,21 @@
                                     <img src=@product.ImageProduct alt="">
                                 </div>
                                 <div class="product-body">
-                                  @*   <p class="product-category">@product.CategoryId</p> *@
+                                    @*   <p class="product-category">@product.CategoryId</p> *@
                                     <h3 class="product-name"><a href="#">@product.ProductName</a></h3>
                                     <p class="product-name"><a href="#">@product.Memory</a></p>
                                     <h4 class="product-price">$@product.PriceNew <del class="product-old-price">$@product.PriceOld</del></h4>
                                     <div class="product-btns">
                                         <a asp-action="ViewProductDetail" asp-controller="Product" asp-route-id="@product.ProductId"><span class="tooltipp">Detail Product</span></a>
                                     </div>
+
                                 </div>
                                 <div class="add-to-cart">
-                                    @if(userid == null)
+                                    @if (userid == null)
                                     {
                                         <a class="add-to-cart-btn login" asp-action="Login" asp-controller="Home"><i class="fa fa-shopping-cart"></i> add to cart</a>
-                                    } else
+                                    }
+                                    else
                                     {
                                         <button class="add-to-cart-btn addToCart" data-product-id="@product.ProductId"><i class="fa fa-shopping-cart"></i> add to cart</button>
                                     }
@@ -55,18 +48,13 @@
                         </div>
                     }
                 </div>
-              
                 <div class="store-filter clearfix" style="margin-top:50px">
-                    @Html.PagedListPager(Model, page => Url.Action("ViewStore",
-                             new { page }))
-                </div>     
-            </div>       
+                    @Html.PagedListPager(Model, page => Url.Action("GetProductByCategory", new { page, name = searchinput }))
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<br />
-
-
 <script type="text/javascript">
     $(document).ready(function () {
         $(".addToCart").click(function (e) {
@@ -87,5 +75,3 @@
         });
     });
 </script>
-
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>

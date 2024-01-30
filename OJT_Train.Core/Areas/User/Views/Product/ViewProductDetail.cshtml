@@ -3,6 +3,7 @@
 @{
     var userid = Context.Session.GetInt32("UserID");
     var listcoment = ViewBag.CommentList as List<Comment>;
+
 }
 <div class="section">
     <div class="container">
@@ -31,7 +32,15 @@
                     </div>
                     <p>@Html.Raw(Model.ProductDetail)</p>
                     <div class="add-to-cart">
-                        <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+						@if (userid == null)
+						{
+							<a class="add-to-cart-btn login" asp-action="Login" asp-controller="Home"><i class="fa fa-shopping-cart"></i> add to cart</a>
+						}
+						else
+						{
+							<button class="add-to-cart-btn addToCart" data-product-id="@Model.ProductId"><i class="fa fa-shopping-cart"></i> add to cart</button>
+						}
+                 
                     </div>
                     
                 </div>
@@ -110,3 +119,23 @@
 		</div>
     </div>
 </div>
+<script type="text/javascript">
+	$(document).ready(function () {
+		$(".addToCart").click(function (e) {
+			e.preventDefault();
+			var productId = $(this).data("product-id");
+			$.ajax({
+				url: '/User/Cart/AddToCart',
+				type: "POST",
+				data: {
+					productID: productId,
+				},
+				success: function (result) {
+				},
+				error: function (result) {
+					alert('error');
+				}
+			});
+		});
+	});
+</script>

@@ -28,8 +28,9 @@
 						</div>
 						<div class="form-group">
 							<label>Confirm Password</label>
-							<input asp-for="ComfirmPassword" type="password" class="form-control rounded-left" placeholder="Comfirm Password">
-							<span asp-validation-for="Password" class="text-danger"></span>
+							<input class="form-control rounded-left" type="password" placeholder="Comfirm Password" required name="txtPassword">
+							<span class="text-danger">@ViewBag.Checkpassword</span>
+
 						</div>
 						<div class="form-group">
 							<label asp-for="Email"></label>
@@ -48,7 +49,7 @@
 						</div>
 						<div class="form-group">
 							<label asp-for="DateOfBirth"></label>
-							<input asp-for="DateOfBirth" type="datetime-local" class="form-control rounded-left" placeholder="Your Date of Birth">
+							<input asp-for="DateOfBirth" type="date" class="form-control rounded-left" placeholder="Your Date of Birth">
 							<span asp-validation-for="DateOfBirth" class="text-danger"></span>
 						</div>
 						<div class="form-group d-flex align-items-center">

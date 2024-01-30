@@ -27,6 +27,7 @@ namespace OJT_Train.Core.Areas.User.Controllers
 		{
 			if (HttpContext.Session.GetInt32("UserID") == null)
 			{
+				ViewBag.ActivationMessage = TempData["ActivationMessage"] as string;
 				return View();
 			}
 			else
@@ -45,6 +46,10 @@ namespace OJT_Train.Core.Areas.User.Controllers
 			{
 				return Ok(new { status = false, message = "UserName or Password is not correctly" });
 			}
+			else if (account.ISACTIVED == false)
+			{	
+				return Ok(new { status = false, message = "Please check your email for comfirm account" });
+			}
 			else
 			{
 				HttpContext.Session.SetInt32("UserID", account.UserID);
@@ -61,23 +66,35 @@ namespace OJT_Train.Core.Areas.User.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Register(Account model)
+		public async Task<IActionResult> Register(Account model, IFormCollection form)
 		{
-			int check = await _accountRepository.UpsRegistration(model.Adapt<AccountDTO>());
+			 if (model.Password == form["txtPassword"])
+			{
+				int check = await _accountRepository.UpsRegistration(model.Adapt<AccountDTO>());
 
-			if (check == 1)
-			{
-				ViewBag.Message = "Username already have, please input another username";
-				return View();
-			}
-			else if (check == 2)
-			{
-				ViewBag.Message = "Email already have, please input another email";
-				return View();
+				if (check == 1)
+				{
+					ViewBag.Message = "Username already have, please input another username";
+					return View();
+				}
+				else if (check == 2)
+				{
+					ViewBag.Message = "Email already have, please input another email";
+					return View();
+				}
+				else
+				{
+
+					int userid = await _accountRepository.Uspgetuseridbyemail(model.Adapt<AccountDTO>());
+					EmailHelper.Instance.SendActive(model.Email, userid);
+					TempData["ActivationMessage"] = "We already sent email confirm for actived account! Please check your email!";
+					return RedirectToAction("Login", "Home");
+				}
 			}
 			else
 			{
-				return RedirectToAction("Login", "Home");
+				ViewBag.Checkpassword = "Password and Confirm password does not match";
+				return View();
 			}
 
 		}
@@ -116,6 +133,12 @@ namespace OJT_Train.Core.Areas.User.Controllers
 		{
 			HttpContext.Session.Clear();
 			HttpContext.Session.Remove("UserName");
+			return RedirectToAction("Login", "Home");
+		}
+		[HttpGet]
+		public async Task<IActionResult> ActiveAccount(int? id)
+		{
+			await _accountRepository.ActivedAccount(id);
 			return RedirectToAction("Login", "Home");
 		}
 

@@ -153,7 +153,8 @@ create proc UpsUserLogin
 AS
 BEGIN
 DECLARE @UserName NVARCHAR(255),
-		@Password NVARCHAR(255)
+		@Password NVARCHAR(255),
+		@HashedInputPassword VARBINARY(256)
 		SELECT @UserName = OJ.USERNAME,
 			   @Password = OJ.[PASSWORD]
 		FROM OPENJSON(@JInput)
@@ -162,12 +163,16 @@ DECLARE @UserName NVARCHAR(255),
 		USERNAME NVARCHAR(255),
 		[PASSWORD] NVARCHAR(255)
 		)OJ
+		SET @HashedInputPassword = HASHBYTES('MD5', CONVERT(VARCHAR(255), @Password));
 		SELECT 
 		userlogin.USERID,
 		userlogin.USERNAME,
-		userlogin.[PASSWORD]
+		userlogin.[PASSWORD],
+		userlogin.ISACTIVED,
+		userlogin.EMAIL
 		FROM ACCOUNT userlogin
-		WHERE (USERNAME=@UserName and [PASSWORD]=@Password)
+		WHERE userlogin.USERNAME = @UserName
+         AND userlogin.[PASSWORD]=@HashedInputPassword;
 end; 
 GO
 --create proc UpsRegistration
@@ -215,11 +220,13 @@ AS
 		--CON NEU KHONG CO THI TIEP TUC ADD USER VAO
 		ELSE
 		BEGIN
-
-		INSERT INTO ACCOUNT( USERNAME,[PASSWORD],EMAIL,FULLNAME,[ADDRESS],PHONE,DATEOFBIRTH) VALUES(@UserName,@Password,@Email,@FullName,@Address,@Phone,@DateOfBirth);
+		DECLARE @EncryptedPassword VARBINARY(MAX);
+        SET @EncryptedPassword = HASHBYTES('MD5', CONVERT(VARCHAR(255), @Password));
+		INSERT INTO ACCOUNT( USERNAME,[PASSWORD],EMAIL,FULLNAME,[ADDRESS],PHONE,DATEOFBIRTH) VALUES(@UserName,@EncryptedPassword,@Email,@FullName,@Address,@Phone,@DateOfBirth);
 		END
 		SELECT @UserExists AS UserExists;
-end; 
+end
+
 GO
 
 --create proc UspForgetPassword 
@@ -239,9 +246,11 @@ BEGIN
 	)OJ
 	IF EXISTS (SELECT 1 FROM ACCOUNT WHERE EMAIL=@Email)
 	BEGIN
+	  DECLARE @EncryptedPassword VARBINARY(MAX);
 	  set @Password  = CAST(SUBSTRING(CONVERT(VARCHAR(36), NEWID()), 1, 9) AS VARCHAR(255));
+	  SET @EncryptedPassword = HASHBYTES('MD5', CONVERT(VARCHAR(255), @Password));
 	  Update ACCOUNT
-	  SET [PASSWORD]= @Password 
+	  SET [PASSWORD]= @EncryptedPassword
 	  WHERE Email = @Email;
 	  SET @UserExists = 1;
 	END
@@ -250,7 +259,7 @@ BEGIN
 	SET @UserExists = 0;
 	end
 	SELECT @UserExists AS UserExists, @Password AS [Password], @Email as Email;
-end; 
+end;
 GO
 
 -- create proc UspAllCategory
@@ -359,6 +368,70 @@ begin
   insert into Comment(Commentcontent,Createddate,Productid,UserId) values(@CommentContent,GETDATE(),@ProductId,@UserId);
 end; 
 GO
+
+--create proc UspUpdateActiveAccount
+
+alter proc UspUpdateActiveAccount
+@UserId int
+as
+begin
+update account set ISACTIVED=1 where USERID=@UserId
+end;
+GO
+--create proc getuserid by email
+create proc Uspgetuseridbyemail
+@Email varchar(100)
+as
+begin
+	select act.USERID
+	FROM ACCOUNT act where @Email=act.EMAIL
+end;
+GO
+
+--create orderandorderdetail
+ALTER PROCEDURE UspAddOrderAndOrderDetail
+    @OrderPrice decimal,
+    @CreatedBy NVARCHAR(50),
+    @Address NVARCHAR(200),
+    @UserID INT,
+    @Jinput NVARCHAR(MAX)
+AS
+BEGIN
+    DECLARE @OrderID INT;
+    INSERT INTO [ORDER] (OrderPrice, CreatedDate, CreatedBy, [Address], UserID, OrderStatus, IsDeleted)
+    VALUES (@OrderPrice, GETDATE(), @CreatedBy, @Address, @UserID, N'Đã đặt hàng', 0);
+
+    SET @OrderID = SCOPE_IDENTITY();
+
+    INSERT INTO ORDERDETAIL (ProductID, Quantity, Price, OrderID)
+    SELECT 
+        ProductID,
+        Quantity,
+        Price,
+        @OrderID
+    FROM OPENJSON(@Jinput)
+    WITH (
+        PRODUCTID INT '$.PRODUCTID',
+		QUANTITY INT '$.QUANTITY',
+		PRICE bigint '$.PRICE'
+    );
+END;
+GO
+
+--create proc UspGetPromotionu
+create proc UspGetPromotionu
+@Promotioncode varchar(100)
+as
+begin
+select pro.PROMOTIONCODE,pro.PROMOTIONVALUE
+from PROMOTION pro
+where pro.PROMOTIONCODE=@Promotioncode and pro.ISDELETED='false'
+end;
+GO
+
+---admin
+
+
 -- GET ALL CATEGORY
 CREATE PROCEDURE GetAllCategory
 AS

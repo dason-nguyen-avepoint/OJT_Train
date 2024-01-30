@@ -1,9 +1,6 @@
-﻿using Mapster;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
-using NuGet.Protocol;
 using OJT_Train.Core.Areas.User.Models;
-using Repositories.Dto;
 using Repositories.Interfaces;
 using System.Web;
 using X.PagedList;
@@ -22,8 +19,27 @@ namespace OJT_Train.Core.Areas.User.Controllers
             _categoryRepository = categoryRepository;
             _commentRepository = commentRepository;
         }
-
-        [HttpGet]
+		public async Task<IActionResult> CategoryPartial()
+		{
+			var listcategory = await _categoryRepository.GetAllCategory();
+			List<Category> resultCate = new List<Category>();
+			foreach (var item1 in listcategory)
+			{
+				var category = new Category();
+				category.CategoryId = item1.CategoryId;
+				category.CategoryName = item1.CategoryName;
+				resultCate.Add(category);
+			}
+			if (resultCate.Count != 0)
+			{
+				return Ok(new { status = true, resultCate });
+			}
+			else
+			{
+				return Ok(new { status = false });
+			}
+		}
+		[HttpGet]
         public async Task<ActionResult> ViewStore(int? page)
         {
             var listcategory = await _categoryRepository.GetAllCategory();
@@ -116,5 +132,34 @@ namespace OJT_Train.Core.Areas.User.Controllers
             ViewBag.CommentList = comments;
             return View(returnProduct);
         }
-    }
+		public async Task<IActionResult> GetProductByCategory(int id, string? name, int? page)
+		{
+			ViewBag.search = name != null ? name : null;
+			var listproduct = await _productRepository.GetProductByCategory(id);
+			if (page == null) page = 1;
+			int pageSize = 9;
+			int pageNumber = (page ?? 1);
+
+			List<Product> resultProductbycategory = new List<Product>();
+			foreach (var item in listproduct)
+			{
+				Product product = new Product();
+				product.ProductId = item.ProductId;
+				product.ProductName = item.ProductName;
+				product.CategoryId = item.CategoryId;
+				product.Memory = item.Memory;
+				product.PriceNew = item.PriceNew;
+				product.PriceOld = item.PriceOld;
+				product.ProductDetail = item.ProductDetail;
+				product.ImageProduct = item.ImageProduct;
+				resultProductbycategory.Add(product);
+			}
+			if (!string.IsNullOrEmpty(name))
+			{
+				resultProductbycategory = resultProductbycategory.Where(x => x.ProductName.Contains(name, StringComparison.OrdinalIgnoreCase)).ToList();
+			}
+			return View(resultProductbycategory.ToPagedList(pageNumber, pageSize));
+
+		}
+	}
 }

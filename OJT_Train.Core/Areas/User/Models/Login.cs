@@ -27,6 +27,7 @@ namespace OJT_Train.Core.Areas.User.Models
 	}
 	public class Account
 	{
+		public int UserID { get; set; }
 		[Required]
 		[RegularExpression(@"^[a-zA-Z0-9]+$", ErrorMessage = "Please do not input special character")]
 		public string? UserName { get; set; }
@@ -46,7 +47,8 @@ namespace OJT_Train.Core.Areas.User.Models
 		public string? Phone { get; set; }
 		[Required]
 		public DateTime DateOfBirth { get; set; }
-	}
+        public string Image { get; set; }
+    }
 	public class Contact
 	{
 		[Required]
@@ -64,5 +66,10 @@ namespace OJT_Train.Core.Areas.User.Models
 		public string? Email { get; set; }
 		public int UserExists { get; set; }
 		public string? Password { get; set; }
+	}
+
+	public class UserInfoPayment
+	{
+
 	}
 }
