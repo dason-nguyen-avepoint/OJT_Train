@@ -17,6 +17,9 @@ namespace Repositories.Interfaces
         //Task<int> UspOrder(int orderPrice, int userID, string createBy, string address);
         void AddOrderandOrderDetail(decimal OrderPrice, string CreatedBy, string Address, int UserID, List<OrderU> model);
 		void DeleteOrder(int id);
-		Task<int> TotalOrder();
+        void ShipCompleted(int id);
+        Task<int> TotalOrder();
+        Task<int> TotalShip();
+        Task<IEnumerable<OrderDTO>> GetShips(int pageNumber, int pageSize);
     }
 }

@@ -39,7 +39,7 @@
                         }
 
                         <td>
-                            @if (order.OrderStatus == "Huỷ Đơn Hàng")
+                            @if (order.OrderStatus == "Huỷ Đơn Hàng" || order.OrderStatus == "Đã giao hàng")
                             {
                                 <button class="btn btn-outline-primary" onclick="OrderDetails(@order.OrderId)">Chi tiết</button>
                             }
@@ -175,15 +175,18 @@
                     day: '2-digit'
                 }));
             };
-            if (response.order.orderStatus === 'Đang giao hàng') {
-                $('#orderStatus').css({ 'color': 'green', 'font-weight': 'bold' })
-                $('#image-template').append('<img src="/Images/order_template3.jpg" alt="" style="width:50%; float: inline-end;" />');
+            if (response.order.orderStatus === 'Đã đặt hàng') {
+                $('#orderStatus').css({ 'color': 'blue', 'font-weight': 'bold' })
+                $('#image-template').append('<img src="/Images/order_template.jpg" alt="" style="width:50%; float: inline-end;" />');
             } else if (response.order.orderStatus === 'Huỷ Đơn Hàng') {
                 $('#orderStatus').css({ 'color': 'red', 'font-weight': 'bold' });
                 $('#image-template').append('<img src="/Images/order_template2.jpg" alt="" style="width:50%; float: inline-end;" />');
-            } else {
-                $('#orderStatus').css({ 'color': 'blue', 'font-weight': 'bold' });
+            } else if (response.order.orderStatus === 'Đã giao hàng') {
+                $('#orderStatus').css({ 'color': 'green', 'font-weight': 'bold' });
                 $('#image-template').append('<img src="/Images/order_template.jpg" alt="" style="width:50%; float: inline-end;" />');
+            } else {
+                $('#orderStatus').css({ 'color': 'green', 'font-weight': 'bold' });
+                $('#image-template').append('<img src="/Images/order_template3.jpg" alt="" style="width:50%; float: inline-end;" />');
             };
             var products = response.orderDetail;
             var formatter = new Intl.NumberFormat('vi-VN', {

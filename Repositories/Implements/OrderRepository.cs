@@ -63,6 +63,15 @@ namespace Repositories.Implements
                 await connection.ExecuteAsync("ShippingOrder", param: parameter, commandType: CommandType.StoredProcedure);
             });
         }
+        public async void ShipCompleted(int id)
+        {
+            await WithConnection(async connection =>
+            {
+                var parameter = new DynamicParameters();
+                parameter.Add("orderId", id, DbType.Int32);
+                await connection.ExecuteAsync("ShipCompleted", param: parameter, commandType: CommandType.StoredProcedure);
+            });
+        }
         public async Task<IEnumerable<OrderById>> GetByUserId(int userId)
         {
             return await WithConnection(async connection =>
@@ -71,6 +80,33 @@ namespace Repositories.Implements
                 parameter.Add("userId", userId, DbType.Int32);
                 var order = await connection.QueryAsync<OrderById>("GetOrderByUserId", param: parameter, commandType: CommandType.StoredProcedure);
                 return order.ToList();
+            });
+        }
+        public async Task<IEnumerable<OrderDTO>> GetShips(int pageNumber, int pageSize)
+        {
+            return await WithConnection(async connection =>
+            {
+                var parameter = new DynamicParameters();
+                parameter.Add("pageNumber", pageNumber, DbType.Int32);
+                parameter.Add("pageSize", pageSize, DbType.Int32);
+                var ships = await connection.QueryAsync<OrderDTO>("GetShipInfo", param: parameter, commandType: CommandType.StoredProcedure);
+                return ships.ToList();
+            });
+        }
+        public async Task<int> TotalOrder()
+        {
+            return await WithConnection(async connection =>
+            {
+                int orders = (int)await connection.ExecuteScalarAsync("TotalOrder", null, commandType: CommandType.StoredProcedure);
+                return orders;
+            });
+        }
+        public async Task<int> TotalShip()
+        {
+            return await WithConnection(async connection =>
+            {
+                int orders = (int)await connection.ExecuteScalarAsync("TotalShip", null, commandType: CommandType.StoredProcedure);
+                return orders;
             });
         }
 
@@ -104,17 +140,7 @@ namespace Repositories.Implements
 			});
 		}
 
-		public async Task<int> TotalOrder()
-		{
-			return await WithConnection(async connection =>
-			{
-				int orders = (int)await connection.ExecuteScalarAsync("TotalOrder", null, commandType: CommandType.StoredProcedure);
-				return orders;
-			});
-		}
-
         
-
         #endregion
     }
 }

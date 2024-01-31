@@ -611,6 +611,17 @@ BEGIN
 
 END;
 GO
+-- SHIP COMPLETED
+CREATE PROCEDURE ShipCompleted @orderId INT
+AS 
+BEGIN
+	UPDATE [ORDER]
+	SET ORDERSTATUS = N'Đã giao hàng',
+		PAYMENTDATE = GETDATE()
+	WHERE ORDERID = @orderId
+
+END;
+GO
 ------ CREATE SALE
 CREATE PROCEDURE AddSale @quantity int, @unitPrice int, @productId int
 AS
@@ -915,7 +926,7 @@ GO
 CREATE PROCEDURE GetAllPromo @pageNumber INT, @pageSize INT
 AS
 BEGIN
-DECLARE @Offset INT;
+	DECLARE @Offset INT;
 	SET @Offset = (@PageNumber - 1) * @PageSize;
 	
 	SELECT * FROM PROMOTION
@@ -957,5 +968,26 @@ BEGIN
 	SET ISDELETED = 'True',
 		MODIFIEDDATE = GETDATE()
 	WHERE PROMOTIONID = @id;
+END;
+GO
+-- SHIP ORDER INFO
+CREATE PROCEDURE GetShipInfo @pageNumber INT, @pageSize INT
+AS
+BEGIN
+	DECLARE @Offset INT;
+	SET @Offset = (@PageNumber - 1) * @PageSize;
+	
+	SELECT * FROM [ORDER]
+	WHERE ORDERSTATUS = N'Đang giao hàng'
+	ORDER BY ORDERID
+    OFFSET @Offset ROWS
+    FETCH NEXT @PageSize ROWS ONLY;
+END;
+GO
+--TOTAL SHIP ORDER
+CREATE PROCEDURE TotalShip
+AS 
+BEGIN
+	SELECT COUNT(*) FROM [ORDER] WHERE ORDERSTATUS = N'Đang giao hàng';
 END;
 GO
