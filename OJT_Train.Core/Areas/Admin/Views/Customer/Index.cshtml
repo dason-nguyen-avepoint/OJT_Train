@@ -18,7 +18,7 @@
         </tbody>
     </table>
 </div>
-@* POP UP EDITOR *@
+@* POP UP CUSTOMER *@
 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -75,6 +75,56 @@
         </div>
     </div>
 </div>
+@* POP UP ORDER DETAILS *@
+<div class="modal fade" id="newModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="btn btn-outline-primary" onclick="backToCustomer()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-skip-backward-btn" viewBox="0 0 16 16">
+                        <path d="M11.21 5.093A.5.5 0 0 1 12 5.5v5a.5.5 0 0 1-.79.407L8.5 8.972V10.5a.5.5 0 0 1-.79.407L5 8.972V10.5a.5.5 0 0 1-1 0v-5a.5.5 0 0 1 1 0v1.528l2.71-1.935a.5.5 0 0 1 .79.407v1.528z" />
+                        <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1z" />
+                    </svg>
+                </button>
+                <h5 class="modal-title mx-2" id="editModalLabel">Chi tiết đơn hàng</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeData()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-6">
+                        <span>Mã đơn hàng: #<span id="orderId"></span></span>
+                        <br />
+                        <span>Trạng thái đơn hàng: <span id="orderStatus"></span></span>
+                        <br />
+                        <span>Khách hàng: <span id="Name" style="font-weight:bold"></span></span>
+                        <br />
+                        <span>Địa chỉ giao hàng: <span id="Address" style="font-weight:bold"></span></span>
+                        <br />
+                        <span>Số điện thoại: <span id="Phone" style="font-weight:bold"></span></span>
+                        <br />
+                        <span>Ngày tạo đơn: <span id="CDate"></span></span>
+                        <br />
+                        <span>Ngày thanh toán: <span id="PDate"></span></span>
+                        <input id="customerId" hidden/>
+                    </div>
+                    <div class="col-6" id="image-template">
+                    </div>
+                </div>
+                <div class="my-3">
+                    <h3>Product</h3>
+                    <div id="productContainer">
+                    </div>
+                    <div class="col d-flex flex-row-reverse" style="margin-left:-7px;margin-bottom:10px">
+                        <span>Total: <strong id="totalOrder"></strong></span>
+                    </div>
+                </div>
+                <div class="col d-flex flex-row-reverse" id="buttonDiv" style="margin-right:20px;margin-bottom:10px"></div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <nav aria-label="Page navigation example" class="mx-2 ml-4">
     <ul class="pagination">
@@ -84,11 +134,24 @@
     <script>
         $(document).click(function (event) {
             if (!$(event.target).closest('.modal-content').length) {
-
+                $('#productContainer').empty();
+                $('#buttonDiv').empty();
+                $('#image-template').empty();
             }
         });
 
-        function closeData() { }
+        function backToCustomer() {
+            var userId = $('#customerId').val();
+            $('#productContainer').empty();
+            $('#buttonDiv').empty();
+            $('#image-template').empty();
+            $('#newModal').modal("hide");
+            UserDetail(userId);
+        }
+
+        function closeData() {
+            $('#productContainer').empty(); $('#buttonDiv').empty(); $('#image-template').empty();
+        }
         GetData();
 
         function UserDetail(userId) {
@@ -136,12 +199,121 @@
                     "<td>" + formatdate + "</td>" +
                     "<td>" + formattedPrice + "</td>" +
                     "<td>" + order.orderStatus + "</td>" +
-                    "<td><button class='btn btn-outline-info' onclick='UserDetail(" + order.userId + ")'>Chi tiết</button></td>" +
+                    "<td><button class='btn btn-outline-info' onclick='OrderDetail(" + order.orderId + ")'>Chi tiết</button></td>" +
                     "</tr>";
                 tableBody.append(row);
             });
         }
+        function OrderDetail(orderId) {
+            $.ajax({
+                type: 'PUT',
+                url: "https://localhost:7258/admin/order/OrderDetails/",
+                contentType: 'application/json',
+                // Truyền dữ liệu dưới dạng object JSON
+                data: JSON.stringify(orderId),
+                success: function (response) {
+                    $('#editModal').modal("hide");
+                    $('#newModal').modal("show");
+                    OrderInfo(response);
 
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+        function OrderInfo(response) {
+            $('#orderId').text(response.order.orderId);
+            $('#orderStatus').text(response.order.orderStatus);
+            $('#Name').text(response.order.createdBy);
+            $('#Address').text(response.order.address);
+            $('#Phone').text(response.order.phone);
+            $('#customerId').text(response.order.userId);
+            var createdDate = new Date(response.order.createdDate);
+            $('#CDate').text(createdDate.toLocaleDateString('en-GB', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            }));
+            if (response.order.paymentDate !== null) {
+                var paymentDate = new Date(response.order.paymentDate);
+                $('#PDate').text(paymentDate.toLocaleDateString('en-GB', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                }));
+            };
+            if (response.order.orderStatus === 'Đang giao hàng') {
+                $('#orderStatus').css({ 'color': 'green', 'font-weight': 'bold' })
+                $('#image-template').append('<img src="/Images/order_template3.jpg" alt="" style="width:50%; float: inline-end;" />');
+            } else if (response.order.orderStatus === 'Huỷ Đơn Hàng') {
+                $('#orderStatus').css({ 'color': 'red', 'font-weight': 'bold' });
+                $('#image-template').append('<img src="/Images/order_template2.jpg" alt="" style="width:50%; float: inline-end;" />');
+            } else {
+                $('#orderStatus').css({ 'color': 'blue', 'font-weight': 'bold' });
+                $('#image-template').append('<img src="/Images/order_template.jpg" alt="" style="width:50%; float: inline-end;" />');
+            };
+            var products = response.orderDetail;
+            var formatter = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            });
+            products.forEach(function (product, index) {
+                var productDiv = $('<div class="detail d-flex flex-row"></div>');
+                productDiv.append('<div class="col-2"><img src="' + product.imageProduct + '" style="width:100%" /></div>');
+                productDiv.append('<div class="col-6 d-flex flex-column"><strong>' + product.productName + '</strong><span>Made by Apple</span><span>' + formatter.format(product.price) + '</span></div>');
+                productDiv.append('<div class="col-2 d-flex flex-column"><strong>Quantity</strong><span>' + product.quantity + '</span></div>');
+                productDiv.append('<div class="col-2 d-flex flex-column"><strong>Total</strong><span>' + formatter.format(product.quantity * product.price) + '</span></div>');
+                $('#productContainer').append(productDiv);
+            });
+            $('#totalOrder').text(formatter.format(response.order.orderPrice));
+            if (response.order.orderStatus === 'Đã đặt hàng') {
+                $('#buttonDiv').append('<a class="btn btn-danger" style = "margin-right:10px" onclick = "deleteOrder(' + response.order.orderId + ',' + response.order.userId + ')"> Huỷ đơn hàng </a>' +
+                    '<a class= "btn btn-success mx-3" onclick="ShippingOrder(' + response.order.orderId + ',' + response.order.userId + ')" > Xác nhận giao hàng </a>');
+            }
+        }
+        function ShippingOrder(orderId, userId) {
+            var confirmShip = confirm("Bạn có chắc chắn muốn giao đơn hàng này không?");
+            if (confirmShip) {
+                $.ajax({
+                    type: 'PUT',
+                    url: "https://localhost:7258/admin/order/ShippingOrder/",
+                    contentType: 'application/json',
+                    data: JSON.stringify(orderId),
+                    success: function () {
+                        $('#productContainer').empty();
+                        $('#buttonDiv').empty();
+                        $('#image-template').empty();
+                        $('#newModal').modal("hide");
+                        UserDetail(userId);
+                    },
+                    error: function (error) {
+                        console.error('Error sending data to server:', error);
+                    }
+                });
+            }
+        }
+        function deleteOrder(orderId, userId) {
+            var confirmDelete = confirm("Bạn có chắc chắn muốn xoá đơn hàng này không?");
+            if (confirmDelete) {
+                $.ajax({
+                    type: 'PUT',
+                    url: "https://localhost:7258/admin/order/DeleteOrder/",
+                    contentType: 'application/json',
+                    data: JSON.stringify(orderId),
+                    success: function () {
+                        $('#productContainer').empty();
+                        $('#buttonDiv').empty();
+                        $('#image-template').empty();
+                        $('#newModal').modal("hide");
+                        UserDetail(userId);
+                    },
+                    error: function (error) {
+                        console.error('Error sending data to server:', error);
+                    }
+                });
+            }
+        }
 
         function GetData() {
             var searchBy = document.getElementById("searchInput").value;
