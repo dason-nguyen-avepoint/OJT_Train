@@ -16,5 +16,9 @@ namespace Repositories.Interfaces
         Task<ForgotPasswordDTO?> UspForgetPassword(ForgotPasswordDTO model);
         Task<AccountDTO?> UspGetProfile(int? id);
 
+		void UpdateProfile(AccountDTO model);
+		Task ActivedAccount(int? id);
+
+		Task<int> Uspgetuseridbyemail(AccountDTO model);
 	}
 }

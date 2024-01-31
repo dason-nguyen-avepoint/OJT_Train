@@ -2,6 +2,7 @@
 @model X.PagedList.IPagedList<Product>;
 @using X.PagedList.Mvc.Core;
 @{
+    var userid = Context.Session.GetInt32("UserID");
     var listCategory = ViewBag.listCate as List<Category>;
 }
 <div class="section">
@@ -42,7 +43,13 @@
                                     </div>
                                 </div>
                                 <div class="add-to-cart">
-                                    <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+                                    @if(userid == null)
+                                    {
+                                        <a class="add-to-cart-btn login" asp-action="Login" asp-controller="Home"><i class="fa fa-shopping-cart"></i> add to cart</a>
+                                    } else
+                                    {
+                                        <button class="add-to-cart-btn addToCart" data-product-id="@product.ProductId"><i class="fa fa-shopping-cart"></i> add to cart</button>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -58,3 +65,27 @@
     </div>
 </div>
 <br />
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".addToCart").click(function (e) {
+            e.preventDefault();
+            var productId = $(this).data("product-id");
+            $.ajax({
+                url: '/User/Cart/AddToCart',
+                type: "POST",
+                data: {
+                    productID: productId,
+                },
+                success: function (result) {
+                },
+                error: function (result) {
+                    alert('error');
+                }
+            });
+        });
+    });
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>

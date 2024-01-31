@@ -1,0 +1,36 @@
+﻿<nav id="navigation">
+    <div class="container">
+        <div id="responsive-nav">
+            <ul class="main-nav nav navbar-nav" id="category-list">
+                <li><a asp-action="Index" asp-controller="Home">Home</a></li>
+                <li><a asp-action="ViewStore" asp-controller="Product">Store</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.ajax({
+            url: '/User/Product/CategoryPartial',
+            type: 'GET',
+            success: function (data) {
+                data.resultCate.forEach(function (category) {
+                    var a = document.createElement("a");
+                    a.appendChild(document.createTextNode(category.categoryName));
+                    var url = '/User/Product/GetProductByCategory/' + category.categoryId;
+                    a.setAttribute("href", url);
+                    var li = document.createElement("li");
+                    li.appendChild(a);
+                    document.getElementById("category-list").appendChild(li);
+                });
+            },
+            error: function (error) {
+                console.log('Lỗi khi tải dữ liệu:', error);
+            }
+        });
+    });
+</script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+

@@ -1,0 +1,237 @@
+﻿<div class="container">
+    <!-- Shopping cart table -->
+    <div class="card">
+        <div class="card-header">
+            <h2>Shopping Cart</h2>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered m-0">
+                    <thead>
+                        <tr>
+                            <!-- Set columns width -->
+                            <th class="text-center py-3 px-4" style="min-width: 400px;">Product Name &amp; Details</th>
+                            <th class="text-right py-3 px-4" style="width: 100px;">Price</th>
+                            <th class="text-center py-3 px-4" style="width: 120px;">Quantity</th>
+                            <th class="text-right py-3 px-4" style="width: 100px;">Total</th>
+                            <th class="text-center align-middle py-3 px-0" style="width: 40px;"><a href="#" class="shop-tooltip float-none text-light" title="" data-original-title="Clear cart"><i class="ino ion-md-trash"></i></a></th>
+                        </tr>
+                    </thead>
+                    <tbody id="productListBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center pb-4">
+                <div class="mt-4">
+                    <label class="text-muted font-weight-normal">Promocode</label>
+                    <input type="text" placeholder="ABC" class="form-control" id="promoCodeInput">
+                </div>
+                <div class="d-flex">
+                    <div class="text-right mt-4 mr-5" id="discountValue">
+                      @*   <label class="text-muted font-weight-normal m-0">Discount</label>
+                        <div class="text-large"><strong>$20</strong></div> *@
+                    </div>
+                    <div class="text-right mt-4" id="totalPriveInCart">
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="float-right">
+                <button type="button" class="btn btn-lg btn-default md-btn-flat mt-2 mr-3">Back to shopping</button>
+                <button class="btn btn-lg btn-primary mt-2" id="onClickCheckOut">Checkout</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<style>
+
+    .ui-w-40 {
+        width: 40px !important;
+        height: auto;
+    }
+
+    .card {
+        box-shadow: 0 1px 15px 1px rgba(52,40,104,.08);
+        color: black;
+    }
+
+    .ui-product-color {
+        color: black;
+        display: inline-block;
+        overflow: hidden;
+        margin: .144em;
+        width: .875rem;
+        height: .875rem;
+        border-radius: 10rem;
+        -webkit-box-shadow: 0 0 0 1px rgba(0,0,0,0.15) inset;
+        box-shadow: 0 0 0 1px rgba(0,0,0,0.15) inset;
+        vertical-align: middle;
+    }
+</style>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.ajax({
+            url: '/User/Cart/OnClickToViewCart',
+            type: 'GET',
+            success: function (data) {
+                // Lặp qua dữ liệu và thêm vào tbody
+                $.each(data.listCart, function (index, product) {
+                    var newRow = "<tr>" +
+                        "<td class='p-4'>" +
+                        "<div class='media align-items-center'>" +
+                        "<img src='" + product.productImg + "' class='d-block ui-w-40 ui-bordered mr-4' alt=''>" +
+                        "<div class='media-body'>" +
+                        "<a href='#' class='d-block text-dark'>" + product.productName + "</a>" +
+                        "<small>" +
+                        "</div>" + 
+                        "</div>" +
+                        "</td>" +
+                        "<td class='text-right font-weight-semibold align-middle p-4'>" + product.price + "</td>" +
+                        "<td class='align-middle p-4 text-center'>" + product.quantity + "</td>" +
+                        "<td class='text-right font-weight-semibold align-middle p-4'>" + product.itemPriceTotal + "</td>" +
+                        "<td class='text-center align-middle px-0'><button class='shop-tooltip close float-none text-danger' id='removenow' data-product-id='" + product.productID + "' title='' data-original-title='Remove'>×</button></td>" +
+                        "</tr>";
+                    // Thêm hàng vào tbody
+                    $("#productListBody").append(newRow);
+                });
+
+                var totalPriveInCart = $('#totalPriveInCart');
+                totalPriveInCart.empty();
+
+                var labelContent = $('<label class="text-muted font-weight-normal m-0">Total price</label>');
+                var divContent = $('<div class="text-large"><strong>$' + data.totalCart + '</strong></div>');
+
+                totalPriveInCart.append(labelContent);
+                totalPriveInCart.append(divContent);
+            },
+            error: function () {
+                alert("Failed to load data");
+            }
+        });
+
+        $("#onClickCheckOut").click(function () {
+            var coupon = $("#promoCodeInput").val();
+            $.ajax({
+                url: '/User/Cart/CheckOut',
+                type: 'get',
+                contenttype: 'application/json',
+                data: JSON.stringify(coupon),
+                datatype: "json",
+                success: function (data) {
+                    if (data.status == 200) {
+                        // window.location.href = '/User/Cart/ViewPaymentForm';
+                        window.location.href = "@Url.Action("ViewPaymentForm", "Cart")";
+                    }
+                },
+                error: function () {
+                    alert("failed to load data");
+                }
+            });
+        });
+
+
+
+
+        // Gửi yêu cầu AJAX đến controller để kiểm tra PromoCode
+        $("#promoCodeInput").on("keypress", function (event) { 
+            var enteredPromoCode = $(this).val();
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                var coupon = $(this).val();
+                // Gửi yêu cầu AJAX đến controller để kiểm tra Coupon
+                $.ajax({
+                    url: '/User/Cart/CheckCoupon',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(coupon),
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.status === 200) {
+                            var currentTotalCart = parseFloat($('#totalPriveInCart .text-large strong').text().replace('$', ''));
+                            var discountedTotalCart = currentTotalCart * (data.getCoupon.promotionvalue / 100);
+                            var valueafterdiscounted = currentTotalCart - discountedTotalCart;
+                            var totalPriveInCart = $('#totalPriveInCart');
+                            totalPriveInCart.empty();
+                            var labelContent = $('<label class="text-muted font-weight-normal m-0">Total price</label>');
+                            var divContent = $('<div class="text-large"><strong>$' + valueafterdiscounted.toFixed(2) + '</strong></div>');
+                            totalPriveInCart.append(labelContent);
+                            totalPriveInCart.append(divContent);
+
+
+                            var discountValue = $('#discountValue');
+                            discountValue.empty();
+
+                            var labelDiscount = $('<label class="text-muted font-weight-normal m-0">Discount</label>');
+                            var divDiscoount = $('<div class="text-large"><strong>' + data.getCoupon.promotionvalue + '%</strong></div>');
+
+                            discountValue.append(labelDiscount);
+                            discountValue.append(divDiscoount);
+                        } else {
+                            alert("Invalid Coupon");
+                        }
+                    },
+                    error: function () {
+                        alert("Failed to check Coupon. See console for details.");
+                    }
+                });
+            }
+        });
+
+        //xoa product khoi list
+        $('#productListBody').on('click', '#removenow', function (e) {
+           
+            var productId = $(this).data("product-id");
+            $.ajax({
+                url: '/User/Cart/DeleteProduct',
+                type: 'POST',
+                data: { productID: productId },
+                success: function (data) {
+                    if (data.status === 200) {
+                            $("#productListBody").empty();
+                        $.each(data.listCart, function (index, product) {
+                            var newRow = "<tr>" +
+                                "<td class='p-4'>" +
+                                "<div class='media align-items-center'>" +
+                                "<img src='" + product.productImg + "' class='d-block ui-w-40 ui-bordered mr-4' alt=''>" +
+                                "<div class='media-body'>" +
+                                "<a href='#' class='d-block text-dark'>" + product.productName + "</a>" +
+                                "<small>" +
+                                "</div>" +
+                                "</div>" +
+                                "</td>" +
+                                "<td class='text-right font-weight-semibold align-middle p-4'>" + product.price + "</td>" +
+                                "<td class='align-middle p-4 text-center'>" + product.quantity + "</td>" +
+                                "<td class='text-right font-weight-semibold align-middle p-4'>" + product.itemPriceTotal + "</td>" +
+                                "<td class='text-center align-middle px-0'><button class='shop-tooltip close float-none text-danger' id='removenow' data-product-id='" + product.productID + "' title='' data-original-title='Remove'>×</button></td>" +
+                                "</tr>";
+                            // Thêm hàng vào tbody
+                            $("#productListBody").append(newRow);
+                        });
+
+                        var totalPriveInCart = $('#totalPriveInCart');
+                        totalPriveInCart.empty();
+
+                        var labelContent = $('<label class="text-muted font-weight-normal m-0">Total price</label>');
+                        var divContent = $('<div class="text-large"><strong>$' + data.totalCart + '</strong></div>');
+
+                        totalPriveInCart.append(labelContent);
+                        totalPriveInCart.append(divContent);
+                    }
+                    else {
+                        console.log('Product not found in the cart.');
+                    }
+                    
+                },
+                error: function () {              
+                    console.log('Error removing product');
+                }
+            });
+        });
+    });
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>

@@ -1,4 +1,6 @@
 ﻿using Dapper;
+using Data.Helpers;
+using Repositories.Const;
 using Repositories.DataAccess;
 using Repositories.Dto;
 using Repositories.Interfaces;
@@ -62,13 +64,45 @@ namespace Repositories.Implements
             });
         }
 
-        public async Task<int> TotalOrder()
-        {
-            return await WithConnection(async connection =>
-            {
-                int orders = (int) await connection.ExecuteScalarAsync("TotalOrder", null, commandType: CommandType.StoredProcedure);
-                return orders;
-            });
-        }
-    }
+		#region HUNG
+		//public async Task<int> UspOrder(int orderPrice,int userID, string createBy, string address)
+		//{
+		//	return await WithConnection(async connection =>
+		//	{
+		//		DynamicParameters parameters = new DynamicParameters();
+		//		parameters.Add("orderPrice", orderPrice, DbType.Int32);
+		//		parameters.Add("userID", userID, DbType.Int32);
+		//		parameters.Add("createBy", createBy, DbType.String);
+		//		parameters.Add("address", orderPrice, DbType.String);
+		//		int check = await connection.ExecuteScalarAsync<int>(StoreProcedureOrderu.UspOrder, param: parameters, commandType: CommandType.StoredProcedure);
+		//		return check;
+		//	});
+		//}
+
+		public async void AddOrderandOrderDetail(decimal OrderPrice, string CreatedBy, string Address, int UserID, List<OrderU> model)
+		{
+			await WithConnection(async connection =>
+			{
+				var parameters = new DynamicParameters();
+				parameters.Add("OrderPrice", OrderPrice, DbType.Decimal);
+				parameters.Add("CreatedBy", CreatedBy, DbType.String);
+				parameters.Add("Address", Address, DbType.String);
+				parameters.Add("UserID", UserID, DbType.Int32);
+				var jInput = JsonDeserializeHelper.SerializeObjectForDb(model);
+				parameters.Add("@jInput", jInput, DbType.String, ParameterDirection.Input);
+				await connection.ExecuteAsync(StoreProcedureOrderu.UspAddOrderAndOrderDetail, param: parameters, commandType: CommandType.StoredProcedure);
+			});
+		}
+
+		public async Task<int> TotalOrder()
+		{
+			return await WithConnection(async connection =>
+			{
+				int orders = (int)await connection.ExecuteScalarAsync("TotalOrder", null, commandType: CommandType.StoredProcedure);
+				return orders;
+			});
+		}
+
+		#endregion
+	}
 }

@@ -1,0 +1,88 @@
+﻿@using OJT_Train.Core.Areas.User.Controllers
+@using Microsoft.AspNetCore.Http
+@{
+	var viewContext = ViewContext.HttpContext;
+	// List<CartItem> cartItems = viewContext.Session.GetObjectFromJson<List<CartItem>>("listcartchecout");
+	// string totalCart = Context.Session.GetString("totoalcartcheckout");
+	var mySessionObject = viewContext.Session.GetObjectFromJson<InforCheckOut>("InforCheckOut");
+}
+
+<div class="section">
+	<!-- container -->
+	<div class="container">
+		<!-- row -->
+		<div class="row">
+
+			<div class="col-md-7">
+				<!-- Billing Details -->
+				<div class="billing-details">
+					<div class="section-title">
+						<h3 class="title">Billing address</h3>
+					</div>
+					<div class="form-group">
+						<input class="input" type="text" name="txtUserName" placeholder="UserName" value="@mySessionObject.Account.UserName" readonly>
+					</div>
+					<div class="form-group">
+						<input class="input" type="text" name="txtFullName" placeholder="@mySessionObject.Account.FullName" readonly>
+					</div>
+					<div class="form-group">
+						<input class="input" type="email" name="email" placeholder="@mySessionObject.Account.Email" readonly>
+					</div>
+					<div class="form-group">
+						<input class="input" type="text" name="txtAddress" placeholder="@mySessionObject.Account.Address" readonly>
+					</div>
+					<div class="form-group">
+						<input class="input" type="text" name="txtPhone" placeholder="@mySessionObject.Account.Phone" readonly>
+					</div>
+				</div>
+				<!-- /Billing Details -->
+			</div>
+
+			<!-- Order Details -->
+			<div class="col-md-5 order-details">
+				<div class="section-title text-center">
+					<h3 class="title">Your Order</h3>
+				</div>
+				<div class="order-summary">
+					<div class="order-col">
+						<div><strong>PRODUCT</strong></div>
+						<div><strong>TOTAL</strong></div>
+					</div>
+					<div class="order-products">
+						@foreach(var item in mySessionObject.CartItems)
+						{
+							<div class="order-col">
+								<div>@item.Quantity x @item.ProductName</div>
+								<div>$@item.Price</div>
+							</div>
+						}
+						
+					</div>
+					<div class="order-col">
+						<div>Shiping</div>
+						<div><strong>FREE</strong></div>
+					</div>
+					<div class="order-col">
+						<div><strong>TOTAL</strong></div>
+						<div><strong class="order-total">$@mySessionObject.TotalPrice</strong></div>
+					</div>
+				</div>
+				<div class="payment-method">
+					<div class="input-radio">
+						<input type="radio" name="payment" id="payment-1" checked>
+						<label for="payment-1">
+							<span></span>
+							Payment on delivery
+						</label>
+					</div>
+					
+				</div>
+				<a asp-action="Orderdetail" asp-controller="Cart" class="primary-btn order-submit">CheckOut</a>
+			</div>
+			<!-- /Order Details -->
+		</div>
+		<!-- /row -->
+	</div>
+	<!-- /container -->
+</div>
+

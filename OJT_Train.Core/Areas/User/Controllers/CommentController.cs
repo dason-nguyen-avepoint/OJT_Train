@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OJT_Train.Core.Areas.User.Models;
-using Repositories.Dto;
-using Repositories.Implements;
 using Repositories.Interfaces;
 
 namespace OJT_Train.Core.Areas.User.Controllers

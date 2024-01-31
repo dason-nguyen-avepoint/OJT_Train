@@ -1,5 +1,4 @@
-﻿using Repositories.Dto;
-
+﻿
 namespace OJT_Train.Core.Areas.User.Models
 {
     public class Product

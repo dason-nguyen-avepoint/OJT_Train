@@ -16,7 +16,10 @@ namespace Repositories.Const
 		//storeproceduce contact
 		public static readonly string UspContactInfor = "UspContactInfor";
 		public static readonly string UspGetProfile = "UspGetProfile";
-        
+		public static readonly string UspUpdateInformation = "UspUpdateInformation";
+		public static readonly string UspUpdateActiveAccount = "UspUpdateActiveAccount";
+		public static readonly string Uspgetuseridbyemail = "Uspgetuseridbyemail";
+
 
 	}
 }
