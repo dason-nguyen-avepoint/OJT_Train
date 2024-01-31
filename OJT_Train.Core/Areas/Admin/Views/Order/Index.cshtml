@@ -112,7 +112,7 @@
         }
         @for (int i = 1; i <= ViewBag.TotalOrders; i++)
         {
-            <li class="page-item"><a class="page-link" asp-area="Admin" asp-controller="Order" asp-action="Index" asp-route-pageNumber="@i">@i</a></li>
+            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")"><a class="page-link" asp-area="Admin" asp-controller="Order" asp-action="Index" asp-route-pageNumber="@i">@i</a></li>
         }
         @if (ViewBag.CurrentPage == ViewBag.TotalOrders)
         {

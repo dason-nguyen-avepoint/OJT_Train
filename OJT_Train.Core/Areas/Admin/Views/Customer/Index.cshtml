@@ -107,7 +107,7 @@
                         <span>Ngày tạo đơn: <span id="CDate"></span></span>
                         <br />
                         <span>Ngày thanh toán: <span id="PDate"></span></span>
-                        <input id="customerId" hidden/>
+                        <input id="customerId" hidden />
                     </div>
                     <div class="col-6" id="image-template">
                     </div>
@@ -126,7 +126,7 @@
     </div>
 </div>
 
-<nav aria-label="Page navigation example" class="mx-2 ml-4">
+<nav aria-label="Page navigation example" class="mx-2 ml-3">
     <ul class="pagination">
     </ul>
 </nav>
@@ -321,7 +321,6 @@
                 url: "https://localhost:7258/admin/Customer/Getdata/",
                 contentType: 'application/json',
                 success: function (response) {
-                    console.log(response);
                     var tableBody = $("#tbody_data");
                     tableBody.empty();
                     $.each(response.users, function (index, user) {
@@ -336,9 +335,28 @@
                     });
                     var pagination = $(".pagination");
                     pagination.empty();
+                    if (response.currentPage > 1) {
+                        var previousLink = "<li class='page-item'><a class='page-link' onclick=\"numPage('" + searchBy + "', " + (response.currentPage - 1) + ")\">Previous</a></li>";
+                        pagination.append(previousLink);
+                    } else {
+                        var previousLink = "<li class='page-item disabled'><a class='page-link'>Previous</a></li>";
+                        pagination.append(previousLink);
+                    }
                     for (var i = 1; i <= response.totalPages; i++) {
-                        var pageLink = "<li class='page-item'><a class='page-link' onclick=\"numPage('" + searchBy + "', " + i + ")\">" + i + "</a></li>";
-                        pagination.append(pageLink);
+                        if (i === response.currentPage) {
+                            var pageLink = "<li class='page-item active'><a class='page-link' onclick=\"numPage('" + searchBy + "', " + i + ")\">" + i + "</a></li>";
+                            pagination.append(pageLink);
+                        } else {
+                            var pageLink = "<li class='page-item'><a class='page-link' onclick=\"numPage('" + searchBy + "', " + i + ")\">" + i + "</a></li>";
+                            pagination.append(pageLink);
+                        }
+                    }
+                    if (response.currentPage < response.totalPages) {
+                        var nextLink = "<li class='page-item'><a class='page-link' onclick=\"numPage('" + searchBy + "', " + (response.currentPage + 1) + ")\">Next</a></li>";
+                        pagination.append(nextLink);
+                    } else {
+                        var nextLink = "<li class='page-item disabled'><a class='page-link'>Next</a></li>";
+                        pagination.append(nextLink);
                     }
                 }
 
@@ -351,7 +369,6 @@
                 contentType: 'application/json',
                 data: { searchBy: searchBy, pageNumber: pageNumber },
                 success: function (response) {
-                    console.log(response);
                     var tableBody = $("#tbody_data");
                     tableBody.empty();
                     $.each(response.users, function (index, user) {
@@ -366,9 +383,28 @@
                     });
                     var pagination = $(".pagination");
                     pagination.empty();
+                    if (response.currentPage > 1) {
+                        var previousLink = "<li class='page-item'><a class='page-link' onclick=\"numPage('" + searchBy + "', " + (response.currentPage - 1) + ")\">Previous</a></li>";
+                        pagination.append(previousLink);
+                    } else {
+                        var previousLink = "<li class='page-item disabled'><a class='page-link'>Previous</a></li>";
+                        pagination.append(previousLink);
+                    }
                     for (var i = 1; i <= response.totalPages; i++) {
-                        var pageLink = "<li class='page-item'><a class='page-link' onclick=\"numPage('" + searchBy + "', " + i + ")\">" + i + "</a></li>";
-                        pagination.append(pageLink);
+                        if (i === response.currentPage) {
+                            var pageLink = "<li class='page-item active'><a class='page-link' onclick=\"numPage('" + searchBy + "', " + i + ")\">" + i + "</a></li>";
+                            pagination.append(pageLink);
+                        } else {
+                            var pageLink = "<li class='page-item'><a class='page-link' onclick=\"numPage('" + searchBy + "', " + i + ")\">" + i + "</a></li>";
+                            pagination.append(pageLink);
+                        }
+                    }
+                    if (response.currentPage < response.totalPages) {
+                        var nextLink = "<li class='page-item'><a class='page-link' onclick=\"numPage('" + searchBy + "', " + (response.currentPage + 1) + ")\">Next</a></li>";
+                        pagination.append(nextLink);
+                    } else {
+                        var nextLink = "<li class='page-item disabled'><a class='page-link'>Next</a></li>";
+                        pagination.append(nextLink);
                     }
                 }
             })
@@ -381,7 +417,6 @@
                 contentType: 'application/json',
                 data: { searchBy: searchBy },
                 success: function (response) {
-                    console.log(response);
                     var tableBody = $("#tbody_data");
                     tableBody.empty();
                     $.each(response.users, function (index, user) {
@@ -396,9 +431,28 @@
                     });
                     var pagination = $(".pagination");
                     pagination.empty();
+                    if (response.currentPage > 1) {
+                        var previousLink = "<li class='page-item'><a class='page-link' onclick=\"numPage('" + searchBy + "', " + (response.currentPage - 1) + ")\">Previous</a></li>";
+                        pagination.append(previousLink);
+                    } else {
+                        var previousLink = "<li class='page-item disabled'><a class='page-link'>Previous</a></li>";
+                        pagination.append(previousLink);
+                    }
                     for (var i = 1; i <= response.totalPages; i++) {
-                        var pageLink = "<li class='page-item'><a class='page-link' onclick=\"numPage('" + searchBy + "', " + i + ")\">" + i + "</a></li>";
-                        pagination.append(pageLink);
+                        if (i === response.currentPage) {
+                            var pageLink = "<li class='page-item active'><a class='page-link' onclick=\"numPage('" + searchBy + "', " + i + ")\">" + i + "</a></li>";
+                            pagination.append(pageLink);
+                        } else {
+                            var pageLink = "<li class='page-item'><a class='page-link' onclick=\"numPage('" + searchBy + "', " + i + ")\">" + i + "</a></li>";
+                            pagination.append(pageLink);
+                        }
+                    }
+                    if (response.currentPage < response.totalPages) {
+                        var nextLink = "<li class='page-item'><a class='page-link' onclick=\"numPage('" + searchBy + "', " + (response.currentPage + 1) + ")\">Next</a></li>";
+                        pagination.append(nextLink);
+                    } else {
+                        var nextLink = "<li class='page-item disabled'><a class='page-link'>Next</a></li>";
+                        pagination.append(nextLink);
                     }
                 }
             })

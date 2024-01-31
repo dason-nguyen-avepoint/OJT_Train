@@ -182,7 +182,7 @@
         }
         @for (int i = 1; i <= ViewBag.TotalAccounts; i++)
         {
-            <li class="page-item"><a class="page-link" asp-area="Admin" asp-controller="Account" asp-action="Index" asp-route-pageNumber="@i">@i</a></li>
+            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")"><a class="page-link" asp-area="Admin" asp-controller="Account" asp-action="Index" asp-route-pageNumber="@i">@i</a></li>
         }
         @if (ViewBag.CurrentPage == ViewBag.TotalAccounts)
         {
