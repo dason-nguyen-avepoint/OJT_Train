@@ -1,6 +1,4 @@
-﻿@model IEnumerable<AccountManageDTO>
-
-<h2 class="text-center font-weight-bold">Quản lý thông tin khách hàng</h2>
+﻿<h2 class="text-center font-weight-bold">Quản lý thông tin khách hàng</h2>
 <div class="form-inline my-2 my-lg-0 ml-4" id="searchForm">
     <input class="form-control mr-sm-2" type="search" id="searchInput" placeholder="Search" aria-label="Search">
     <button class="btn btn-outline-success my-2 my-sm-0" onclick="submitForm()">Search</button>
@@ -16,62 +14,143 @@
                 <th class="col-1"></th>
             </tr>
         </thead>
-        <tbody>
-            @foreach (var user in Model)
-            {
-                <tr class="text-center">
-                    <td>@user.FullName</td>
-                    <td>@user.Email</td>
-                    <td>@user.Phone</td>
-                    <td>@user.Address</td>
-                    <td>
-                        <button class="btn btn-outline-info" onclick="UserDetail(@user.UserId)">Chi tiết</button>
-                    </td>
-                </tr>
-            }
+        <tbody id="tbody_data">
         </tbody>
     </table>
 </div>
-
+@* POP UP EDITOR *@
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Thông tin khách hàng</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeData()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col">Tên khách hàng</div>
+                            <div class="col" id="customerName"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col">Email</div>
+                            <div class="col" id="customerEmail"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col">Số điện thoại</div>
+                            <div class="col" id="customerPhone"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col">Địa chỉ khách hàng</div>
+                            <div class="col" id="customerAddress"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col">Ngày sinh</div>
+                            <div class="col" id="customerDOB"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="my-3">
+                    <h4>Lịch sử mua hàng</h4>
+                    <div id="customerHistory">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr class="text-center">
+                                    <th class="col-2">Mã đơn </th>
+                                    <th class="col-3">Ngày mua hàng</th>
+                                    <th class="col-3">Giá trị</th>
+                                    <th class="col-2">Trạng thái</th>
+                                    <th class="col-2"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody_customer">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <nav aria-label="Page navigation example" class="mx-2 ml-4">
     <ul class="pagination">
-        @if (ViewBag.CurrentPage == 1)
-        {
-            <li class="page-item disabled"><a class="page-link">Previous</a></li>
-        }
-        else
-        {
-            <li class="page-item"><a class="page-link" asp-area="Admin" asp-controller="Customer" asp-action="Index" asp-route-pageNumber="@(ViewBag.CurrentPage - 1)">Previous</a></li>
-        }
-        @for (int i = 1; i <= ViewBag.TotalUsers; i++)
-        {
-            <li class="page-item"><a class="page-link" asp-area="Admin" asp-controller="Customer" asp-action="Index" asp-route-pageNumber="@i">@i</a></li>
-        }
-        @if (ViewBag.CurrentPage == ViewBag.TotalUsers)
-        {
-            <li class="page-item disabled"><a class="page-link">Next</a></li>
-        }
-        else
-        {
-            <li class="page-item"><a class="page-link" asp-area="Admin" asp-controller="Customer" asp-action="Index" asp-route-pageNumber="@(ViewBag.CurrentPage + 1)">Next</a></li>
-        }
     </ul>
 </nav>
 @section Scripts {
     <script>
-        function submitForm() {
-            var searchBy = document.getElementById("searchInput").value;
-            // if (searchBy === null) {
-                
-            // }
+        $(document).click(function (event) {
+            if (!$(event.target).closest('.modal-content').length) {
+
+            }
+        });
+
+        function closeData() { }
+        GetData();
+
+        function UserDetail(userId) {
             $.ajax({
-                url: "https://localhost:7258/admin/Customer/Index/",
+                type: 'PUT',
+                url: "https://localhost:7258/admin/customer/UserDetail/",
                 contentType: 'application/json',
-                data: { searchBy: searchBy },
+                data: JSON.stringify(userId),
+                success: function (response) {
+                    $('#editModal').modal("show");
+                    CustomerInfo(response);
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+        function CustomerInfo(data) {
+            $('#customerName').text(data.user.fullName);
+            $('#customerAddress').text(data.user.address);
+            $('#customerPhone').text(data.user.phone);
+            $('#customerEmail').text(data.user.email);
+            var dateOfBirth = new Date(data.user.dateOfBirth);
+            $('#customerDOB').text(dateOfBirth.toLocaleDateString('en-GB', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            }));
+            console.log(data.orders);
+            var tableBody = $("#tbody_customer");
+            tableBody.empty();
+            $.each(data.orders, function (index, order) {
+                var createdDate = new Date(order.createdDate);
+                var formatdate = createdDate.toLocaleDateString('en-GB', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                var formattedPrice = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'VND' }).format(order.orderPrice);
+                var row = "<tr class='text-center'>" +
+                    "<td>" + order.orderId + "</td>" +
+                    "<td>" + formatdate + "</td>" +
+                    "<td>" + formattedPrice + "</td>" +
+                    "<td>" + order.orderStatus + "</td>" +
+                    "<td><button class='btn btn-outline-info' onclick='UserDetail(" + order.userId + ")'>Chi tiết</button></td>" +
+                    "</tr>";
+                tableBody.append(row);
+            });
+        }
+
+
+        function GetData() {
+            var searchBy = document.getElementById("searchInput").value;
+            $.ajax({
+                url: "https://localhost:7258/admin/Customer/Getdata/",
+                contentType: 'application/json',
                 success: function (response) {
                     console.log(response);
-                    var tableBody = $("tbody");
+                    var tableBody = $("#tbody_data");
                     tableBody.empty();
                     $.each(response.users, function (index, user) {
                         var row = "<tr class='text-center'>" +
@@ -86,11 +165,72 @@
                     var pagination = $(".pagination");
                     pagination.empty();
                     for (var i = 1; i <= response.totalPages; i++) {
-                        var pageLink = "<li class='page-item'><a class='page-link' href='/admin/Customer/Index?pageNumber=" + i + "'>" + i + "</a></li>";
+                        var pageLink = "<li class='page-item'><a class='page-link' onclick=\"numPage('" + searchBy + "', " + i + ")\">" + i + "</a></li>";
+                        pagination.append(pageLink);
+                    }
+                }
+
+            })
+        }
+        function numPage(searchBy, pageNumber) {
+            var searchBy = document.getElementById("searchInput").value;
+            $.ajax({
+                url: "https://localhost:7258/admin/Customer/Getdata/",
+                contentType: 'application/json',
+                data: { searchBy: searchBy, pageNumber: pageNumber },
+                success: function (response) {
+                    console.log(response);
+                    var tableBody = $("#tbody_data");
+                    tableBody.empty();
+                    $.each(response.users, function (index, user) {
+                        var row = "<tr class='text-center'>" +
+                            "<td>" + user.fullName + "</td>" +
+                            "<td>" + user.email + "</td>" +
+                            "<td>" + user.phone + "</td>" +
+                            "<td>" + user.address + "</td>" +
+                            "<td><button class='btn btn-outline-info' onclick='UserDetail(" + user.userId + ")'>Chi tiết</button></td>" +
+                            "</tr>";
+                        tableBody.append(row);
+                    });
+                    var pagination = $(".pagination");
+                    pagination.empty();
+                    for (var i = 1; i <= response.totalPages; i++) {
+                        var pageLink = "<li class='page-item'><a class='page-link' onclick=\"numPage('" + searchBy + "', " + i + ")\">" + i + "</a></li>";
                         pagination.append(pageLink);
                     }
                 }
             })
         }
+
+        function submitForm() {
+            var searchBy = document.getElementById("searchInput").value;
+            $.ajax({
+                url: "https://localhost:7258/admin/Customer/Getdata/",
+                contentType: 'application/json',
+                data: { searchBy: searchBy },
+                success: function (response) {
+                    console.log(response);
+                    var tableBody = $("#tbody_data");
+                    tableBody.empty();
+                    $.each(response.users, function (index, user) {
+                        var row = "<tr class='text-center'>" +
+                            "<td>" + user.fullName + "</td>" +
+                            "<td>" + user.email + "</td>" +
+                            "<td>" + user.phone + "</td>" +
+                            "<td>" + user.address + "</td>" +
+                            "<td><button class='btn btn-outline-info' onclick='UserDetail(" + user.userId + ")'>Chi tiết</button></td>" +
+                            "</tr>";
+                        tableBody.append(row);
+                    });
+                    var pagination = $(".pagination");
+                    pagination.empty();
+                    for (var i = 1; i <= response.totalPages; i++) {
+                        var pageLink = "<li class='page-item'><a class='page-link' onclick=\"numPage('" + searchBy + "', " + i + ")\">" + i + "</a></li>";
+                        pagination.append(pageLink);
+                    }
+                }
+            })
+        }
+
     </script>
 }

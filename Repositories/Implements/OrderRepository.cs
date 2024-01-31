@@ -63,23 +63,33 @@ namespace Repositories.Implements
                 await connection.ExecuteAsync("ShippingOrder", param: parameter, commandType: CommandType.StoredProcedure);
             });
         }
+        public async Task<IEnumerable<OrderById>> GetByUserId(int userId)
+        {
+            return await WithConnection(async connection =>
+            {
+                var parameter = new DynamicParameters();
+                parameter.Add("userId", userId, DbType.Int32);
+                var order = await connection.QueryAsync<OrderById>("GetOrderByUserId", param: parameter, commandType: CommandType.StoredProcedure);
+                return order.ToList();
+            });
+        }
 
-		#region HUNG
-		//public async Task<int> UspOrder(int orderPrice,int userID, string createBy, string address)
-		//{
-		//	return await WithConnection(async connection =>
-		//	{
-		//		DynamicParameters parameters = new DynamicParameters();
-		//		parameters.Add("orderPrice", orderPrice, DbType.Int32);
-		//		parameters.Add("userID", userID, DbType.Int32);
-		//		parameters.Add("createBy", createBy, DbType.String);
-		//		parameters.Add("address", orderPrice, DbType.String);
-		//		int check = await connection.ExecuteScalarAsync<int>(StoreProcedureOrderu.UspOrder, param: parameters, commandType: CommandType.StoredProcedure);
-		//		return check;
-		//	});
-		//}
+        #region HUNG
+        //public async Task<int> UspOrder(int orderPrice,int userID, string createBy, string address)
+        //{
+        //	return await WithConnection(async connection =>
+        //	{
+        //		DynamicParameters parameters = new DynamicParameters();
+        //		parameters.Add("orderPrice", orderPrice, DbType.Int32);
+        //		parameters.Add("userID", userID, DbType.Int32);
+        //		parameters.Add("createBy", createBy, DbType.String);
+        //		parameters.Add("address", orderPrice, DbType.String);
+        //		int check = await connection.ExecuteScalarAsync<int>(StoreProcedureOrderu.UspOrder, param: parameters, commandType: CommandType.StoredProcedure);
+        //		return check;
+        //	});
+        //}
 
-		public async void AddOrderandOrderDetail(decimal OrderPrice, string CreatedBy, string Address, int UserID, List<OrderU> model)
+        public async void AddOrderandOrderDetail(decimal OrderPrice, string CreatedBy, string Address, int UserID, List<OrderU> model)
 		{
 			await WithConnection(async connection =>
 			{
@@ -103,6 +113,8 @@ namespace Repositories.Implements
 			});
 		}
 
-		#endregion
-	}
+        
+
+        #endregion
+    }
 }

@@ -1,57 +1,60 @@
 ﻿@model IEnumerable<OrderDTO>
 <div>
     <h2 class="text-center font-weight-bold my-3">Danh sách đơn hàng</h2>
-    <table class="table table-bordered" style="margin-left:10px">
-        <thead>
-            <tr class="text-center">
-                <th scope="col">Mã đơn hàng</th>
-                <th scope="col">Người tạo đơn</th>
-                <th scope="col">Ngày tạo</th>
-                <th scope="col">Địa chỉ giao hàng</th>
-                <th scope="col">Ngày thanh toán</th>
-                <th scope="col">Tổng giá trị</th>
-                <th scope="col">Trạng thái đơn hàng</th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var order in Model)
-            {
+    <div class="my-4 mx-2" style="margin-right:10px">
+        <table class="table table-bordered">
+            <thead>
                 <tr class="text-center">
-                    <th scope="row">@order.OrderId</th>
-                    <td>@order.CreatedBy</td>
-                    <td>@order.CreatedDate</td>
-                    <td>@order.Address</td>
-                    <td>@order.PaymentDate</td>
-                    <td>@order.OrderPrice.ToString("###,###,###") VND</td>
-                    @if (@order.OrderStatus == "Huỷ Đơn Hàng")
-                    {
-                        <td style="color:red; font-weight:bold">@order.OrderStatus</td>
-                    }
-                    else if (@order.OrderStatus == "Đã đặt hàng")
-                    {
-                        <td style="color:blue; font-weight:bold">@order.OrderStatus</td>
-                    }
-                    else
-                    {
-                        <td style="color:green; font-weight:bold">@order.OrderStatus</td>
-                    }
-
-                    <td>
-                        @if (order.OrderStatus == "Huỷ Đơn Hàng")
+                    <th class="col-1">Mã đơn hàng</th>
+                    <th class="col-2">Người tạo đơn</th>
+                    <th class="col-1">Ngày tạo</th>
+                    <th class="col-2">Địa chỉ giao hàng</th>
+                    @* <th class="col-2">Ngày thanh toán</th> *@
+                    <th class="col-2">Tổng giá trị</th>
+                    <th class="col-2">Trạng thái đơn hàng</th>
+                    <th class="col-2"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr class="text-center">
+                        <th scope="row">@order.OrderId</th>
+                        <td>@order.CreatedBy</td>
+                        <td>@order.CreatedDate</td>
+                        <td>@order.Address</td>
+                        @* <td>@order.PaymentDate</td> *@
+                        <td>@order.OrderPrice.ToString("###,###,###") VND</td>
+                        @if (@order.OrderStatus == "Huỷ Đơn Hàng")
                         {
-                            <button class="btn btn-outline-primary" onclick="OrderDetails(@order.OrderId)">Chi tiết</button>
+                            <td style="color:red; font-weight:bold">@order.OrderStatus</td>
+                        }
+                        else if (@order.OrderStatus == "Đã đặt hàng")
+                        {
+                            <td style="color:blue; font-weight:bold">@order.OrderStatus</td>
                         }
                         else
                         {
-                            <button class="btn btn-outline-primary" onclick="OrderDetails(@order.OrderId)">Chi tiết</button>
-                            <a class="btn btn-outline-danger" onclick="deleteOrder(@order.OrderId)">Huỷ đơn</a>
+                            <td style="color:green; font-weight:bold">@order.OrderStatus</td>
                         }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+
+                        <td>
+                            @if (order.OrderStatus == "Huỷ Đơn Hàng")
+                            {
+                                <button class="btn btn-outline-primary" onclick="OrderDetails(@order.OrderId)">Chi tiết</button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-outline-primary" onclick="OrderDetails(@order.OrderId)">Chi tiết</button>
+                                <a class="btn btn-outline-danger" onclick="deleteOrder(@order.OrderId)">Huỷ đơn</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    
     @* POP UP EDITOR *@
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">

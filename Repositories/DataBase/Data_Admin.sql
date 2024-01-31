@@ -23,6 +23,10 @@ INSERT INTO ACCOUNT VALUES ('User1','123456','User1@gmail.com','USER1','05 Vu Tr
 INSERT INTO ACCOUNT VALUES ('User2','123456','User2@gmail.com','USER2','04 Vu Trong Phung','0909000777','03-01-1998',NULL,GETDATE(),NULL,NULL,'True','True','False',1);
 INSERT INTO ACCOUNT VALUES ('User3','123456','User3@gmail.com','USER3','03 Vu Trong Phung','0909000666','04-01-1998',NULL,GETDATE(),NULL,NULL,'False','False','False',1);
 INSERT INTO ACCOUNT VALUES ('User4','123456','User4@gmail.com','USER4','02 Vu Trong Phung','0909000555','05-01-1998',NULL,GETDATE(),NULL,NULL,'False','True','True',1);
+-- SEED ACCOUNT
+INSERT INTO ACCOUNT VALUES ('User5','123456','nguyenvana@gmail.com','Nguyen Van A','05 Ong Ich Khiem','0909000111','02-01-1998',NULL,GETDATE(),NULL,NULL,'False','True','False',1);
+INSERT INTO ACCOUNT VALUES ('User6','123456','nguyenvanb@gmail.com','Nguyen Van B','05 Ong Ich Khiem','0909000111','02-01-1998',NULL,GETDATE(),NULL,NULL,'False','True','False',1);
+INSERT INTO ACCOUNT VALUES ('User7','123456','nguyenvanc@gmail.com','Nguyen Van C','05 Ong Ich Khiem','0909000111','02-01-1998',NULL,GETDATE(),NULL,NULL,'False','True','False',1);
 
 SELECT * FROM [ORDER]
 SELECT * FROM [ORDERDETAIL]
@@ -75,5 +79,12 @@ BEGIN
 END;
 GO
 
-EXEC GetUserInfo @PageNumber =1, @PageSize =3, @searchBy = 'User1@gmail.com';
-
+-- GET LIST ORDER BY USERID
+CREATE PROCEDURE GetOrderByUserId @userId INT
+AS
+BEGIN
+	SELECT O.*, A.ADDRESS AS UserAddress, A.Phone FROM [ORDER] AS O 
+	JOIN ACCOUNT AS A ON O.USERID = A.USERID
+	WHERE O.USERID = @userId;
+END;
+GO

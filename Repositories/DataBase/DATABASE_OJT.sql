@@ -1,3 +1,7 @@
+use master;
+GO
+DROP DATABASE IF EXISTS OJT_TRAIN_G6;
+GO
 CREATE DATABASE OJT_TRAIN_G6;
 GO
 use OJT_TRAIN_G6;
@@ -372,7 +376,7 @@ GO
 
 --create proc UspUpdateActiveAccount
 
-alter proc UspUpdateActiveAccount
+create proc UspUpdateActiveAccount
 @UserId int
 as
 begin
@@ -390,7 +394,7 @@ end;
 GO
 
 --create orderandorderdetail
-ALTER PROCEDURE UspAddOrderAndOrderDetail
+create PROCEDURE UspAddOrderAndOrderDetail
     @OrderPrice decimal,
     @CreatedBy NVARCHAR(50),
     @Address NVARCHAR(200),

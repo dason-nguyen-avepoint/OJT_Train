@@ -11,6 +11,7 @@ namespace Repositories.Interfaces
     {
         Task<IEnumerable<OrderDTO>> GetAll(int pageNumber, int pageSize);
         Task<OrderById> GetById(int id);
+        Task<IEnumerable<OrderById>> GetByUserId(int userId);
         void ShippingOrder(int id);
         Task<IEnumerable<OrderDetail>> GetOrderDetail(int id);
         //Task<int> UspOrder(int orderPrice, int userID, string createBy, string address);
