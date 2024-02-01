@@ -31,10 +31,16 @@ namespace OJT_Train.Core.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public async Task<ActionResult> CheckOut([FromBody] string? coupon)
+		public async Task<ActionResult> CheckOut(string? coupon)
 		{
 			int userId = Convert.ToInt32(HttpContext.Session.GetInt32("UserID"));
-			var couponDetail = await _promotionuRepository.UspGetPromotionu(coupon);
+            var list = ListItemCart();
+            var listOfUser = list.Where(x => x.UserID == userId).ToList();
+			if(listOfUser.Count() == 0)
+			{
+				return Ok(new { status = 202 });
+			}
+            var couponDetail = await _promotionuRepository.UspGetPromotionu(coupon);
 			var userDTO = await _accountRepository.UspGetProfile(userId);
 			var userInfo = new Account();
 			userInfo.UserID = userDTO.UserID;
@@ -43,8 +49,7 @@ namespace OJT_Train.Core.Areas.User.Controllers
 			userInfo.Email = userDTO.Email;
 			userInfo.Address = userDTO.Address;	
 			userInfo.Phone = userDTO.Phone;
-			var list = ListItemCart();
-			var listOfUser = list.Where(x => x.UserID == userId).ToList();
+			
 			decimal totalCart = 0;
 			foreach (var item in listOfUser)
 			{
@@ -52,8 +57,10 @@ namespace OJT_Train.Core.Areas.User.Controllers
 			}
 			if(couponDetail != null)
 			{
-				totalCart = totalCart * (couponDetail.Promotionvalue / 100);
-			}
+                double discountPercentage = Convert.ToDouble(couponDetail.Promotionvalue) / 100;
+                decimal discountAmount = totalCart * Convert.ToDecimal(discountPercentage);
+                totalCart -= discountAmount;
+            }
 			InforCheckOut inforCheckOut = new InforCheckOut();
 			inforCheckOut.Account = userInfo;
 			inforCheckOut.TotalPrice = totalCart;
@@ -63,11 +70,17 @@ namespace OJT_Train.Core.Areas.User.Controllers
 		}
 
 
+		[HttpGet]
 		public IActionResult  Orderdetail()
 		{
-			InforCheckOut inforCheckOut = HttpContext.Session.GetObjectFromJson<InforCheckOut>("InforCheckOut");
+            InforCheckOut inforCheckOut = HttpContext.Session.GetObjectFromJson<InforCheckOut>("InforCheckOut");
 			_orderRepository.AddOrderandOrderDetail(inforCheckOut.TotalPrice, inforCheckOut.Account.Email, inforCheckOut.Account.Address, inforCheckOut.Account.UserID, inforCheckOut.CartItems.Adapt<List<OrderU>>());
-			return Ok(new { status = 200 , list = inforCheckOut.CartItems });
+            int userId = Convert.ToInt32(HttpContext.Session.GetInt32("UserID"));
+            List<CartItem> lstCart = ListItemCart();
+            var listWithoutUserCheckOut = lstCart.Where(x => x.UserID != userId).ToList();
+            HttpContext.Session.SetObjectAsJson("ItemCart", listWithoutUserCheckOut);
+            HttpContext.Session.Remove("InforCheckOut");
+            return Ok(new { status = 200 });
 		}
 
 
@@ -86,7 +99,6 @@ namespace OJT_Train.Core.Areas.User.Controllers
 
 		public async Task<ActionResult> AddToCart(int productID)
 		{
-             Console.WriteLine(productID);
             try
 			{
 				int userId = Convert.ToInt32(HttpContext.Session.GetInt32("UserID"));
@@ -160,18 +172,15 @@ namespace OJT_Train.Core.Areas.User.Controllers
 				CartItem deleteProduct = listCartOfUser.SingleOrDefault(x => x.ProductID == productId);
 				listCartOfUser.Remove(deleteProduct);
 				//var removedItem = listCartOfUser.RemoveAll(x => x.ProductID == productId);
-
-				if (listCartOfUser.Count > 0)
+				decimal totalCart = 0;
+                if (listCartOfUser.Count > 0)
 				{
-					decimal totalCart = listCartOfUser.Sum(item => Convert.ToDecimal(item.ItemPriceTotal));
-					HttpContext.Session.SetObjectAsJson("ItemCart", listCartOfUser);
-					return Ok(new { status = 200, listCart = listCartOfUser, totalCart = totalCart, countItem = listCartOfUser.Count() });
+                    totalCart = listCartOfUser.Sum(item => Convert.ToDecimal(item.ItemPriceTotal));
+					
 				}
-				else
-				{
-					return Ok(new { status = 404, message = "Product not found in the cart." });
-				}
-			}
+                HttpContext.Session.SetObjectAsJson("ItemCart", listCartOfUser);
+                return Ok(new { status = 200, listCart = listCartOfUser, totalCart = totalCart, countItem = listCartOfUser.Count() });
+            }
 			catch (Exception ex)
 			{
 				// Log the exception details for debugging purposes.

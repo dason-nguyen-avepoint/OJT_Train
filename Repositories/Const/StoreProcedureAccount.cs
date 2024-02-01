@@ -19,7 +19,9 @@ namespace Repositories.Const
 		public static readonly string UspUpdateInformation = "UspUpdateInformation";
 		public static readonly string UspUpdateActiveAccount = "UspUpdateActiveAccount";
 		public static readonly string Uspgetuseridbyemail = "Uspgetuseridbyemail";
+        public static readonly string UspPassword = "UspPassword";
+        
 
 
-	}
+    }
 }

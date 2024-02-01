@@ -39,7 +39,7 @@
             </div>
 
             <div class="float-right">
-                <button type="button" class="btn btn-lg btn-default md-btn-flat mt-2 mr-3">Back to shopping</button>
+                <button type="button" id="backtoshop" class="btn btn-lg btn-default md-btn-flat mt-2 mr-3">Back to shopping</button>
                 <button class="btn btn-lg btn-primary mt-2" id="onClickCheckOut">Checkout</button>
             </div>
 
@@ -103,7 +103,7 @@
                 totalPriveInCart.empty();
 
                 var labelContent = $('<label class="text-muted font-weight-normal m-0">Total price</label>');
-                var divContent = $('<div class="text-large"><strong>$' + data.totalCart + '</strong></div>');
+                var divContent = $('<div class="text-large"><strong>' + data.totalCart + '₫</strong></div>');
 
                 totalPriveInCart.append(labelContent);
                 totalPriveInCart.append(divContent);
@@ -113,15 +113,20 @@
             }
         });
 
+        //click checkout
         $("#onClickCheckOut").click(function () {
             var coupon = $("#promoCodeInput").val();
             $.ajax({
                 url: '/User/Cart/CheckOut',
-                type: 'get',
+                type: 'Get',
                 contenttype: 'application/json',
-                data: JSON.stringify(coupon),
+                data: { coupon: coupon },
                 datatype: "json",
                 success: function (data) {
+                    if (data.status == 202){
+                        alert("Let's buy something!");
+                        window.location.href = "@Url.Action("Index", "Home")";
+                    }
                     if (data.status == 200) {
                         // window.location.href = '/User/Cart/ViewPaymentForm';
                         window.location.href = "@Url.Action("ViewPaymentForm", "Cart")";
@@ -133,8 +138,11 @@
             });
         });
 
-
-
+        //click to back for shopping
+        $("#backtoshop").click(function () {
+            
+            window.location.href = "@Url.Action("ViewStore", "Product")";
+        });
 
         // Gửi yêu cầu AJAX đến controller để kiểm tra PromoCode
         $("#promoCodeInput").on("keypress", function (event) { 
@@ -157,7 +165,7 @@
                             var totalPriveInCart = $('#totalPriveInCart');
                             totalPriveInCart.empty();
                             var labelContent = $('<label class="text-muted font-weight-normal m-0">Total price</label>');
-                            var divContent = $('<div class="text-large"><strong>$' + valueafterdiscounted.toFixed(2) + '</strong></div>');
+                            var divContent = $('<div class="text-large"><strong>' + valueafterdiscounted.toFixed(2) + '₫</strong></div>');
                             totalPriveInCart.append(labelContent);
                             totalPriveInCart.append(divContent);
 
@@ -191,35 +199,45 @@
                 data: { productID: productId },
                 success: function (data) {
                     if (data.status === 200) {
-                            $("#productListBody").empty();
-                        $.each(data.listCart, function (index, product) {
-                            var newRow = "<tr>" +
-                                "<td class='p-4'>" +
-                                "<div class='media align-items-center'>" +
-                                "<img src='" + product.productImg + "' class='d-block ui-w-40 ui-bordered mr-4' alt=''>" +
-                                "<div class='media-body'>" +
-                                "<a href='#' class='d-block text-dark'>" + product.productName + "</a>" +
-                                "<small>" +
-                                "</div>" +
-                                "</div>" +
-                                "</td>" +
-                                "<td class='text-right font-weight-semibold align-middle p-4'>" + product.price + "</td>" +
-                                "<td class='align-middle p-4 text-center'>" + product.quantity + "</td>" +
-                                "<td class='text-right font-weight-semibold align-middle p-4'>" + product.itemPriceTotal + "</td>" +
-                                "<td class='text-center align-middle px-0'><button class='shop-tooltip close float-none text-danger' id='removenow' data-product-id='" + product.productID + "' title='' data-original-title='Remove'>×</button></td>" +
-                                "</tr>";
-                            // Thêm hàng vào tbody
-                            $("#productListBody").append(newRow);
-                        });
+                        $("#productListBody").empty();
+                        if (data.countItem != 0) {
+                            $.each(data.listCart, function (index, product) {
+                                var newRow = "<tr>" +
+                                    "<td class='p-4'>" +
+                                    "<div class='media align-items-center'>" +
+                                    "<img src='" + product.productImg + "' class='d-block ui-w-40 ui-bordered mr-4' alt=''>" +
+                                    "<div class='media-body'>" +
+                                    "<a href='#' class='d-block text-dark'>" + product.productName + "</a>" +
+                                    "<small>" +
+                                    "</div>" +
+                                    "</div>" +
+                                    "</td>" +
+                                    "<td class='text-right font-weight-semibold align-middle p-4'>" + product.price + "</td>" +
+                                    "<td class='align-middle p-4 text-center'>" + product.quantity + "</td>" +
+                                    "<td class='text-right font-weight-semibold align-middle p-4'>" + product.itemPriceTotal + "</td>" +
+                                    "<td class='text-center align-middle px-0'><button class='shop-tooltip close float-none text-danger' id='removenow' data-product-id='" + product.productID + "' title='' data-original-title='Remove'>×</button></td>" +
+                                    "</tr>";
+                                // Thêm hàng vào tbody
+                                $("#productListBody").append(newRow);
+                                var totalPriveInCart = $('#totalPriveInCart');
+                                totalPriveInCart.empty();
 
-                        var totalPriveInCart = $('#totalPriveInCart');
-                        totalPriveInCart.empty();
+                                var labelContent = $('<label class="text-muted font-weight-normal m-0">Total price</label>');
+                                var divContent = $('<div class="text-large"><strong>$' + data.totalCart + '</strong></div>');
 
-                        var labelContent = $('<label class="text-muted font-weight-normal m-0">Total price</label>');
-                        var divContent = $('<div class="text-large"><strong>$' + data.totalCart + '</strong></div>');
+                                totalPriveInCart.append(labelContent);
+                                totalPriveInCart.append(divContent);
+                            });
+                        } else {
+                            var totalPriveInCart = $('#totalPriveInCart');
+                            totalPriveInCart.empty();
 
-                        totalPriveInCart.append(labelContent);
-                        totalPriveInCart.append(divContent);
+                            var labelContent = $('<label class="text-muted font-weight-normal m-0">Total price</label>');
+                            var divContent = $('<div class="text-large"><strong>$' + 0 + '</strong></div>');
+
+                            totalPriveInCart.append(labelContent);
+                            totalPriveInCart.append(divContent);
+                        }
                     }
                     else {
                         console.log('Product not found in the cart.');

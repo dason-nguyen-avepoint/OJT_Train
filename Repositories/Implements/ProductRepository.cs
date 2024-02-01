@@ -119,5 +119,21 @@ namespace Repositories.Implements
                 return product.ToList();
             });
         }
-    }
+		public async Task<IEnumerable<ProductInUserViewDTO>> TopfiveProductbyPriceNew()
+		{
+			return await WithConnection(async connection =>
+			{
+				var product = await connection.QueryAsync<ProductInUserViewDTO>(StoreProcedureCategoryProduct.uspTopFIVEProduct, null, commandType: CommandType.StoredProcedure);
+				return product.ToList();
+			});
+		}
+		public async Task<IEnumerable<ProductInUserViewDTO>> TopfiveProductbyMemories()
+		{
+			return await WithConnection(async connection =>
+			{
+				var product = await connection.QueryAsync<ProductInUserViewDTO>(StoreProcedureCategoryProduct.uspTopFiveProductbyMemory, null, commandType: CommandType.StoredProcedure);
+				return product.ToList();
+			});
+		}
+	}
 }

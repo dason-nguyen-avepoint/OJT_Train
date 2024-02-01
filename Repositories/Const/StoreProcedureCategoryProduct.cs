@@ -15,5 +15,8 @@ namespace Repositories.Const
         public static readonly string UspGetListProductByCategory = "UspGetListProductByCategory";
         public static readonly string UspGetProductDetails = "UspGetProductDetails";
         public static readonly string UspgetProductDetailImg = "UspgetProductDetailImg";
-    }
+
+		public static readonly string uspTopFIVEProduct = "uspTopFIVEProduct";
+		public static readonly string uspTopFiveProductbyMemory = "uspTopFiveProductbyMemory";
+	}
 }

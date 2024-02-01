@@ -14,9 +14,10 @@ namespace Repositories.Interfaces
         Task<IEnumerable<OrderById>> GetByUserId(int userId);
         void ShippingOrder(int id);
         Task<IEnumerable<OrderDetail>> GetOrderDetail(int id);
-        //Task<int> UspOrder(int orderPrice, int userID, string createBy, string address);
         void AddOrderandOrderDetail(decimal OrderPrice, string CreatedBy, string Address, int UserID, List<OrderU> model);
+        Task<IEnumerable<OrderForcheckHistory>> GetOrdercheckhistory(int userid);
 		void DeleteOrder(int id);
+        Task UpdateOrder(int OrderId);
         void ShipCompleted(int id);
         Task<int> TotalOrder();
         Task<int> TotalShip();

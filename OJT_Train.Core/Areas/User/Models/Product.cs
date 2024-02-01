@@ -24,4 +24,9 @@ namespace OJT_Train.Core.Areas.User.Models
         public int ImgID { get; set; }
         public string? ImgProduct { get; set; }
     }
+    public class ProductViewModel
+    {
+		public List<Product> List1 { get; set; }
+		public List<Product> List2 { get; set; }
+	}
 }

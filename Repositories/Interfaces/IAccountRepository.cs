@@ -1,10 +1,4 @@
 ﻿using Repositories.Dto;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Repositories.Interfaces
 {
     public interface IAccountRepository
@@ -20,5 +14,7 @@ namespace Repositories.Interfaces
 		Task ActivedAccount(int? id);
 
 		Task<int> Uspgetuseridbyemail(AccountDTO model);
-	}
+        Task<int> ChangePassword(AccountDTO model, string repassword);
+
+    }
 }

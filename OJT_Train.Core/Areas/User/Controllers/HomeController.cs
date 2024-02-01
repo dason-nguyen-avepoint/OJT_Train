@@ -10,22 +10,56 @@ namespace OJT_Train.Core.Areas.User.Controllers
     public class HomeController : Controller
     {
 		private readonly IAccountRepository _accountRepository;
-
-		public HomeController(IAccountRepository accountRepository)
+		private readonly IProductRepository _productRepository;
+		public HomeController(IAccountRepository accountRepository,IProductRepository productRepository)
 		{
-
+			_productRepository= productRepository;
 			_accountRepository = accountRepository;
 		}
-
-		public IActionResult Index()
+		[HttpGet]
+		public async Task<IActionResult> Index()
         {
-            return View();
+	
+			var check1 = await _productRepository.TopfiveProductbyPriceNew();
+			var check2 = await _productRepository.TopfiveProductbyMemories();
+			List<Product> listproduct1 = new List<Product>();
+			foreach (var item in check1)
+			{
+				Product product = new Product();
+				product.ProductId = item.ProductId;
+				product.ProductName = item.ProductName;
+				product.Memory = item.Memory;
+				product.PriceNew = item.PriceNew;
+				product.PriceOld = item.PriceOld;
+				product.ProductDetail = item.ProductDetail;
+				product.ImageProduct = item.ImageProduct;
+				listproduct1.Add(product);
+			}
+			List<Product> listproduct2 = new List<Product>();
+			foreach (var item in check2)
+			{
+				Product product = new Product();
+				product.ProductId = item.ProductId;
+				product.ProductName = item.ProductName;
+				product.Memory = item.Memory;
+				product.PriceNew = item.PriceNew;
+				product.PriceOld = item.PriceOld;
+				product.ProductDetail = item.ProductDetail;
+				product.ImageProduct = item.ImageProduct;
+				listproduct2.Add(product);
+			}
+			var viewModel = new ProductViewModel
+			{
+				List1 = listproduct1,
+				List2 = listproduct2
+			};
+			return View(viewModel);
         }
 
 		[HttpGet]
 		public IActionResult Login()
 		{
-			if (HttpContext.Session.GetInt32("UserID") == null)
+			if (HttpContext.Session.GetInt32("User") == null)
 			{
 				ViewBag.ActivationMessage = TempData["ActivationMessage"] as string;
 				return View();
@@ -53,6 +87,8 @@ namespace OJT_Train.Core.Areas.User.Controllers
 			else
 			{
 				HttpContext.Session.SetInt32("UserID", account.UserID);
+                HttpContext.Session.SetInt32("User", account.UserID);
+                HttpContext.Session.SetString("UserName",account.UserName);
                 // SET ROLE NAME
                 HttpContext.Session.SetString("RoleName", "Admin");
                 
@@ -132,7 +168,7 @@ namespace OJT_Train.Core.Areas.User.Controllers
 		public IActionResult Logout()
 		{
 			HttpContext.Session.Clear();
-			HttpContext.Session.Remove("UserName");
+			//HttpContext.Session.Remove("User");
 			return RedirectToAction("Login", "Home");
 		}
 		[HttpGet]

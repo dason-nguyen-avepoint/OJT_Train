@@ -27,8 +27,21 @@
 
 		}
     }
+	public class OrderForcheck
+	{
+		public int OrderId { get; set; }
+		public long OrderPrice { get; set; }
 
-    public class InforCheckOut
+		public string? OrderStatus { get; set; }
+		public bool IsDeleted { get; set; }
+
+		public string? ProductName { get; set; }
+
+		public int Quantity { get; set; }
+
+	}
+
+	public class InforCheckOut
     {
         public InforCheckOut()
         {

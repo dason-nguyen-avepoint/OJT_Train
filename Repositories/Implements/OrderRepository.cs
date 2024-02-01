@@ -139,8 +139,36 @@ namespace Repositories.Implements
 				await connection.ExecuteAsync(StoreProcedureOrderu.UspAddOrderAndOrderDetail, param: parameters, commandType: CommandType.StoredProcedure);
 			});
 		}
-
-        
+		public async Task<IEnumerable<OrderForcheckHistory>> GetOrdercheckhistory(int userid)
+		{
+			return await WithConnection(async connection =>
+			{
+				var parameter = new DynamicParameters();
+				parameter.Add("userId", userid, DbType.Int32);
+				var orderhistory = await connection.QueryAsync<OrderForcheckHistory>(StoreProcedureOrderu.UspOrderforcheckfistory, param: parameter, commandType: CommandType.StoredProcedure);
+				return orderhistory.ToList();
+			});
+		}
+        public async Task UpdateOrder(int OrderId)
+        {
+            await WithConnection(async connection =>
+            {
+                var parameters = new DynamicParameters();
+              
+                parameters.Add("@OrderId", OrderId, DbType.Int32);     
+                await connection.ExecuteAsync(StoreProcedureOrderu.UspDeleteOrder, param: parameters, commandType: CommandType.StoredProcedure);
+            });
+        }
         #endregion
-    }
+        public async Task<int> TotalOrder()
+		{
+			return await WithConnection(async connection =>
+			{
+				int orders = (int)await connection.ExecuteScalarAsync("TotalOrder", null, commandType: CommandType.StoredProcedure);
+				return orders;
+			});
+		}
+
+		
+	}
 }

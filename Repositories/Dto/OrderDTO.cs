@@ -48,4 +48,17 @@
 
 		public int UserID { get; set; }
 	}
+    public class OrderForcheckHistory
+    {
+        public int OrderId { get; set; }
+		public long OrderPrice { get; set; }
+
+		public string? OrderStatus { get; set; }
+		public bool IsDeleted { get; set; }
+
+        public string? ProductName { get; set; }
+
+        public int Quantity { get; set; }
+
+	}
 }

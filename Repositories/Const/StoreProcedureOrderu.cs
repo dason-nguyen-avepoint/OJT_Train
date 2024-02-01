@@ -10,5 +10,7 @@ namespace Repositories.Const
 	{
 		public static readonly string UspOrder = "UspOrder";
 		public static readonly string UspAddOrderAndOrderDetail = "UspAddOrderAndOrderDetail";
-	}
+		public static readonly string UspOrderforcheckfistory = "UspOrderforcheckfistory";
+        public static readonly string UspDeleteOrder = "UspDeleteOrder";
+    }
 }

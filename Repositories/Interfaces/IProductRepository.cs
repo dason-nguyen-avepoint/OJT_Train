@@ -19,7 +19,7 @@ namespace Repositories.Interfaces
         Task<IEnumerable<ProductInUserViewDTO>> GetProductByCategory(int? id);
         Task<ProductInUserViewDTO?> GetProductByID(int? id);
         Task<IEnumerable<ProductDetailImgDto>> GetProductByIDIMG(int? id);
-
-
-    }
+        Task<IEnumerable<ProductInUserViewDTO>> TopfiveProductbyPriceNew();
+        Task<IEnumerable<ProductInUserViewDTO>> TopfiveProductbyMemories();
+	}
 }
