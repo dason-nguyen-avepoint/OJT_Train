@@ -37,7 +37,7 @@
                                   @*   <p class="product-category">@product.CategoryId</p> *@
                                     <h3 class="product-name"><a href="#">@product.ProductName</a></h3>
                                     <p class="product-name"><a href="#">@product.Memory</a></p>
-                                    <h4 class="product-price">@product.PriceNew ₫<del class="product-old-price">@product.PriceOld ₫</del></h4>
+                                    <h4 class="product-price">@String.Format("{0:N0} ₫", @product.PriceNew)<del class="product-old-price">@String.Format("{0:N0} ₫", @product.PriceOld)</del></h4>
                                     <div class="product-btns">
                                         <a asp-action="ViewProductDetail" asp-controller="Product" asp-route-id="@product.ProductId"><span class="tooltipp">Detail Product</span></a>
                                     </div>
