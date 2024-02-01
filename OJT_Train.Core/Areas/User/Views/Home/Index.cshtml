@@ -75,7 +75,7 @@
 										</div>
 										<div class="product-body">
 											<h3 class="product-name"><a href="#">@item.ProductName</a></h3>
-											<h4 class="product-price">@item.PriceNew <del class="product-old-price">@item.PriceOld</del></h4>
+											<h4 class="product-price">@String.Format("{0:N0} ₫", @item.PriceNew) <del class="product-old-price">@String.Format("{0:N0} ₫", item.PriceOld)</del></h4>
 											<div class="product-rating">
 												<i class="fa fa-star"></i>
 												<i class="fa fa-star"></i>
@@ -187,7 +187,7 @@
 										</div>
 										<div class="product-body">
 											<h3 class="product-name"><a href="#">@item.ProductName</a></h3>
-											<h4 class="product-price">@item.PriceNew <del class="product-old-price">@item.PriceOld</del></h4>
+											<h4 class="product-price">@String.Format("{0:N0} ₫", @item.PriceNew) <del class="product-old-price">@String.Format("{0:N0} ₫", @item.PriceOld)</del></h4>
 											<div class="product-rating">
 												<i class="fa fa-star"></i>
 												<i class="fa fa-star"></i>

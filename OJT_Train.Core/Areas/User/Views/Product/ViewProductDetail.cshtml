@@ -27,7 +27,7 @@
                 <div class="product-details">
                     <h2 class="product-name">@Model.ProductName</h2>
                     <div>
-						<h3 class="product-price">@Model.PriceOld ₫<del class="product-old-price">@Model.PriceNew ₫</del></h3>
+						<h3 class="product-price">@String.Format("{0:N0} ₫", @Model.PriceOld)<del class="product-old-price">@String.Format("{0:N0} ₫", @Model.PriceNew)</del></h3>
                         <span class="product-available">In Stock</span>
                     </div>
                     <p>@Html.Raw(Model.ProductDetail)</p>
