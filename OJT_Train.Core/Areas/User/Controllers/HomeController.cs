@@ -1,4 +1,5 @@
 using Mapster;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OJT_Train.Core.Areas.User.Models;
 using Repositories.Dto;
@@ -66,8 +67,19 @@ namespace OJT_Train.Core.Areas.User.Controllers
 			}
 			else
 			{
-                //HttpContext.SetRoles(new[] { HttpContext.Session.GetString("RoleName") });
-                return RedirectToAction("Index", "Home");
+				//HttpContext.SetRoles(new[] { HttpContext.Session.GetString("RoleName") });
+				if (HttpContext.Session.GetString("RoleName").Equals("User"))
+				{
+                    return RedirectToAction("Index", "Home");
+                } else if (HttpContext.Session.GetString("RoleName").Equals("Admin"))
+				{
+                    return RedirectToAction("Index", "Manager", new { area = "Admin" });
+				}
+				else
+				{
+                    return RedirectToAction("Index", "Shipping", new { area = "Admin" });
+                }
+                
 			}
 		}
 
@@ -89,8 +101,10 @@ namespace OJT_Train.Core.Areas.User.Controllers
 				HttpContext.Session.SetInt32("UserID", account.UserID);
                 HttpContext.Session.SetInt32("User", account.UserID);
                 HttpContext.Session.SetString("UserName",account.UserName);
-                // SET ROLE NAME
-                HttpContext.Session.SetString("RoleName", "Admin");
+				// SET ROLE NAME
+				var userId = (int)HttpContext.Session.GetInt32("UserID");
+				var roleUser = await _accountRepository.GetRoleUser(userId);
+                HttpContext.Session.SetString("RoleName", roleUser);
                 
                 return Ok(new { status = true, message = "Login successful" });
 			}

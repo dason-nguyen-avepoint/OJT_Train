@@ -117,6 +117,15 @@ namespace Repositories.Implements
 			});
 		}
 
-
-	}
+        public async Task<string> GetRoleUser(int id)
+        {
+            return (string)await WithConnection(async connection =>
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("userId", id, DbType.Int32);
+                var roleUser = await connection.ExecuteScalarAsync("GetRoleUser", param: parameters, commandType: CommandType.StoredProcedure);
+                return roleUser;
+            });
+        }
+    }
 }

@@ -13,10 +13,11 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
             _repo = repo;
             _thongke = thongke;
         }
-        private async Task<IActionResult> CheckAdminAccess()
+        private IActionResult CheckAdminAccess()
         {
             if (HttpContext.Session.GetString("RoleName") != "Admin")
             {
+                var a = HttpContext.Session.GetString("RoleName");
                 return RedirectToAction("Unauthorized", "Error");
             }
 
@@ -24,12 +25,13 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
         }
 
         public async Task<IActionResult> Index()
+        
         {
-            //var accessResult = await CheckAdminAccess();
-            //if (accessResult != null)
-            //{
-            //    return accessResult;
-            //}
+            var accessResult = CheckAdminAccess();
+            if (accessResult != null)
+            {
+                return accessResult;
+            }
             var inventories = await _repo.GetInfor();
             ViewBag.ThongKe = await _thongke.GetInfo();
             return View(inventories);

@@ -15,8 +15,22 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
             _repo = repo;
             _order = order;
         }
+        private IActionResult CheckAdminAccess()
+        {
+            if (HttpContext.Session.GetString("RoleName") != "Admin")
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
+
+            return null;
+        }
         public async Task<IActionResult> Index()
         {
+            var accessResult = CheckAdminAccess();
+            if (accessResult != null)
+            {
+                return accessResult;
+            }
             ViewBag.TotalUsers = (int)Math.Ceiling((await _repo.TotalAccount("User", null)) / (double)3);
             return View();
         }

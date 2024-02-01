@@ -16,8 +16,22 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
             _repo = repo;
             _product = product;
         }
+        private IActionResult CheckAdminAccess()
+        {
+            if (HttpContext.Session.GetString("RoleName") != "Admin")
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
+
+            return null;
+        }
         public IActionResult Index()
         {
+            var accessResult = CheckAdminAccess();
+            if (accessResult != null)
+            {
+                return accessResult;
+            }
             return View();
         }
         public async Task<IActionResult> GetSales()

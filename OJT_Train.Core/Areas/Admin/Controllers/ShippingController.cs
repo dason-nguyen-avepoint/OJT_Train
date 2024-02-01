@@ -11,9 +11,22 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
         {
             _repo = repo;
         }
+        private IActionResult CheckAdminAccess()
+        {
+            if (HttpContext.Session.GetString("RoleName") == "Admin" || HttpContext.Session.GetString("RoleName") == "Shiper")
+            {
+                return null;
+            }
+            return RedirectToAction("Unauthorized", "Error");
+        }
 
         public async Task<IActionResult> Index(int pageNumber = 1)
         {
+            var accessResult = CheckAdminAccess();
+            if (accessResult != null)
+            {
+                return accessResult;
+            }
             int pageSize = 3;
             ViewBag.CurrentPage = pageNumber;
             ViewBag.TotalShips = (int)Math.Ceiling((await _repo.TotalShip()) / (double)pageSize);

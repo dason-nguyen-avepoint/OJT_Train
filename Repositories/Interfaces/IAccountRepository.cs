@@ -15,6 +15,6 @@ namespace Repositories.Interfaces
 
 		Task<int> Uspgetuseridbyemail(AccountDTO model);
         Task<int> ChangePassword(AccountDTO model, string repassword);
-
+        Task<string> GetRoleUser(int id);
     }
 }

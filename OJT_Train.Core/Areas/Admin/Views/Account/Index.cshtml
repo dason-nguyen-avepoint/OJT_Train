@@ -26,6 +26,9 @@
                 @if (item.RoleName == "Admin")
                 {
                     <td>Quản trị viên</td>
+                }else if(item.RoleName == "Shiper")
+                {
+                    <td>Shipper</td>
                 }
                 else
                 {
@@ -80,95 +83,95 @@
             </tr>
         }
     </tbody>
-    @* POP UP EDITOR *@
-    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Cập nhật tài khoản</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label for="editUserName">Tên đăng nhập:</label>
-                            <input type="text" class="form-control" id="editUserName" disabled>
-                        </div>
-                        <div class="form-group">
-                            <label for="editFullName">Tên đầy đủ:</label>
-                            <input type="text" class="form-control" id="editFullName" disabled>
-                        </div>
-                        <div class="form-group">
-                            <label for="editEmail">Địa chỉ Email:</label>
-                            <input type="email" class="form-control" id="editEmail" disabled>
-                        </div>
-                        <div class="form-group">
-                            <label for="editPhone">Số điện thoại:</label>
-                            <input type="text" class="form-control" id="editPhone" disabled>
-                        </div>
-                        <div class="form-group">
-                            <label for="editAddress">Địa chỉ:</label>
-                            <input type="text" class="form-control" id="editAddress" disabled>
-                        </div>
-                        <div class="form-group">
-                            <label for="editRoleId">Vai trò:</label>
-                            <select id="chooseRole">
-                                <option value="" disabled selected id="defaultRole">Chọn vai trò</option>
-                                @foreach (var item in ViewBag.GetRoles)
-                                {
-                                    <option value="@item.RoleId" data-role="@item.RoleName">@item.RoleName</option>
-                                }
-                            </select>
-                        </div>
-                        <input type="hidden" id="editUserId">
-                        <input type="hidden" id="editDOB">
-                        <input type="hidden" id="editTimeStamp">
-                        <input type="hidden" id="editIsActived">
-                        <input type="hidden" id="editIsBlocked">
-                        <input type="hidden" id="editRoleId">
-                        <input type="hidden" id="editRoleName">
-
-                        <button type="submit" class="btn btn-primary" style="width:140px" onclick="saveChanges()">Lưu</button>
-                        <button type="button" class="btn btn-danger" style="width:140px" onclick="closeChanges()">Thoát</button>
-                        
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    @* POP UP BLOCK ACCOUNT *@
-    <div class="modal fade" id="blockModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Khoá tài khoản</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <span>Bạn muốn khoá tài khoản trong bao lâu?</span>
-                            <select class="form-select" aria-label="Default select example" style="text-align:center" id="timeSelect">
-                                    <option selected disabled value="0">-- Time Option --</option>
-                                    <option value="3">3 phút</option>
-                                    <option value="5">5 phút</option>
-                                    <option value="10">10 phút</option>
-                            </select>
-                            <span id="validTime" style="color:red; display:none">Vui lòng chọn 1 tuỳ chọn thời gian.</span>
-                        </div>
-                        <input type="hidden" id="editUserId">
-                        <button type="submit" class="btn btn-primary" style="width:140px" onclick="blockAccount(event)">Thực hiện</button>
-                        <button type="button" class="btn btn-danger" style="width:140px" onclick="closeBlock()">Thoát</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 </table>
+@* POP UP EDITOR *@
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Cập nhật tài khoản</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="editUserName">Tên đăng nhập:</label>
+                        <input type="text" class="form-control" id="editUserName" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="editFullName">Tên đầy đủ:</label>
+                        <input type="text" class="form-control" id="editFullName" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmail">Địa chỉ Email:</label>
+                        <input type="email" class="form-control" id="editEmail" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPhone">Số điện thoại:</label>
+                        <input type="text" class="form-control" id="editPhone" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="editAddress">Địa chỉ:</label>
+                        <input type="text" class="form-control" id="editAddress" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="editRoleId">Vai trò:</label>
+                        <select id="chooseRole">
+                            <option value="" disabled selected id="defaultRole">Chọn vai trò</option>
+                            @foreach (var item in ViewBag.GetRoles)
+                            {
+                                <option value="@item.RoleId" data-role="@item.RoleName">@item.RoleName</option>
+                            }
+                        </select>
+                    </div>
+                    <input type="hidden" id="editUserId">
+                    <input type="hidden" id="editDOB">
+                    <input type="hidden" id="editTimeStamp">
+                    <input type="hidden" id="editIsActived">
+                    <input type="hidden" id="editIsBlocked">
+                    <input type="hidden" id="editRoleId">
+                    <input type="hidden" id="editRoleName">
+
+                    <button type="submit" class="btn btn-primary" style="width:140px" onclick="saveChanges()">Lưu</button>
+                    <button type="button" class="btn btn-danger" style="width:140px" onclick="closeChanges()">Thoát</button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@* POP UP BLOCK ACCOUNT *@
+<div class="modal fade" id="blockModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Khoá tài khoản</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <span>Bạn muốn khoá tài khoản trong bao lâu?</span>
+                        <select class="form-select" aria-label="Default select example" style="text-align:center" id="timeSelect">
+                            <option selected disabled value="0">-- Time Option --</option>
+                            <option value="3">3 phút</option>
+                            <option value="5">5 phút</option>
+                            <option value="10">10 phút</option>
+                        </select>
+                        <span id="validTime" style="color:red; display:none">Vui lòng chọn 1 tuỳ chọn thời gian.</span>
+                    </div>
+                    <input type="hidden" id="editUserId">
+                    <button type="submit" class="btn btn-primary" style="width:140px" onclick="blockAccount(event)">Thực hiện</button>
+                    <button type="button" class="btn btn-danger" style="width:140px" onclick="closeBlock()">Thoát</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <nav aria-label="Page navigation example" class="mx-2">
     <ul class="pagination">

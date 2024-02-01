@@ -145,7 +145,7 @@ FOREIGN KEY (PRODUCTID) REFERENCES PRODUCT(PRODUCTID)
 GO
 ALTER TABLE ACCOUNT ADD DEFAULT 0 FOR ISBLOCKED;
 ALTER TABLE ACCOUNT ADD DEFAULT 0 FOR ISDELETED;
-ALTER TABLE ACCOUNT ADD DEFAULT 1 FOR ISACTIVED;
+ALTER TABLE ACCOUNT ADD DEFAULT 0 FOR ISACTIVED;
 ALTER TABLE ACCOUNT
 ADD CONSTRAINT df_Role
 DEFAULT 1 FOR ROLEID;
@@ -404,7 +404,7 @@ AS
 BEGIN
     DECLARE @OrderID INT;
     INSERT INTO [ORDER] (OrderPrice, CreatedDate, CreatedBy, [Address], UserID, OrderStatus, IsDeleted)
-    VALUES (@OrderPrice, GETDATE(), @CreatedBy, @Address, @UserID, N'Đã Đặt Hàng', 0);
+    VALUES (@OrderPrice, GETDATE(), @CreatedBy, @Address, @UserID, N'Đã đặt hàng', 0);
 
     SET @OrderID = SCOPE_IDENTITY();
 
@@ -465,8 +465,8 @@ create PROC UspDeleteOrder
 AS
 BEGIN
     UPDATE [Order] SET OrderStatus = N'Huỷ Đơn Hàng', IsDeleted = 1 WHERE OrderId = @OrderId;
-END
-GO;
+END;
+GO
 --create proc usptop5product
 CREATE PROCEDURE uspTopFIVEProduct
 AS
@@ -499,8 +499,8 @@ BEGIN
 	from PRODUCT pro
 	where pro.ISPUBLISHED='true' and pro.ISDELETED='false' 
     ORDER BY Memory DESC;
-END
-GO;
+END;
+GO
 
 
 --create proc UspGetPromotionu
@@ -537,8 +537,8 @@ WHERE
     o.orderid = od.orderid and o.userid=@userId
 GROUP BY
     o.orderid,o.orderprice,o.orderstatus,o.isdeleted;
-END
-GO;
+END;
+GO
 
 
 --create proc [UspUpdateInformation]
@@ -551,8 +551,8 @@ CREATE PROC [dbo].[UspUpdateInformation]
 AS
 BEGIN
   UPDATE Account SET FullName =@Fullname, PHONE =@Phone, [ADDRESS] =@Address, [Dateofbirth] = @DateOfBirth WHERE UserID= @UserId 
-END
-GO;
+END;
+GO
 ---admin
 
 
@@ -1098,3 +1098,14 @@ BEGIN
 	SELECT COUNT(*) FROM [ORDER] WHERE ORDERSTATUS = N'Đang giao hàng';
 END;
 GO
+--GET ROLE USER
+CREATE PROCEDURE GetRoleUser @userId INT
+AS
+BEGIN
+	SELECT [ROLE].ROLENAME FROM  ACCOUNT 
+	JOIN [ROLE] ON ACCOUNT.ROLEID = [ROLE].ROLEID
+	WHERE USERID = @userId;
+END;
+GO
+
+EXEC GetRoleUser @userId = 3

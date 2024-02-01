@@ -160,15 +160,5 @@ namespace Repositories.Implements
             });
         }
         #endregion
-        public async Task<int> TotalOrder()
-		{
-			return await WithConnection(async connection =>
-			{
-				int orders = (int)await connection.ExecuteScalarAsync("TotalOrder", null, commandType: CommandType.StoredProcedure);
-				return orders;
-			});
-		}
-
-		
 	}
 }

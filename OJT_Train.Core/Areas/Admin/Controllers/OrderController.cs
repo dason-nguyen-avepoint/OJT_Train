@@ -11,8 +11,22 @@ namespace OJT_Train.Core.Areas.Admin.Controllers
         {
             _repo = repo;
         }
+        private IActionResult CheckAdminAccess()
+        {
+            if (HttpContext.Session.GetString("RoleName") != "Admin")
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
+
+            return null;
+        }
         public async Task<IActionResult> Index(int pageNumber = 1)
         {
+            var accessResult = CheckAdminAccess();
+            if (accessResult != null)
+            {
+                return accessResult;
+            }
             int pageSize = 3;
             ViewBag.CurrentPage = pageNumber;
             ViewBag.TotalOrders = (int)Math.Ceiling((await _repo.TotalOrder()) / (double)pageSize);
