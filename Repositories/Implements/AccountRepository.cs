@@ -81,11 +81,22 @@ namespace Repositories.Implements
 				parameters.Add("Phone", model.Phone);
 				parameters.Add("Address", model.Address);
 				parameters.Add("DateOfBirth", model.DateOfBirth);
-				parameters.Add("Password", model.Password);
 				await connection.ExecuteAsync(StoreProcedureAccount.UspUpdateInformation, param: parameters, commandType: CommandType.StoredProcedure);
 			});
 		}
-		public async Task ActivedAccount(int? id)
+        public async Task<int> ChangePassword(AccountDTO model, string repassword)
+        {
+            return await WithConnection(async connection =>
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("UserId", model.UserID, DbType.Int32);
+                parameters.Add("Password", model.Password, DbType.String);
+                parameters.Add("Repassword", repassword, DbType.String);
+                int check = await connection.ExecuteScalarAsync<int>(StoreProcedureAccount.UspPassword, param: parameters, commandType: CommandType.StoredProcedure);
+                return check;
+            });
+        }
+        public async Task ActivedAccount(int? id)
 		{
 			await WithConnection(async connection =>
 			{

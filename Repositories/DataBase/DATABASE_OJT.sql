@@ -389,6 +389,7 @@ end;
 GO
 
 --create orderandorderdetail
+--create orderandorderdetail
 ALTER PROCEDURE UspAddOrderAndOrderDetail
     @OrderPrice decimal,
     @CreatedBy NVARCHAR(50),
@@ -399,7 +400,7 @@ AS
 BEGIN
     DECLARE @OrderID INT;
     INSERT INTO [ORDER] (OrderPrice, CreatedDate, CreatedBy, [Address], UserID, OrderStatus, IsDeleted)
-    VALUES (@OrderPrice, GETDATE(), @CreatedBy, @Address, @UserID, N'Đã đặt hàng', 0);
+    VALUES (@OrderPrice, GETDATE(), @CreatedBy, @Address, @UserID, N'Đã Đặt Hàng', 0);
 
     SET @OrderID = SCOPE_IDENTITY();
 
@@ -415,32 +416,139 @@ BEGIN
 		QUANTITY INT '$.QUANTITY',
 		PRICE bigint '$.PRICE'
     );
-	 UPDATE S
-    SET S.QUANTITY = S.QUANTITY - OD.QUANTITY
-    FROM SALE S
+	UPDATE INVENTORYDETAIL
+    SET 
+        DELIVERED = DELIVERED + QUANTITY,
+        REMAINING = REMAINING - QUANTITY
+    FROM INVENTORYDETAIL
     INNER JOIN (
-        SELECT ProductID, SUM(Quantity) AS QUANTITY
+        SELECT 
+            ProductID,
+            Quantity
         FROM OPENJSON(@Jinput)
         WITH (
             PRODUCTID INT '$.PRODUCTID',
-            QUANTITY INT '$.QUANTITY'
+		    QUANTITY INT '$.QUANTITY'
         )
-        GROUP BY ProductID
-    ) OD ON S.PRODUCTID = OD.PRODUCTID;
+    ) AS OrderDetails ON INVENTORYDETAIL.PRODUCTID = OrderDetails.ProductID;
+END;
+GO
+--create store usppassword
+create PROCEDURE UspPassword
+@UserId int,
+@Password nvarchar(100),
+@Repassword nvarchar(100),
+@UserExists INT = 0 
+AS
+BEGIN
+    IF EXISTS(SELECT 1 FROM ACCOUNT WHERE USERID = @Userid AND [PASSWORD] = HASHBYTES('MD5', CONVERT(VARCHAR(255), @Password)))
+    BEGIN
+        DECLARE @EncryptedPassword VARBINARY(MAX);
+        SET @EncryptedPassword = HASHBYTES('MD5', CONVERT(VARCHAR(255), @Repassword));
+        SET @UserExists = 1;
+        UPDATE Account SET [PASSWORD] = @EncryptedPassword WHERE UserID = @UserId;
+    END
+    ELSE 
+    BEGIN
+        SET @UserExists = 0;
+    END
+    SELECT @UserExists AS UserExist;
+END;
+GO
+--create proc UspDeleteOrder
+create PROC UspDeleteOrder
+@OrderId INT
+AS
+BEGIN
+    UPDATE [Order] SET OrderStatus = N'Huỷ Đơn Hàng', IsDeleted = 1 WHERE OrderId = @OrderId;
+END
+GO;
+--create proc usptop5product
+CREATE PROCEDURE uspTopFIVEProduct
+AS
+BEGIN
+SELECT TOP 5
+	pro.PRODUCTID,
+	pro.PRODUCTNAME,
+	pro.MEMORY,
+	pro.PRICENEW,
+    pro.PRICEOLD,
+	pro.PRODUCTDETAIL,
+	pro.IMAGEPRODUCT
+	FROM PRODUCT pro
+	WHERE pro.ISPUBLISHED='true' and pro.ISDELETED='false' 
+    ORDER BY pro.PRICENEW DESC;
+END;
+GO
+--create proc uspTopFiveProductbyMemory
+CREATE PROCEDURE uspTopFiveProductbyMemory
+AS
+BEGIN
+	select TOP 5
+	pro.PRODUCTID,
+	pro.PRODUCTNAME,
+	pro.MEMORY,
+	pro.PRICENEW,
+    pro.PRICEOLD,
+	pro.PRODUCTDETAIL,
+	pro.IMAGEPRODUCT
+	from PRODUCT pro
+	where pro.ISPUBLISHED='true' and pro.ISDELETED='false' 
+    ORDER BY Memory DESC;
+END
+GO;
+
+
+--create proc UspGetPromotionu
+CREATE PROC UspGetPromotionu
+@Promotioncode varchar(100)
+AS
+BEGIN
+SELECT pro.PROMOTIONCODE,pro.PROMOTIONVALUE
+FROM PROMOTION pro
+WHERE pro.PROMOTIONCODE=@Promotioncode and pro.ISDELETED='false'
 END;
 GO
 
---create proc UspGetPromotionu
-create proc UspGetPromotionu
-@Promotioncode varchar(100)
-as
-begin
-select pro.PROMOTIONCODE,pro.PROMOTIONVALUE
-from PROMOTION pro
-where pro.PROMOTIONCODE=@Promotioncode and pro.ISDELETED='false'
-end;
-GO
 
+--create proc UspOrderforcheckfistory
+CREATE PROC UspOrderforcheckfistory
+@userId INT
+AS
+BEGIN
+SELECT
+    o.OrderId,
+	 o.OrderPrice,
+	 o.OrderStatus,
+	 o.IsDeleted,
+    STRING_AGG(p.productname + 'x' + CAST(od.quantity AS NVARCHAR), ', ') AS ProductName,
+    SUM(od.quantity) AS Quantity
+FROM
+    [order] o
+JOIN
+    ORDERDETAIL od ON o.orderid = od.orderid
+JOIN
+    product p ON od.productid = p.productid
+WHERE
+    o.orderid = od.orderid and o.userid=@userId
+GROUP BY
+    o.orderid,o.orderprice,o.orderstatus,o.isdeleted;
+END
+GO;
+
+
+--create proc [UspUpdateInformation]
+CREATE PROC [dbo].[UspUpdateInformation]
+@UserId int,
+@Fullname nvarchar(255),
+@Phone varchar(12),
+@Address nvarchar(255),
+@DateOfBirth Date
+AS
+BEGIN
+  UPDATE Account SET FullName =@Fullname, PHONE =@Phone, [ADDRESS] =@Address, [Dateofbirth] = @DateOfBirth WHERE UserID= @UserId 
+END
+GO;
 ---admin
 
 

@@ -2,7 +2,6 @@
 @{
     var userid = Context.Session.GetInt32("UserID");
 }
-
 <div class="set-bg" data-setbg="">
     <div class="row mx-0">
         <div class="col-sm-8" style="width: 90%; margin: auto; border: 1px solid black; margin-top: 50px; margin-bottom: 50px; box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5); border-radius: 5px;">
@@ -10,7 +9,7 @@
             <!-- Profile form -->
             <form asp-controller="User" asp-action="UpdateProfile" method="post" class="form-horizontal">
                 <div class="panel-body">
-                    <h2 class="mgbt-xs-20" style="color: black; text-align: center; font-family: 'Dancing Script', cursive;">Profile User: <span class="font-semibold">@Model.FullName</span></h2>
+                    <h2 class="mgbt-xs-20" style="color: black; text-align: center; font-family: 'Dancing Script', cursive;">Profile User: <span class="font-semibold">@Model.UserName</span></h2>
                     <br />
                     <span class="text-danger">@ViewBag.success</span>
                     <div class="row">
@@ -28,18 +27,15 @@
                                             <img alt="example image" src="@Url.Content("~/Images/Avartardefault/avtnull.png")" style="width: 100%; overflow: hidden; border-radius: 10px; height: 400px;">
                                         }
                                     </div>
-                                  @*   <form asp-controller="User" asp-action="UploadAvatar" method="post" enctype="multipart/form-data">
-                                        <input type="hidden" asp-route-id="@userid" />
-                                        <div class="form-img-action text-center mgbt-xs-20" style="margin-top: 10px;">
-                                            <input type="file" name="file" style="width: 100%;" class="vd_bg-blue" />
-                                            <input type="submit" class="btn btn-info" value="Upload" style="margin-top: 10px;" />
-                                            @ViewBag.Message
-                                        </div>
-                                    </form> *@
                                     <br />
                                     <div>
-                                        <a class="btn btn-info" style="width: 100%; margin-bottom: 10px; color: white" id="btnMemberCard">
+                                        <a asp-action="DisplayPurchasedHistory" asp-controller="User" asp-route-userid="@userid" class="btn btn-info" style="width: 100%; margin-bottom: 10px; color: white" id="btnMemberCard">
                                             Purchased History
+                                        </a>
+                                    </div>
+                                    <div>
+                                        <a asp-action="ChangePassword" asp-controller="User" asp-route-userid="@userid" class="btn btn-info" style="width: 100%; margin-bottom: 10px; color: white" id="btnMemberCard">
+                                            Account Setting
                                         </a>
                                     </div>
                                 </div>
@@ -57,7 +53,7 @@
                                         <label style="padding-top: 4px; margin-bottom: 0; font-weight: 500; margin: 5px; color: black;">Full Name</label>
                                     </div>
                                     <div class="col-sm-9">
-                                        <input asp-for="@Model.FullName" class="form-control" style="width: 100%; height: 35px;" name="txtfullname" />
+                                        <input asp-for="@Model.FullName" class="form-control" style="width: 100%; height: 35px;" name="txtfullname" required/>
                                         <span asp-validation-for="@Model.FullName" class="text-danger"></span>
                                     </div>
                                 </div>
@@ -74,7 +70,7 @@
                                         <label style="padding-top: 4px; margin-bottom: 0; font-weight: 500; margin: 5px; color: black;"> Phone Number</label>
                                     </div>
                                     <div class="col-sm-9">
-                                        <input asp-for="@Model.Phone" class="form-control" style="width: 100%; height: 35px;" name="txtphone" />
+                                        <input asp-for="@Model.Phone" class="form-control" style="width: 100%; height: 35px;" name="txtphone" required />
                                         <span asp-validation-for="@Model.Phone" class="text-danger"></span>
                                     </div>
                                 </div>
@@ -83,7 +79,7 @@
                                         <label style="padding-top: 4px; margin-bottom: 0; font-weight: 500; margin: 5px; color: black;">Address</label>
                                     </div>
                                     <div class="col-sm-9">
-                                        <input asp-for="@Model.Address" class="form-control" style="width: 100%; height: 35px;" name="txtaddress" />
+                                        <input asp-for="@Model.Address" class="form-control" style="width: 100%; height: 35px;" name="txtaddress" required />
                                         <span asp-validation-for="@Model.Address" class="text-danger"></span>
                                     </div>
                                 </div>
@@ -92,43 +88,13 @@
                                         <label style="padding-top: 4px; margin-bottom: 0; font-weight: 500; margin: 5px; color: black;">DateOfBirth</label>
                                     </div>
                                     <div class="col-sm-9">
-                                        <input asp-for="@Model.DateOfBirth" type="date" class="form-control" style="width: 100%; height: 35px;" name="txtdateofbirth" />
+                                        <input asp-for="@Model.DateOfBirth" type="date" class="form-control" style="width: 100%; height: 35px;" name="txtdateofbirth" required />
                                         <span asp-validation-for="@Model.DateOfBirth" class="text-danger"></span>
                                     </div>
                                 </div>
                             </div>
-                            <!-- Account setting End -->
-
-                            <hr />
-                            <!-- Profile setting Begin -->
                             <div style="margin-bottom: 25px;">
-                                <h3 class="mgbt-xs-15">Account Setting</h3>
-                                <div class="form-group row" style="margin-top: 15px; height: 40px;">
-                                    <div class="col-sm-3" style="text-align: right;">
-                                        <label style="padding-top: 4px; margin-bottom: 0; font-weight: 500; margin: 5px; color: black;">Username</label>
-                                    </div>
-                                    <div class="col-sm-9">
-                                        <input asp-for="@Model.UserName" class="form-control" style="width: 100%; height: 35px;" disabled />
-                                    </div>
-                                </div>
-                                <div class="form-group row" style="margin-top: 15px; height: 40px;">
-                                    <div class="col-sm-3" style="text-align: right;">
-                                        <label style="padding-top: 4px; margin-bottom: 0; font-weight: 500; margin: 5px; color: black;">Password</label>
-                                    </div>
-                                    <div class="col-sm-9">
-                                        <input asp-for="@Model.Password" type="password" class="form-control" style="width: 100%; height: 35px;" placeholder="Your password" name="txtpassword"/>
-                                       
-                                    </div>
-                                </div>
-                                <div class="form-group row" style="margin-top: 15px; height: 40px;">
-                                    <div class="col-sm-3" style="text-align: right;">
-                                        <label style="padding-top: 4px; margin-bottom: 0; font-weight: 500; margin: 5px; color: black;">Confirm Password</label>
-                                    </div>
-                                    <div class="col-sm-9">
-                                        <input name="txrepassword" type="password" placeholder="Repassword..." style="width: 100%; height: 35px; color: black;" value="" class="form-control">
-                                    </div>
-                                </div>
-                                <div style="margin-top: 15px; width: 100%;">
+                                     <div style="margin-top: 15px; width: 100%;">
                                     <p style="color: red; text-align: center;">@ViewBag.Message</p>
                                 </div>
                                 <div class="form-group row" style="margin-top: 15px; height: 40px; ">
@@ -148,14 +114,4 @@
     @{
         <partial name="_ValidationScriptsPartial" />
     }
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script type="text/javascript">
-        $('.set-bg').each(function () {
-            var bg = $(this).data('setbg');
-            $(this).css('background-image', 'url(' + bg + ')');
-            $(this).css('background-repeat', 'no-repeat');
-            $(this).css('background-size', 'cover');
-        });
-    </script>
-
 }
